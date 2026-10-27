@@ -5,6 +5,7 @@ import type { StageDefinition } from '../core/model/stage';
 import { getStages } from '../core/stages';
 import { createRepository, type SaveData } from '../storage/repository';
 import { Editor } from './Editor';
+import { describeTile } from './describeTile';
 import { GameView } from './GameView';
 import { ErrorList, HelpPanel, HintPanel, InspectorPanel, LogPanel } from './panels';
 import { setStageCompletions } from './monaco/setup';
@@ -301,7 +302,13 @@ export function App() {
             <span className="muted">{stage.description}</span>
             {progress?.cleared && <span className="badge">クリア済み（最良 {progress.bestTicks} tick）</span>}
           </div>
-          <GameView world={previewWorld ?? initialWorld} options={renderOptions} version={ctl.version} onSelect={(id) => setSelectedId(id)} />
+          <GameView
+            world={previewWorld ?? initialWorld}
+            options={renderOptions}
+            version={ctl.version}
+            onSelect={(id) => setSelectedId(id)}
+            describeTile={(x, y) => describeTile(stage, previewWorld ?? initialWorld, x, y)}
+          />
           {ctl.isReplay && <div className="replay-banner">過去のコマを表示中（閲覧専用）。やり直すには「最初に戻す」</div>}
           <div className="legend" aria-label="凡例">
             <span><i className="sw sw-thief" />怪盗</span>

@@ -1,7 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { WorldState } from '../core/model/types';
 import { createGame, type GameHandle } from '../game/createGame';
 import type { RenderOptions } from '../game/HeistScene';
+
+export interface TileInfo {
+  title: string;
+  lines: string[];
+}
 
 export interface GameViewProps {
   world: WorldState;
@@ -9,10 +14,15 @@ export interface GameViewProps {
   /** world は同一オブジェクトが更新されるため、tick ごとに変わる値で再描画を促す */
   version: number;
   onSelect: (id: string | null) => void;
+  /** マウス位置のタイルの説明（なければ null） */
+  describeTile: (x: number, y: number) => TileInfo | null;
 }
 
 /** Phaser キャンバスを保持する React コンテナ */
-export function GameView({ world, options, version, onSelect }: GameViewProps) {
+export function GameView({ world, options, version, onSelect, describeTile }: GameViewProps) {
+  const [tip, setTip] = useState<{ x: number; y: number; info: TileInfo } | null>(null);
+  const describeRef = useRef(describeTile);
+  describeRef.current = describeTile;
   const containerRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<GameHandle | null>(null);
   const onSelectRef = useRef(onSelect);
@@ -40,5 +50,30 @@ export function GameView({ world, options, version, onSelect }: GameViewProps) {
     handleRef.current?.setWorld(world, options);
   }, [world, options, version]);
 
-  return <div ref={containerRef} className="game-view" data-testid="game-view" />;
+  const onMove = (e: React.MouseEvent) => {
+    const handle = handleRef.current;
+    const el = containerRef.current;
+    if (!handle || !el) return;
+    const tile = handle.tileAt(e.clientX, e.clientY);
+    const info = tile ? describeRef.current(tile.x, tile.y) : null;
+    if (!info) {
+      setTip(null);
+      return;
+    }
+    const rect = el.getBoundingClientRect();
+    setTip({ x: e.clientX - rect.left + 14, y: e.clientY - rect.top + 14, info });
+  };
+
+  return (
+    <div ref={containerRef} className="game-view" data-testid="game-view" onMouseMove={onMove} onMouseLeave={() => setTip(null)}>
+      {tip && (
+        <div className="tile-tip" style={{ left: tip.x, top: tip.y }} role="tooltip" data-testid="tile-tip">
+          <div className="tile-tip-title">{tip.info.title}</div>
+          {tip.info.lines.map((l, i) => (
+            <div key={i}>{l}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }

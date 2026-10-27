@@ -185,14 +185,15 @@ export class HeistScene extends Phaser.Scene {
     for (const thief of world.thieves) {
       const vm = world.vms.find((v) => v.thiefId === thief.id);
       if (!vm || !vm.action || vm.action.kind !== 'move') continue;
-      g.lineStyle(2, 0x4fc7dc, 0.45);
-      let prev = { x: thief.x, y: thief.y };
+      // 通る予定のマスの中央に点を置く（怪盗自身のマスには描かず、体を横切らない）
       const half = TILE / 2;
-      for (const p of vm.action.path) {
-        g.lineBetween(prev.x * TILE + half, prev.y * TILE + half, p.x * TILE + half, p.y * TILE + half);
-        prev = p;
+      const path = vm.action.path;
+      for (let i = 0; i < path.length - 1; i++) {
+        const p = path[i]!;
+        g.fillStyle(0x4fc7dc, 0.55);
+        g.fillRect(p.x * TILE + half - 2, p.y * TILE + half - 2, 4, 4);
       }
-      g.fillStyle(0x4fc7dc, 0.8);
+      g.fillStyle(0x4fc7dc, 0.9);
       g.fillRect(vm.action.goal.x * TILE + half - 3, vm.action.goal.y * TILE + half - 3, 6, 6);
     }
   }

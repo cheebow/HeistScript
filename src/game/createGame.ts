@@ -8,6 +8,8 @@ export interface GameHandle {
   scene: HeistScene;
   setWorld(world: WorldState, options: RenderOptions): void;
   resize(containerWidth: number, containerHeight: number): void;
+  /** 画面座標（clientX/Y）からタイル座標を求める。キャンバス外なら null */
+  tileAt(clientX: number, clientY: number): { x: number; y: number } | null;
   destroy(): void;
 }
 
@@ -39,6 +41,16 @@ export function createGame(parent: HTMLElement, width: number, height: number, c
     resize(cw, ch) {
       const zoom = Math.max(1, Math.floor(Math.min(cw / (width * TILE), ch / (height * TILE))));
       game.scale.setZoom(zoom);
+    },
+    tileAt(clientX, clientY) {
+      const rect = game.canvas.getBoundingClientRect();
+      if (clientX < rect.left || clientY < rect.top || clientX >= rect.right || clientY >= rect.bottom) return null;
+      const sx = rect.width / (width * TILE);
+      const sy = rect.height / (height * TILE);
+      const x = Math.floor((clientX - rect.left) / sx / TILE);
+      const y = Math.floor((clientY - rect.top) / sy / TILE);
+      if (x < 0 || y < 0 || x >= width || y >= height) return null;
+      return { x, y };
     },
     destroy() {
       game.destroy(true);

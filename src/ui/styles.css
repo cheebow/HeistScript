@@ -136,3 +136,7 @@ h2 { font-size: 12px; letter-spacing: 0.02em; color: var(--muted); }
 .sw-locker { background: #4caf72; }
 .sw-exit { background: #4fc7dc; }
 .sw-path { background: transparent; border-top: 2px solid rgba(79, 199, 220, 0.8); height: 0; border-radius: 0; }
+
+.tile-tip { position: absolute; z-index: 5; pointer-events: none; max-width: 260px; background: rgba(28, 31, 38, 0.96); border: 1px solid var(--border); border-radius: 4px; padding: 6px 9px; font-size: 12px; line-height: 1.45; color: var(--text); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); }
+.tile-tip-title { font-weight: 600; margin-bottom: 2px; }
+.tile-tip code { color: var(--accent-text); }
