@@ -1,5 +1,9 @@
 # HeistScript
 
+**遊ぶ:** https://cheebow.github.io/HeistScript/ ／ **紹介ページ:** https://cheebow.github.io/HeistScript/about/
+
+main に push すると GitHub Actions（`.github/workflows/pages.yml`）がテスト・ビルドして GitHub Pages に公開します。
+
 プログラミングした怪盗たちが宝を盗み出す、8ビット風ステルス・パズルゲーム。怪盗ごとに専用言語 **HSL (HeistScript Language)** のスクリプトを書き、警備員・監視カメラを避けて宝物を盗み、全員で脱出する。ローカル完結・オフライン・シングルプレイヤーで、コードは外部に送信しない。
 
 - 仕様: [`SPEC.md`](SPEC.md)（正）
