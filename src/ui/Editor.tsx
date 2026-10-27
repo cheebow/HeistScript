@@ -42,6 +42,10 @@ export function Editor({ thiefId, value, onChange, errors, activeLine, breakpoin
       tabSize: 2,
       insertSpaces: true,
       wordBasedSuggestions: 'off',
+      quickSuggestions: { other: true, comments: false, strings: false },
+      quickSuggestionsDelay: 50,
+      suggestOnTriggerCharacters: true,
+      suggest: { showWords: false, preview: true },
       renderLineHighlight: 'line',
       ariaLabel: 'HSL スクリプトエディタ',
     });

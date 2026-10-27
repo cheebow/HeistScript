@@ -26,18 +26,18 @@ export interface CommandDoc {
 }
 
 export const COMMAND_DOCS: CommandDoc[] = [
-  { name: 'move', signature: 'move <目的地>', summary: '最短経路で目的地へ自動移動する。目的地はウェイポイント・宝物・扉・出口・人物のID。', ticks: '距離に応じる（2tick/タイル、運搬中は4tick）', example: 'move jewel' },
-  { name: 'steal', signature: 'steal <宝物>', summary: '隣接または同じマスの宝物を盗む。', ticks: '3 tick', example: 'steal jewel' },
-  { name: 'wait', signature: 'wait <n> / wait until <条件>', summary: 'n tick 待つ、または条件が成立するまで毎tick判定しながら待つ。', ticks: 'n tick（0は1）/ 条件次第', example: 'wait until guard_away' },
+  { name: 'move', signature: 'move 目的地ID', summary: '最短経路で目的地へ自動移動する。目的地はウェイポイント・宝物・扉・出口・人物のID。', ticks: '距離に応じる（2tick/タイル、運搬中は4tick）', example: 'move jewel' },
+  { name: 'steal', signature: 'steal 宝物ID', summary: '隣接または同じマスの宝物を盗む。', ticks: '3 tick', example: 'steal jewel' },
+  { name: 'wait', signature: 'wait 数 / wait until 条件', summary: 'n tick 待つ、または条件が成立するまで毎tick判定しながら待つ。', ticks: 'n tick（0は1）/ 条件次第', example: 'wait until guard_away' },
   { name: 'hide', signature: 'hide', summary: '隠れ場所（緑のロッカー）にいるときだけ隠れる。移動や knockout で解除。', ticks: '1 tick', example: 'hide' },
-  { name: 'knockout', signature: 'knockout <警備員>', summary: '警備員の真後ろの隣接マスにいるときだけ気絶させられる。30 tick 後に目覚める。', ticks: '2 tick', example: 'knockout guard_1' },
-  { name: 'carry', signature: 'carry <警備員>', summary: '隣接する気絶中の警備員を担ぐ。運搬中は移動が遅くなる。', ticks: '3 tick', example: 'carry guard_1' },
+  { name: 'knockout', signature: 'knockout 警備員ID', summary: '警備員の真後ろの隣接マスにいるときだけ気絶させられる。30 tick 後に目覚める。', ticks: '2 tick', example: 'knockout guard_1' },
+  { name: 'carry', signature: 'carry 警備員ID', summary: '隣接する気絶中の警備員を担ぐ。運搬中は移動が遅くなる。', ticks: '3 tick', example: 'carry guard_1' },
   { name: 'drop', signature: 'drop', summary: '担いでいる警備員を現在地に下ろす。', ticks: '1 tick', example: 'drop' },
-  { name: 'open', signature: 'open <扉>', summary: '隣接する扉を開ける。', ticks: '2 tick', example: 'open service_door' },
-  { name: 'signal', signature: 'signal <名前>', summary: '味方全員が signal_received(名前) で確認できるフラグを立てる。', ticks: '1 tick', example: 'signal ready' },
-  { name: 'if', signature: 'if <条件> ... else ... end', summary: '評価した瞬間の条件で分岐する。', ticks: '0 tick', example: 'if guard_visible\n  hide\nend' },
-  { name: 'while', signature: 'while <条件> ... end', summary: '条件が真の間くり返す。中に wait を入れないと命令数上限で停止する。', ticks: '0 tick（本体次第）', example: 'while not at_exit\n  wait 1\nend' },
-  { name: 'on', signature: 'on spotted / on alarm ... end', summary: 'イベントハンドラ。発見・警報の次tickに実行中の命令を中断して起動する。', ticks: '-', example: 'on spotted\n  move safe_room\n  hide\n  wait until safe\n  resume\nend' },
+  { name: 'open', signature: 'open 扉ID', summary: '隣接する扉を開ける。', ticks: '2 tick', example: 'open service_door' },
+  { name: 'signal', signature: 'signal 名前', summary: '味方全員が signal_received(名前) で確認できるフラグを立てる。', ticks: '1 tick', example: 'signal ready' },
+  { name: 'if', signature: 'if 条件 … else … end', summary: '評価した瞬間の条件で分岐する。', ticks: '0 tick', example: 'if guard_visible\n  hide\nend' },
+  { name: 'while', signature: 'while 条件 … end', summary: '条件が真の間くり返す。中に wait を入れないと命令数上限で停止する。', ticks: '0 tick（本体次第）', example: 'while not at_exit\n  wait 1\nend' },
+  { name: 'on', signature: 'on spotted … end / on alarm … end', summary: 'イベントハンドラ。発見・警報の次tickに実行中の命令を中断して起動する。', ticks: '-', example: 'on spotted\n  move safe_room\n  hide\n  wait until safe\n  resume\nend' },
   { name: 'resume', signature: 'resume', summary: 'ハンドラから中断した元の命令へ復帰する（移動は再探索、他は最初からやり直し）。', ticks: '0 tick', example: 'resume' },
 ];
 
@@ -93,66 +93,117 @@ export function registerHslLanguage(): void {
     base: 'vs-dark',
     inherit: true,
     rules: [
-      { token: 'keyword', foreground: 'f5d547', fontStyle: 'bold' },
-      { token: 'keyword.action', foreground: '35c0d6', fontStyle: 'bold' },
-      { token: 'variable.predefined', foreground: 'f08a24' },
-      { token: 'operator', foreground: 'c678dd' },
-      { token: 'type', foreground: 'd7263d' },
-      { token: 'comment', foreground: '6b7280', fontStyle: 'italic' },
-      { token: 'number', foreground: '98c379' },
-      { token: 'identifier', foreground: 'f4e8c1' },
+      { token: 'keyword', foreground: 'c9a84c' },
+      { token: 'keyword.action', foreground: '9fc3df' },
+      { token: 'variable.predefined', foreground: 'd4a27a' },
+      { token: 'operator', foreground: 'b39ddb' },
+      { token: 'type', foreground: 'c88a8a' },
+      { token: 'comment', foreground: '6c717c', fontStyle: 'italic' },
+      { token: 'number', foreground: '9cc08d' },
+      { token: 'identifier', foreground: 'd9dbe0' },
     ],
-    colors: { 'editor.background': '#111527', 'editorLineNumber.foreground': '#4b5270' },
+    colors: { 'editor.background': '#15171c', 'editorLineNumber.foreground': '#4a4f5a', 'editor.lineHighlightBackground': '#1c1f26' },
   });
 }
 
 let completionDisposable: monaco.IDisposable | null = null;
 
-/** ステージ依存の補完（ID 一覧）を登録し直す */
+/** ステージ依存の補完を登録し直す。行の文脈（命令の直後か、条件の中か）に応じて候補を絞る。 */
 export function setStageCompletions(stage: StageDefinition | null): void {
   completionDisposable?.dispose();
   completionDisposable = null;
   if (!stage) return;
-  const ids = [
-    ...stage.waypoints.map((w) => ({ id: w.id, detail: `ウェイポイント (${w.x},${w.y})` })),
-    { id: 'exit', detail: `出口 (${stage.exit.x},${stage.exit.y})` },
-    ...stage.objects.map((o) => ({ id: o.id, detail: `${o.type === 'treasure' ? '宝物' : o.type === 'door' ? '扉' : 'ロッカー'} (${o.x},${o.y})` })),
-    ...stage.guards.map((g) => ({ id: g.id, detail: '警備員' })),
-    ...stage.thieves.map((t) => ({ id: t.id, detail: '怪盗' })),
-  ].filter((v, i, arr) => arr.findIndex((w) => w.id === v.id) === i);
+  type Item = { id: string; detail: string; kinds: string[] };
+  const items: Item[] = [];
+  const add = (id: string, detail: string, kinds: string[]) => {
+    if (!items.some((i) => i.id === id)) items.push({ id, detail, kinds });
+  };
+  add('exit', `出口 (${stage.exit.x},${stage.exit.y})`, ['move']);
+  for (const w of stage.waypoints) add(w.id, `地点 (${w.x},${w.y})`, ['move']);
+  for (const o of stage.objects) {
+    if (o.type === 'treasure') add(o.id, `宝物 (${o.x},${o.y})`, ['move', 'steal']);
+    else if (o.type === 'door') add(o.id, `扉 (${o.x},${o.y})`, ['move', 'open']);
+    else add(o.id, `ロッカー (${o.x},${o.y})`, ['move']);
+  }
+  for (const g of stage.guards) add(g.id, '警備員', ['move', 'knockout', 'carry']);
+  for (const t of stage.thieves) add(t.id, '怪盗', ['move']);
+
+  const TARGET_COMMANDS = ['move', 'steal', 'open', 'knockout', 'carry'];
+  const CONDITION_HEADS = ['if', 'while', 'until', 'and', 'or', 'not', '('];
+
   completionDisposable = monaco.languages.registerCompletionItemProvider(HSL_LANGUAGE, {
+    triggerCharacters: [' ', '('],
     provideCompletionItems(model, position) {
       const word = model.getWordUntilPosition(position);
       const range = new monaco.Range(position.lineNumber, word.startColumn, position.lineNumber, word.endColumn);
+      const before = model.getValueInRange(new monaco.Range(position.lineNumber, 1, position.lineNumber, word.startColumn)).trim();
+      const tokens = before.split(/[\s(]+/).filter(Boolean);
+      const last = tokens[tokens.length - 1] ?? '';
       const suggestions: monaco.languages.CompletionItem[] = [];
-      for (const c of COMMAND_DOCS) {
-        if (!stage.unlockedCommands.includes(c.name)) continue;
-        suggestions.push({
-          label: c.name,
-          kind: monaco.languages.CompletionItemKind.Keyword,
-          insertText: c.name === 'if' ? 'if ${1:safe}\n\t$0\nend' : c.name === 'while' ? 'while ${1:not at_exit}\n\t$0\nend' : c.name === 'on' ? 'on ${1:spotted}\n\t$0\n\tresume\nend' : c.name,
-          insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-          detail: c.signature,
-          documentation: `${c.summary}\n所要: ${c.ticks}`,
-          range,
-        });
+      const kind = monaco.languages.CompletionItemKind;
+
+      // 1) 命令の直後: その命令に合う ID だけ
+      if (TARGET_COMMANDS.includes(last) && tokens.length === 1) {
+        for (const it of items) {
+          if (!it.kinds.includes(last)) continue;
+          suggestions.push({ label: it.id, kind: kind.Variable, insertText: it.id, detail: it.detail, range, sortText: '0' + it.id });
+        }
+        return { suggestions };
       }
-      for (const p of PREDICATE_DOCS) {
-        suggestions.push({
-          label: p.name,
-          kind: monaco.languages.CompletionItemKind.Function,
-          insertText: p.name.startsWith('signal_received') ? 'signal_received(${1:ready})' : p.name,
-          insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-          detail: '条件',
-          documentation: p.summary,
-          range,
-        });
+      if (last === 'wait' && tokens.length === 1) {
+        suggestions.push({ label: 'until', kind: kind.Keyword, insertText: 'until ', detail: '条件が成立するまで待つ', range, command: { id: 'editor.action.triggerSuggest', title: '' } });
+        for (const n of ['1', '5', '10']) suggestions.push({ label: n, kind: kind.Value, insertText: n, detail: `${n} tick 待つ`, range });
+        return { suggestions };
       }
-      for (const id of ids) {
-        suggestions.push({ label: id.id, kind: monaco.languages.CompletionItemKind.Variable, insertText: id.id, detail: id.detail, range });
+      if (last === 'on' && tokens.length === 1) {
+        for (const ev of ['spotted', 'alarm']) suggestions.push({ label: ev, kind: kind.Event, insertText: `${ev}\n\t$0\n\tresume\nend`, insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: ev === 'spotted' ? '見つかったとき' : '警報のとき', range });
+        return { suggestions };
       }
-      for (const op of ['and', 'or', 'not', 'until', 'else', 'end', 'resume']) {
-        suggestions.push({ label: op, kind: monaco.languages.CompletionItemKind.Operator, insertText: op, range });
+      if (last === 'signal_received') {
+        suggestions.push({ label: 'ready', kind: kind.Value, insertText: 'ready)', range });
+        return { suggestions };
+      }
+
+      // 2) 条件の中: 述語と演算子
+      const inCondition = tokens.some((t) => CONDITION_HEADS.includes(t)) || before.endsWith('(');
+      if (inCondition) {
+        for (const p of PREDICATE_DOCS) {
+          suggestions.push({
+            label: p.name,
+            kind: kind.Function,
+            insertText: p.name.startsWith('signal_received') ? 'signal_received(${1:ready})' : p.name,
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            detail: '条件',
+            documentation: p.summary,
+            range,
+            sortText: '0' + p.name,
+          });
+        }
+        for (const op of ['and', 'or', 'not', 'true', 'false']) suggestions.push({ label: op, kind: kind.Operator, insertText: op, range, sortText: '1' + op });
+        return { suggestions };
+      }
+
+      // 3) 行頭: 解禁済みの命令
+      if (tokens.length === 0) {
+        for (const c of COMMAND_DOCS) {
+          if (!stage.unlockedCommands.includes(c.name)) continue;
+          const needsTarget = TARGET_COMMANDS.includes(c.name) || c.name === 'wait' || c.name === 'signal' || c.name === 'on';
+          suggestions.push({
+            label: c.name,
+            kind: kind.Keyword,
+            insertText:
+              c.name === 'if' ? 'if ${1:safe}\n\t$0\nend' : c.name === 'while' ? 'while ${1:not at_exit}\n\t$0\nend' : c.name === 'on' ? 'on ${1:spotted}\n\t$0\n\tresume\nend' : needsTarget ? `${c.name} ` : c.name,
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            detail: c.signature,
+            documentation: `${c.summary}\n所要: ${c.ticks}\n例: ${c.example.split('\n')[0]}`,
+            range,
+            sortText: '0' + c.name,
+            // 対象が必要な命令はスペースを入れた直後に ID 候補を出す
+            command: needsTarget && c.name !== 'on' ? { id: 'editor.action.triggerSuggest', title: '' } : undefined,
+          });
+        }
+        for (const op of ['else', 'end']) suggestions.push({ label: op, kind: kind.Keyword, insertText: op, range, sortText: '1' + op });
+        return { suggestions };
       }
       return { suggestions };
     },

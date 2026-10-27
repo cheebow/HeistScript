@@ -195,8 +195,8 @@ export function App() {
     <div className="app" style={{ ['--editor-width' as string]: `${editorWidth}px` }}>
       <header className="topbar">
         <div className="brand">
-          <span className="logo">HEIST</span>
-          <span className="logo2">SCRIPT</span>
+          <span className="logo">Heist</span>
+          <span className="logo2">Script</span>
         </div>
         <label className="stage-select">
           ステージ
@@ -216,13 +216,13 @@ export function App() {
             data-testid="btn-play"
             title={hasErrors ? 'エラーを修正してください' : '実行 / 一時停止 (Space)'}
           >
-            {ctl.status === 'running' ? '⏸ 一時停止' : ctl.run && ctl.status !== 'finished' ? '▶ 再開' : ctl.status === 'finished' && ctl.isReplay ? '▶ リプレイ' : '▶ 実行'}
+            {ctl.status === 'running' ? '一時停止' : ctl.run && ctl.status !== 'finished' ? '再開' : ctl.status === 'finished' && ctl.isReplay ? 'リプレイ' : '実行'}
           </button>
           <button onClick={() => { if (!ctl.run) startRun(false); ctl.stepOnce(); }} disabled={hasErrors || (ctl.status === 'finished' && !ctl.isReplay)} data-testid="btn-step" title="1tick 進める">
-            ⏭ 1tick
+            1tick
           </button>
           <button onClick={() => startRun(false)} disabled={hasErrors} data-testid="btn-restart" title="初期状態から実行（コードは消えません）">
-            ↺ 初期状態へ
+            初期状態へ
           </button>
           <div className="seg" role="radiogroup" aria-label="再生速度">
             {([1, 2, 4] as Speed[]).map((s) => (
@@ -282,7 +282,7 @@ export function App() {
           <ErrorList errors={compileErrors[activeThief] ?? []} onJump={(line) => (jumpRef.current = { thiefId: activeThief, line })} />
           {ctl.lastBreakpoint && (
             <div className="notice" role="status">
-              ⏹ ブレークポイント: {ctl.lastBreakpoint.thiefId} の {ctl.lastBreakpoint.line} 行目の実行前で停止しました
+              ブレークポイント: {ctl.lastBreakpoint.thiefId} の {ctl.lastBreakpoint.line} 行目の実行前で停止しました
             </div>
           )}
         </section>
@@ -318,7 +318,7 @@ export function App() {
         <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="結果" data-testid="result-dialog">
           <div className={`modal result-${result.status}`}>
             <h2>
-              {result.status === 'SUCCESS' ? '🎉 ミッション成功！' : result.status === 'FAILED' ? '💥 ミッション失敗' : '⏹ 停止'}
+              {result.status === 'SUCCESS' ? 'ミッション成功' : result.status === 'FAILED' ? 'ミッション失敗' : '停止'}
             </h2>
             <p className="result-reason" data-testid="result-reason">
               {result.reason}

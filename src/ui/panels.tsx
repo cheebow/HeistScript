@@ -109,7 +109,7 @@ export function InspectorPanel({ world, selectedId, onSelect }: { world: WorldSt
         <dl className="kv">
           <dt>クリア条件</dt>
           <dd data-testid="objective">
-            宝物 {taken.length}/{required.length}、全員が出口へ {world.alarmActive ? '｜⚠ 警戒中' : ''}
+            宝物 {taken.length}/{required.length}、全員が出口へ{world.alarmActive ? '（警戒中）' : ''}
           </dd>
         </dl>
         {thief && <ThiefInfo thief={thief} vm={vm} world={world} />}
@@ -134,7 +134,7 @@ function ThiefInfo({ thief, vm, world }: { thief: Thief; vm: VmState | undefined
     <dl className="kv" data-testid="thief-info">
       <dt>怪盗</dt>
       <dd>
-        {thief.id} {thief.captured ? '🚔 逮捕' : thief.hidden ? '🫥 隠れ中' : ''}
+        {thief.id} {thief.captured ? '（逮捕）' : thief.hidden ? '（隠れ中）' : ''}
       </dd>
       <dt>位置/向き</dt>
       <dd>
@@ -233,18 +233,85 @@ export function HintPanel({ stage, onInsertSample }: { stage: StageDefinition; o
   );
 }
 
+/** ステージ内で命令の対象にできる ID 一覧 */
+function stageIds(stage: StageDefinition) {
+  const rows: { id: string; kind: string; pos: string; usage: string }[] = [];
+  rows.push({ id: 'exit', kind: '出口', pos: `(${stage.exit.x},${stage.exit.y})`, usage: 'move exit' });
+  for (const w of stage.waypoints) {
+    if (w.id === 'exit') continue;
+    rows.push({ id: w.id, kind: '地点', pos: `(${w.x},${w.y})`, usage: `move ${w.id}` });
+  }
+  for (const o of stage.objects) {
+    if (o.type === 'treasure') rows.push({ id: o.id, kind: '宝物', pos: `(${o.x},${o.y})`, usage: `move ${o.id} → steal ${o.id}` });
+    else if (o.type === 'door') rows.push({ id: o.id, kind: '扉', pos: `(${o.x},${o.y})`, usage: `open ${o.id}（隣接して）` });
+    else rows.push({ id: o.id, kind: 'ロッカー', pos: `(${o.x},${o.y})`, usage: `move ${o.id} → hide` });
+  }
+  for (const g of stage.guards) rows.push({ id: g.id, kind: '警備員', pos: `(${g.x},${g.y}) 開始`, usage: `knockout ${g.id} / carry ${g.id}` });
+  for (const t of stage.thieves) rows.push({ id: t.id, kind: '怪盗', pos: `(${t.x},${t.y}) 開始`, usage: `move ${t.id}（隣まで）` });
+  return rows;
+}
+
 export function HelpPanel({ stage }: { stage: StageDefinition }) {
+  const ids = stageIds(stage);
+  const firstWaypoint = stage.waypoints.find((w) => w.id !== 'exit')?.id ?? 'exit';
+  const treasure = stage.objects.find((o) => o.type === 'treasure')?.id ?? 'jewel';
+  const guard = stage.guards[0]?.id ?? 'guard_1';
+  const door = stage.objects.find((o) => o.type === 'door')?.id ?? 'door';
+  const example = (name: string): string => {
+    switch (name) {
+      case 'move':
+        return `move ${firstWaypoint}`;
+      case 'steal':
+        return `steal ${treasure}`;
+      case 'knockout':
+        return `knockout ${guard}`;
+      case 'carry':
+        return `carry ${guard}`;
+      case 'open':
+        return `open ${door}`;
+      default:
+        return COMMAND_DOCS.find((c) => c.name === name)?.example.split('\n')[0] ?? name;
+    }
+  };
   return (
     <section className="panel help-panel" aria-label="命令ヘルプ">
       <header className="panel-header">
-        <h2>命令ヘルプ</h2>
+        <h2>このステージで使える ID</h2>
+      </header>
+      <p className="muted small">命令の後ろには下の ID をそのまま書く。例: <code>{example('move')}</code></p>
+      <table className="help-table" data-testid="id-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>種類</th>
+            <th>位置</th>
+            <th>使い方</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ids.map((r) => (
+            <tr key={r.id}>
+              <td>
+                <code>{r.id}</code>
+              </td>
+              <td>{r.kind}</td>
+              <td>{r.pos}</td>
+              <td>
+                <code>{r.usage}</code>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <header className="panel-header">
+        <h2>命令</h2>
       </header>
       <table className="help-table">
         <thead>
           <tr>
-            <th>命令</th>
+            <th>書き方</th>
             <th>意味</th>
-            <th>時間</th>
+            <th>例</th>
           </tr>
         </thead>
         <tbody>
@@ -252,15 +319,22 @@ export function HelpPanel({ stage }: { stage: StageDefinition }) {
             <tr key={c.name} className={stage.unlockedCommands.includes(c.name) ? '' : 'locked'}>
               <td>
                 <code>{c.signature}</code>
-                {!stage.unlockedCommands.includes(c.name) && <span className="lock">🔒</span>}
+                {!stage.unlockedCommands.includes(c.name) && <span className="lock" title="このステージでは未解禁">未解禁</span>}
               </td>
-              <td>{c.summary}</td>
-              <td>{c.ticks}</td>
+              <td>
+                {c.summary}
+                <span className="muted"> 所要: {c.ticks}</span>
+              </td>
+              <td>
+                <code className="pre">{example(c.name)}</code>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <h3>条件</h3>
+      <header className="panel-header">
+        <h2>条件（if / wait until / while に書く）</h2>
+      </header>
       <table className="help-table">
         <tbody>
           {PREDICATE_DOCS.map((p) => (
@@ -273,7 +347,9 @@ export function HelpPanel({ stage }: { stage: StageDefinition }) {
           ))}
         </tbody>
       </table>
-      <p className="muted">文法: 1行1命令。ブロックは end で閉じる。# 以降はコメント。大文字小文字は区別。</p>
+      <p className="muted small">
+        文法: 1行1命令。ブロックは end で閉じる。# 以降はコメント。大文字小文字は区別。条件は and / or / not / ( ) で組み合わせられる。
+      </p>
     </section>
   );
 }
