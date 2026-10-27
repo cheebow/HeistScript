@@ -9,6 +9,8 @@ export interface SimConfig {
   investigateObserveTicks: number;
   searchTicks: number;
   knockoutSleepTicks: number;
+  /** 気絶した仲間を起こすのに要する tick */
+  reviveTicks: number;
   /** 1tickあたりのゼロコスト命令上限 */
   instructionBudgetPerTick: number;
   /** 1イベントハンドラあたりの最大tick */
@@ -40,6 +42,7 @@ export const DEFAULT_CONFIG: SimConfig = {
   investigateObserveTicks: 3,
   searchTicks: 8,
   knockoutSleepTicks: 30,
+  reviveTicks: 3,
   instructionBudgetPerTick: 100,
   handlerTimeoutTicks: 200,
   maxConsecutiveBlocks: 3,

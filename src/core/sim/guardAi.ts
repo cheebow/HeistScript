@@ -17,6 +17,7 @@ function enterSearch(world: WorldState, g: Guard, at: Position, ctx: SimContext)
   g.searchTurnCounter = 0;
   g.chaseTargetId = null;
   g.capture = null;
+  g.reviveTargetId = null;
   g.path = [];
   log(world, g.id, 'GUARD_SEARCH', `(${at.x},${at.y}) 周辺を捜索開始`);
 }
@@ -27,18 +28,21 @@ function enterPatrol(world: WorldState, g: Guard): void {
   g.chaseTargetId = null;
   g.lastSeenPos = null;
   g.capture = null;
+  g.reviveTargetId = null;
   g.path = [];
   g.moveProgress = 0;
   log(world, g.id, 'GUARD_PATROL', '巡回に戻った');
 }
 
-export function enterInvestigate(world: WorldState, g: Guard, at: Position, reason: string): void {
+export function enterInvestigate(world: WorldState, g: Guard, at: Position, reason: string, reviveTargetId: string | null = null): void {
   g.state = 'INVESTIGATE';
   g.targetPos = { x: at.x, y: at.y };
   g.observeRemaining = 0;
   g.chaseTargetId = null;
   g.capture = null;
   g.path = [];
+  g.reviveTargetId = reviveTargetId;
+  g.reviveRemaining = 0;
   log(world, g.id, 'GUARD_INVESTIGATE', `(${at.x},${at.y}) を調査: ${reason}`, null, 'warn');
 }
 
@@ -46,6 +50,7 @@ export function enterChase(world: WorldState, g: Guard, thiefId: string, at: Pos
   const wasChasing = g.state === 'CHASE' && g.chaseTargetId === thiefId;
   g.state = 'CHASE';
   g.chaseTargetId = thiefId;
+  g.reviveTargetId = null;
   g.lastSeenPos = { x: at.x, y: at.y };
   g.targetPos = { x: at.x, y: at.y };
   g.path = [];
@@ -87,6 +92,34 @@ export function decideGuard(world: WorldState, g: Guard, ctx: SimContext): boole
         enterPatrol(world, g);
         return false;
       }
+      // 気絶した仲間の蘇生: 隣接したら reviveTicks かけて起こす
+      if (g.reviveTargetId) {
+        const mate = world.guards.find((m) => m.id === g.reviveTargetId);
+        if (mate && mate.state === 'UNCONSCIOUS' && !mate.carriedBy) {
+          g.targetPos = { x: mate.x, y: mate.y };
+          if (manhattan(g, mate) <= 1) {
+            if (g.reviveRemaining === 0) {
+              g.reviveRemaining = ctx.config.reviveTicks;
+              log(world, g.id, 'GUARD_REVIVE_START', `${mate.id} を起こそうとしている（${ctx.config.reviveTicks} tick）`);
+            }
+            g.reviveRemaining--;
+            const dir = directionFromTo(g, mate);
+            if (dir) g.direction = dir;
+            if (g.reviveRemaining <= 0) {
+              mate.wakeTick = world.tick + 1;
+              mate.sleepRemaining = null;
+              g.reviveTargetId = null;
+              log(world, g.id, 'GUARD_REVIVE', `${mate.id} を起こした`, null, 'warn');
+              g.observeRemaining = ctx.config.investigateObserveTicks;
+            }
+            return false;
+          }
+          setPathTo(world, g, g.targetPos, true);
+          return true;
+        }
+        // 仲間がいなくなった（運ばれた／目覚めた）: 通常の調査に切り替え
+        g.reviveTargetId = null;
+      }
       if (samePos(g, target) || g.observeRemaining > 0 || (g.path.length === 0 && g.observeRemaining === 0 && !canReach(world, g, target))) {
         if (g.observeRemaining === 0 && samePos(g, target)) {
           g.observeRemaining = ctx.config.investigateObserveTicks;
@@ -114,6 +147,7 @@ export function decideGuard(world: WorldState, g: Guard, ctx: SimContext): boole
       if (samePos(g, target) || (!visible && manhattan(g, target) <= 1 && targetOccupied)) {
         // 最終確認地点に到達（または隣接していて侵入できない）。対象が見えていなければ捜索
         if (!visible) {
+          log(world, g.id, 'GUARD_LOST', `${g.chaseTargetId} を見失った（最終目撃 (${target.x},${target.y})）`, null, 'warn');
           enterSearch(world, g, g, ctx);
           return false;
         }
@@ -122,6 +156,7 @@ export function decideGuard(world: WorldState, g: Guard, ctx: SimContext): boole
       // 追跡対象のタイルは占有されているが、隣接まで進む
       g.path = findPath(world, g, target, { allowBlockedGoal: true }) ?? [];
       if (g.path.length === 0) {
+        log(world, g.id, 'GUARD_LOST', `${g.chaseTargetId} を見失った（最終目撃 (${target.x},${target.y}) へ到達できない）`, null, 'warn');
         enterSearch(world, g, g, ctx);
         return false;
       }

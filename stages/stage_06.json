@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_06",
+  "title": "倉庫の三つの道",
+  "description": "宝物庫の入口を警備員が守り、倉庫の中をぐるりと巡回している。隙を突いて忍び込むか、背後から眠らせるか、わざと姿を見せて遠くへおびき出すか。やり方は一つではない。",
+  "width": 22,
+  "height": 16,
+  "tiles": [
+    "######################",
+    "#E.......#.........H.#",
+    "#........#...........#",
+    "#...##...#...........#",
+    "#...##...#....#####..#",
+    "#........#....#...#..#",
+    "#........#....#...#..#",
+    "#........#....##.##..#",
+    "#....................#",
+    "#........#.....#.#...#",
+    "#........#.....#.#...#",
+    "#........#.....###...#",
+    "#........#...........#",
+    "#........#...........#",
+    "#........#...........#",
+    "######################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上の脱出口"
+    },
+    {
+      "id": "nook",
+      "x": 16,
+      "y": 10,
+      "label": "物陰",
+      "description": "宝物庫の前のすぐ下にある壁のくぼみ。巡回ルートからは見えにくく、警備員が持ち場に来るのを待てる"
+    },
+    {
+      "id": "vault_door",
+      "x": 16,
+      "y": 8,
+      "label": "宝物庫の前",
+      "description": "宝物庫の入口のすぐ下。警備員が持ち場（右隣）で右を向いて立っているとき、その真後ろにあたる"
+    },
+    {
+      "id": "vault_in",
+      "x": 16,
+      "y": 6,
+      "label": "宝物庫の中",
+      "description": "宝石のすぐ下。ここから steal できる"
+    },
+    {
+      "id": "bait",
+      "x": 12,
+      "y": 10,
+      "label": "おとりの位置",
+      "description": "警備員が下から左の列を上ってくるとき、正面に入る位置。わざと見つかるために使う"
+    },
+    {
+      "id": "attic",
+      "x": 19,
+      "y": 1,
+      "label": "奥のロッカー",
+      "description": "右上の隅にある隠れ場所。ここまでおびき出せば宝物庫から遠ざけられる"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "あなたが操作する怪盗",
+      "starterScript": "# 3つの道: 隙を突く / 背後から眠らせる / おびき出す\n# まずは物陰 nook で警備員の動きを観察しよう\nmove nook\nwait 60\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 20,
+      "y": 12,
+      "direction": "down",
+      "label": "警備員1",
+      "description": "宝物庫の前（持ち場）で右を向いてしばらく見張り、右側・下側を回って左の列を上がり、持ち場へ戻る",
+      "patrolRoute": [
+        {
+          "x": 20,
+          "y": 14,
+          "waitTicks": 4
+        },
+        {
+          "x": 12,
+          "y": 14,
+          "waitTicks": 4
+        },
+        {
+          "x": 12,
+          "y": 8,
+          "waitTicks": 0
+        },
+        {
+          "x": 17,
+          "y": 8,
+          "waitTicks": 16
+        },
+        {
+          "x": 20,
+          "y": 8,
+          "waitTicks": 2
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 16,
+      "y": 5,
+      "required": true,
+      "label": "宝石",
+      "description": "宝物庫の中にある必須の宝物"
+    },
+    {
+      "id": "locker_h",
+      "type": "locker",
+      "x": 19,
+      "y": 1,
+      "label": "奥のロッカー",
+      "description": "右上の隠れ場所"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 800,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "pacifist",
+      "type": "noKnockout",
+      "title": "誰も眠らせずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 110,
+      "title": "110tick以内にクリア"
+    }
+  ],
+  "hints": [
+    "警備員は宝物庫の前（持ち場）でしばらく右を向いて立ち、そのあと右側・下側を回って左の列を上がり、持ち場へ戻る。持ち場にいる間、入口の下のマス vault_door は真後ろになる。壁のくぼみ nook（物陰）は巡回ルートから見えにくい。",
+    "隙を突くなら nook で wait until guard_near → wait until guard_away と待ち、警備員が持ち場を離れた直後に vault_in へ。眠らせるなら nook で guard_near を待ってから vault_door へ行き knockout guard_1。おびき出すなら bait で wait until guard_visible のあと attic へ逃げて hide し、wait until safe で落ち着いてから宝物庫へ。",
+    "move nook\nwait until guard_near\nwait until guard_away\nmove vault_in\nsteal jewel\nmove exit"
+  ],
+  "solution": {
+    "thief_a": "move nook\nwait until guard_near\nwait until guard_away\nmove vault_in\nsteal jewel\nmove exit\n"
+  },
+  "solutions": [
+    {
+      "id": "stealth",
+      "title": "完全ステルス",
+      "scripts": {
+        "thief_a": "move nook\nwait until guard_near\nwait until guard_away\nmove vault_in\nsteal jewel\nmove exit\n"
+      }
+    },
+    {
+      "id": "knockout",
+      "title": "制圧",
+      "scripts": {
+        "thief_a": "move nook\nwait until guard_near\nmove vault_door\nknockout guard_1\nmove vault_in\nsteal jewel\nmove exit\n"
+      }
+    },
+    {
+      "id": "decoy",
+      "title": "陽動",
+      "scripts": {
+        "thief_a": "move bait\nwait until guard_visible\nmove attic\nhide\nwait until safe\nmove vault_in\nsteal jewel\nwait until guard_near\nwait until guard_away\nmove exit\n"
+      }
+    }
+  ]
+}

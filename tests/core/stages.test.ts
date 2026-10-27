@@ -39,6 +39,29 @@ describe('組み込みステージ', () => {
     });
   }
 
+  it('stage_06: 3 つの解法がそれぞれ成立し、指標が戦術に対応する', () => {
+    const s = stages.find((x) => x.id === 'stage_06')!;
+    const byId = Object.fromEntries(s.solutions!.map((sol) => [sol.id, simulate(s, sol.scripts).world]));
+    const stealth = byId['stealth']!;
+    const knockout = byId['knockout']!;
+    const decoy = byId['decoy']!;
+    expect(stealth.result?.status).toBe('SUCCESS');
+    expect(stealth.stats.spottedCount).toBe(0);
+    expect(stealth.stats.knockoutCount).toBe(0);
+    expect(knockout.result?.status).toBe('SUCCESS');
+    expect(knockout.stats.knockoutCount).toBe(1);
+    expect(knockout.stats.spottedCount).toBe(0);
+    expect(decoy.result?.status).toBe('SUCCESS');
+    expect(decoy.stats.spottedCount).toBeGreaterThanOrEqual(1);
+    expect(decoy.stats.knockoutCount).toBe(0);
+    // 指標を記録（PHASE9_RESULTS に転記）
+    console.log(`stage_06 metrics: stealth=${stealth.tick} knockout=${knockout.tick} decoy=${decoy.tick}`);
+    // 無策では捕まる
+    const naive = simulate(s, { thief_a: 'move jewel\nsteal jewel\nmove exit\n' }).world;
+    expect(naive.result?.status).toBe('FAILED');
+    expect(naive.thieves[0]!.captured).toBe(true);
+  });
+
   it('stage_02: 何も考えず進むと捕まる', () => {
     const s = stages.find((x) => x.id === 'stage_02')!;
     const { world } = simulate(s, { thief_a: 'move jewel\nsteal jewel\nmove exit\n' });

@@ -64,6 +64,8 @@ export function createWorld(stage: StageDefinition): WorldState {
       carriedBy: null,
       unconsciousReported: false,
       capture: null,
+      reviveTargetId: null,
+      reviveRemaining: 0,
       visibleThiefIds: [],
     }));
 
@@ -90,6 +92,8 @@ export function createWorld(stage: StageDefinition): WorldState {
       takenBy: null,
       open: o.type === 'door' ? o.open === true : false,
       locked: o.type === 'door' ? o.locked === true : false,
+      initiallyOpen: o.type === 'door' ? o.open === true : false,
+      noticed: false,
     }));
 
   return {

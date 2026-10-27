@@ -184,7 +184,17 @@ function GuardInfo({ guard, world, label }: { guard: Guard; world: WorldState; l
         <>
           <dt>追跡対象</dt>
           <dd>
-            {guard.chaseTargetId} 最終確認 ({guard.lastSeenPos?.x},{guard.lastSeenPos?.y}){guard.capture ? ' 捕獲準備中！' : ''}
+            {guard.chaseTargetId}（最終目撃 ({guard.lastSeenPos?.x},{guard.lastSeenPos?.y})）{guard.capture ? ' 捕獲準備中！' : ''}
+          </dd>
+        </>
+      )}
+      {(guard.state === 'INVESTIGATE' || guard.state === 'SEARCH') && guard.targetPos && (
+        <>
+          <dt>{guard.state === 'INVESTIGATE' ? '調査先' : '捜索中'}</dt>
+          <dd>
+            ({guard.targetPos.x},{guard.targetPos.y})
+            {guard.reviveTargetId ? `／${guard.reviveTargetId} を起こしに行く` : ''}
+            {guard.state === 'SEARCH' ? `／残り ${guard.observeRemaining} tick` : ''}
           </dd>
         </>
       )}

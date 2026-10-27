@@ -83,13 +83,30 @@ export function processGuardVision(world: WorldState, ctx: SimContext): void {
     } else if (g.state !== 'CHASE') {
       // 気絶した仲間の発見
       for (const other of world.guards) {
-        if (other.id === g.id || other.state !== 'UNCONSCIOUS' || other.carriedBy || other.unconsciousReported) continue;
+        if (other.id === g.id || other.state !== 'UNCONSCIOUS' || other.carriedBy) continue;
+        if (g.reviveTargetId === other.id) continue; // すでに起こしに向かっている
+        if (g.state === 'INVESTIGATE' && other.unconsciousReported) continue; // 別の調査中は後回し
         if (canSee(world, viewer, other)) {
-          other.unconsciousReported = true;
-          log(world, g.id, 'GUARD_FOUND_UNCONSCIOUS', `気絶した ${other.id} を発見`, null, 'warn');
-          raiseAlarm(world, g.id, other, `${g.id} が気絶した ${other.id} を発見`, ctx);
-          enterInvestigate(world, g, other, `気絶した ${other.id}`);
+          if (!other.unconsciousReported) {
+            other.unconsciousReported = true;
+            log(world, g.id, 'GUARD_FOUND_UNCONSCIOUS', `気絶した ${other.id} を発見`, null, 'warn');
+            raiseAlarm(world, g.id, other, `${g.id} が気絶した ${other.id} を発見`, ctx);
+          }
+          // 報告済みでも（追跡などで中断した後）再び見つければ起こしに行く。警報は一度だけ
+          enterInvestigate(world, g, other, `気絶した ${other.id} を起こしに行く`, other.id);
           break;
+        }
+      }
+      // 開始時に閉まっていた扉が開いている → 一度だけ調査（巡回中のみ）
+      if (g.state === 'PATROL') {
+        for (const door of world.objects) {
+          if (door.type !== 'door' || !door.open || door.initiallyOpen || door.noticed) continue;
+          if (canSee(world, viewer, door)) {
+            door.noticed = true;
+            log(world, g.id, 'GUARD_FOUND_DOOR', `開いている扉 ${door.id} に気づいた`, null, 'warn');
+            enterInvestigate(world, g, door, `開いた扉 ${door.id}`);
+            break;
+          }
         }
       }
     }

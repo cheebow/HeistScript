@@ -5,8 +5,9 @@ import stage02 from '../../../stages/stage_02.json';
 import stage03 from '../../../stages/stage_03.json';
 import stage04 from '../../../stages/stage_04.json';
 import stage05 from '../../../stages/stage_05.json';
+import stage06 from '../../../stages/stage_06.json';
 
-const RAW_STAGES: unknown[] = [stage01, stage02, stage03, stage04, stage05];
+const RAW_STAGES: unknown[] = [stage01, stage02, stage03, stage04, stage05, stage06];
 
 let cache: StageDefinition[] | null = null;
 

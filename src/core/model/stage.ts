@@ -21,6 +21,8 @@ export interface StageDefinition {
   hints?: string[];
   /** 検証で成功が担保されているサンプルスクリプト (thiefId → script) */
   solution?: Record<string, string>;
+  /** 複数解法（それぞれテストで成功を担保） */
+  solutions?: { id: string; title: string; scripts: Record<string, string> }[];
 }
 
 /** ID に付ける日本語名と説明（ヘルプ・補完・インスペクタで表示） */

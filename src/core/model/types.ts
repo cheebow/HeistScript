@@ -71,6 +71,10 @@ export interface Guard {
   unconsciousReported: boolean;
   /** 捕獲準備状態 */
   capture: GuardCapture | null;
+  /** 蘇生しようとしている仲間のID（INVESTIGATE 中） */
+  reviveTargetId: string | null;
+  /** 蘇生の残りtick */
+  reviveRemaining: number;
   /** 直前tickに視認していた怪盗ID一覧（昇順） */
   visibleThiefIds: string[];
 }
@@ -102,6 +106,10 @@ export interface GameObject {
   open: boolean;
   /** door: 施錠されているか（MVPでは常にfalse） */
   locked: boolean;
+  /** door: 開始時に開いていたか（開いた扉の調査判定に使う） */
+  initiallyOpen: boolean;
+  /** door: 警備員が「開いている」ことに気づいたか（一度だけ調査する） */
+  noticed: boolean;
 }
 
 export interface Thief {
