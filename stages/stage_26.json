@@ -4,7 +4,7 @@
   "title": "待てば通れる",
   "chapter": "第2章 警備員の癖",
   "difficulty": 1,
-  "description": "横に長い廊下を警備員が往復している。廊下を横切るのは一瞬。通り過ぎた直後なら背中しか見えない。",
+  "description": "横に長い廊下を警備員が往復している。宝石と出口は廊下の向こう側。",
   "width": 14,
   "height": 9,
   "tiles": [
@@ -32,7 +32,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# gap_top で wait until guard_near → wait until guard_away と書いてから横切る。\n",
+      "starterScript": "# 廊下の手前で止まって、警備員が通り過ぎる様子を観察しよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -93,7 +93,7 @@
     "wait until guard_away"
   ],
   "goal": "廊下を横切って宝石を取り、出口へ。",
-  "firstStep": "gap_top で wait until guard_near → wait until guard_away と書いてから横切る。",
+  "firstStep": "廊下の手前で止まって、警備員が通り過ぎる様子を観察しよう。",
   "hints": [
     "警備員は前しか見えない。通り過ぎた直後に横切れば、背中側になる。",
     "gap_top で guard_near（近づいた）→ guard_away（離れた）の順に待ってから move jewel。",

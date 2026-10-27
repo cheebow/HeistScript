@@ -50,9 +50,16 @@ import stage47 from '../../../stages/stage_47.json';
 import stage48 from '../../../stages/stage_48.json';
 import stage49 from '../../../stages/stage_49.json';
 import stage50 from '../../../stages/stage_50.json';
+import stage51 from '../../../stages/stage_51.json';
+import stage52 from '../../../stages/stage_52.json';
+import stage53 from '../../../stages/stage_53.json';
+import stage54 from '../../../stages/stage_54.json';
+import stage55 from '../../../stages/stage_55.json';
+import stage56 from '../../../stages/stage_56.json';
+import stage57 from '../../../stages/stage_57.json';
 
 // 表示順（章ごと）。ID は固定なので、順番を変えてもセーブデータは壊れない
-const RAW_STAGES: unknown[] = [stage01, stage02, stage03, stage24, stage25, stage36, stage37, stage26, stage27, stage04, stage28, stage06, stage08, stage13, stage38, stage39, stage41, stage40, stage42, stage30, stage29, stage43, stage07, stage09, stage10, stage46, stage12, stage14, stage44, stage45, stage34, stage35, stage47, stage48, stage05, stage11, stage15, stage17, stage18, stage31, stage32, stage33, stage50, stage49, stage19, stage20, stage21, stage22, stage16, stage23];
+const RAW_STAGES: unknown[] = [stage01, stage02, stage03, stage24, stage25, stage36, stage37, stage26, stage27, stage04, stage28, stage06, stage08, stage13, stage38, stage39, stage41, stage40, stage42, stage30, stage29, stage43, stage07, stage09, stage10, stage46, stage12, stage14, stage44, stage45, stage34, stage35, stage47, stage48, stage05, stage11, stage15, stage17, stage18, stage31, stage32, stage33, stage50, stage49, stage19, stage20, stage21, stage22, stage16, stage23, stage51, stage52, stage53, stage55, stage54, stage56, stage57];
 
 let cache: StageDefinition[] | null = null;
 

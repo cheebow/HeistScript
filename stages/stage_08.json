@@ -4,7 +4,7 @@
   "title": "二人の見張り",
   "width": 22,
   "height": 13,
-  "description": "見張りが二人。一人は宝物庫の前で動かず、もう一人は下の通路を往復しながら覗き穴から様子をうかがう。眠らせた見張りをその場に残すと、見つかって起こされてしまう。",
+  "description": "見張りが二人。一人は宝物庫の前で動かず、もう一人は下の通路を往復しながら覗き穴から様子をうかがう。眠った仲間を見つけた見張りは起こしに来る。",
   "tiles": [
     "######################",
     "#E.........#.........#",
@@ -58,7 +58,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "あなたが操作する怪盗",
-      "starterScript": "# 眠らせた見張りは carry で運び、見えない場所で drop して隠そう\n# （眠らせただけだと、もう一人の見張りが見つけて起こしに来る）\nmove corner\nwait until guard_near\nwait until guard_away\nmove behind\nknockout guard_1\nwait 10\n"
+      "starterScript": "# 眠らせた警備員は carry 警備員ID で担ぎ、drop で下ろせる。担いでいる間は歩みが遅い。\nmove corner\nwait until guard_near\nwait until guard_away\nmove behind\nknockout guard_1\nwait 10\n"
     }
   ],
   "guards": [
@@ -150,8 +150,8 @@
     "carry",
     "drop"
   ],
-  "goal": "見張りを眠らせて宝石を盗み、起こされる前に脱出する。",
-  "firstStep": "初期コード（運ばない版）を実行して、見張り2が仲間を見つけて起こすところまで観察しよう。",
+  "goal": "宝石を盗み、出口へ。",
+  "firstStep": "初期コードを実行して、見張り 2 が何に気づくかを見る。",
   "hints": [
     "見張り2は下の通路を往復し、覗き穴 (16,9) に立つと宝物庫の前が見える。眠った見張り1をそこに残すと、見つかって 3 tick で起こされる。壁ぎわ corner は覗き穴から見えず、見張り2が覗き穴に来ると guard_near になる。",
     "corner で見張り2が覗き穴に来て去るのを待ってから behind へ行き knockout。すぐ carry 見張りID で担いで宝物庫の隅 vault_corner へ運び drop。運搬中は遅い（4tick/マス）ので寄り道しない。",

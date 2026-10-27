@@ -4,7 +4,7 @@
   "title": "近道の扉",
   "chapter": "第1章 基本",
   "difficulty": 1,
-  "description": "制限時間が短い。遠回りの廊下では間に合わない。閉まった扉を開ければ近道になる。",
+  "description": "制限時間が 60 tick と短い。宝石のある部屋へは、閉まった扉を通る道と、遠回りの廊下がある。",
   "width": 16,
   "height": 9,
   "tiles": [

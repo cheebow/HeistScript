@@ -4,7 +4,7 @@
   "title": "大金庫",
   "width": 24,
   "height": 14,
-  "description": "総仕上げ。大金庫の扉はスイッチで開き、スイッチの部屋は回転カメラが見張り、広間を警備員が巡回する。二人で役割を分け、学んだことを全部使おう。",
+  "description": "大金庫の扉はスイッチで開く。スイッチの部屋は回転カメラが見張り、広間を警備員が巡回する。怪盗は二人。",
   "tiles": [
     "########################",
     "#......#..E............#",
@@ -58,8 +58,8 @@
       "y": 2,
       "direction": "right",
       "label": "怪盗A",
-      "description": "スイッチを押す係",
-      "starterScript": "# 怪盗A: スイッチ部屋の入口 door_in でカメラの向きを見てから plate へ\nmove door_in\nwait 40\n"
+      "description": "",
+      "starterScript": "# 怪盗A\nmove door_in\nwait 40\n"
     },
     {
       "id": "thief_b",
@@ -67,8 +67,8 @@
       "y": 2,
       "direction": "right",
       "label": "怪盗B",
-      "description": "盗む係",
-      "starterScript": "# 怪盗B: 右上から右端の列を下りて物陰へ\nmove corner_ne\nmove nook\nwait 60\n"
+      "description": "",
+      "starterScript": "# 怪盗B\nmove corner_ne\nmove nook\nwait 60\n"
     }
   ],
   "guards": [
@@ -193,8 +193,8 @@
   "learn": [
     "総合"
   ],
-  "goal": "スイッチで大金庫を開け、宝石を盗んで二人とも出口へ。",
-  "firstStep": "A をスイッチへ、B を物陰へ。カメラの向きと警備員の周期をそれぞれ観察しよう。",
+  "goal": "宝石を盗み、二人とも出口へ。",
+  "firstStep": "カメラの向きと警備員の周期を、それぞれ別の場所から観察しよう。",
   "hints": [
     "スイッチの部屋は回転カメラが見張るが、左下の隅（スイッチ）は射程の外。映ると警報が鳴って警備員が来る。金庫の扉の横で警備員が 14 tick 見張るので、B はその直後に入る。",
     "A は door_in で wait してカメラが上や右を向いている間に部屋を横切り、plate に乗って signal ready。B は corner_ne から右端を下りて nook へ行き、ready と guard_near → guard_away を待って金庫へ。盗んだら nook に戻って signal done、右端を上がって出口へ。A はそれを待ち、カメラの向きを見て出口へ。",

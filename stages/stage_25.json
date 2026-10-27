@@ -4,7 +4,7 @@
   "title": "扉を開ける",
   "chapter": "第1章 基本",
   "difficulty": 1,
-  "description": "閉まった扉は、隣まで行って open すると開く。宝石は扉の向こう。",
+  "description": "閉まった扉の向こうに宝石がある。警備員はいない。",
   "width": 14,
   "height": 7,
   "tiles": [
@@ -30,7 +30,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# move door_in で扉の前まで行き、open door_1。\n",
+      "starterScript": "# move jewel だけで実行して、何が起きるか見てみよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -79,8 +79,8 @@
   "learn": [
     "open"
   ],
-  "goal": "扉を開けて宝石を取り、出口へ。",
-  "firstStep": "move door_in で扉の前まで行き、open door_1。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "move jewel だけで実行して、何が起きるか見てみよう。",
   "hints": [
     "閉まった扉の向こうへは move できない（経路が見つからない）。先に扉の隣まで行く。",
     "move door_in → open door_1 → move jewel → steal jewel → move exit。",

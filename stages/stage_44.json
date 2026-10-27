@@ -4,7 +4,7 @@
   "title": "警報を利用する",
   "chapter": "第3章 設備",
   "difficulty": 3,
-  "description": "警報が鳴ると、警備員は鳴った場所へ駆けつける。金庫の見張りを遠くへ呼び出すために、わざとレーザーに触れてみよう。",
+  "description": "金庫の見張りは入口を見て動かない。警報が鳴ると、警備員は鳴った場所へ駆けつける。レーザーは見張りから遠い左の通路にある。",
   "width": 16,
   "height": 13,
   "tiles": [
@@ -43,7 +43,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# move tripwire でわざと触れてから、見張りがどこへ行くか見る。\n",
+      "starterScript": "# 見張りをクリックして、警報を受けたときどこへ向かうか試してみよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -112,8 +112,8 @@
   "learn": [
     "警報の使い方"
   ],
-  "goal": "見張りを警報で呼び出し、その間に宝石を取って出口へ。",
-  "firstStep": "move tripwire でわざと触れてから、見張りがどこへ行くか見る。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "見張りをクリックして、警報を受けたときどこへ向かうか試してみよう。",
   "hints": [
     "警報の現場は遠いほど、見張りが戻るまでの時間が長い。見張りは下の列を通って左へ来る。",
     "move tripwire（警報）→ move top_right（右上へ回る）→ move jewel → steal → move exit。見張りが戻る前に右下の出口へ。",

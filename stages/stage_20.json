@@ -4,7 +4,7 @@
   "title": "カードキー",
   "width": 20,
   "height": 12,
-  "description": "金庫の扉は施錠されている。事務室にあるカードキーを盗めば開けられる。開いた扉に気づいた警備員は調べに来るので、手早く。",
+  "description": "金庫の扉は施錠されている。カードキーは事務室にあり、事務室と廊下にはそれぞれ巡回する警備員がいる。開いた扉に気づいた警備員は調べに来る。",
   "tiles": [
     "####################",
     "#.........#........#",
@@ -57,7 +57,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# 金庫の扉 vault_door は施錠されている。鍵 keycard を steal してから open する\nmove office_in\nwait 30\n"
+      "starterScript": "# 鍵は steal で手に入る。施錠された扉は、その鍵を持っていれば open できる。\nmove office_in\nwait 30\n"
     }
   ],
   "guards": [
@@ -179,8 +179,8 @@
   "learn": [
     "鍵（steal → open）"
   ],
-  "goal": "カードキーを手に入れ、金庫の扉を開けて宝石を盗み、出口へ。",
-  "firstStep": "office_in で事務員が通り過ぎるのを待ち、open office_door で入って keycard を取りに行こう。",
+  "goal": "宝石を盗んで出口へ。",
+  "firstStep": "事務室の扉の前で、事務員の往復を観察しよう。",
   "hints": [
     "金庫の扉は施錠されていて、鍵を持っていないと open できない。鍵は宝物と同じく move → steal で手に入る。開けた扉はそのままなので、それに気づいた警備員が調べに来る。",
     "office_in で事務員の guard_near → guard_away を待ち、open office_door → keycard を steal → すぐ戻る。廊下は pillar（くぼみ）で警備員をやり過ごし、通り過ぎたら vault_in へ行って open vault_door、宝石を取って右下の出口へ。",

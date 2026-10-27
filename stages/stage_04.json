@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "stage_04",
   "title": "眠ってもらおう",
-  "description": "警備員が宝物庫の入口を見張っている。真後ろに回り込んで気絶させよう。30tick 後に目を覚ますので、その前に宝石を盗んで逃げるか、眠った警備員を運んで隠しておくこと。",
+  "description": "警備員が宝物庫の入口を見張って立っている。眠らせた警備員は 30 tick で目を覚まし、担いで運ぶこともできる。",
   "width": 20,
   "height": 12,
   "tiles": [
@@ -55,7 +55,7 @@
       "x": 1,
       "y": 2,
       "direction": "right",
-      "starterScript": "# 警備員の真後ろのマス behind から knockout guard_1 で気絶させられる。\n# 眠っている警備員のマスは通り抜けられる。\nmove behind\nknockout guard_1\n",
+      "starterScript": "# knockout 警備員ID は、警備員の真後ろの隣のマスにいるときだけ効く。\n# 眠っている警備員のマスは通り抜けられる。\nmove behind\nknockout guard_1\n",
       "label": "怪盗A",
       "description": "あなたが操作する怪盗"
     }
@@ -140,8 +140,8 @@
     "carry",
     "drop"
   ],
-  "goal": "見張りを背後から眠らせて宝石を盗む。30tick 以内に離れるか、警備員を運んで隠す。",
-  "firstStep": "初期コードで knockout まで動く。そのあと move jewel → steal jewel → move exit を足して、目覚める前に逃げ切れるか試そう。",
+  "goal": "宝石を盗んで出口へ。",
+  "firstStep": "見張りをクリックして、向きと視界を確かめよう。",
   "chapter": "第2章 警備員の癖",
   "difficulty": 2
 }

@@ -4,7 +4,7 @@
   "title": "見つかったら",
   "chapter": "第2章 警備員の癖",
   "difficulty": 3,
-  "description": "警備員の周期は読みにくい。見つかることもある。on spotted で「見つかったら通風口へ逃げて、安全になったら続きをする」保険をかけよう。",
+  "description": "警備員が部屋の右半分を回っていて、宝石はその周回路の中。部屋の中央に通風口がある。警備員は通風口には入れない。",
   "width": 16,
   "height": 9,
   "tiles": [
@@ -32,7 +32,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# まず普通に move jewel して見つかる tick を確かめ、on spotted のブロックを足す。\n",
+      "starterScript": "# まず普通に move jewel して、見つかる tick をログで確かめよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -109,8 +109,8 @@
     "resume",
     "safe"
   ],
-  "goal": "見つかっても逃げ切って、宝石を取り出口へ。",
-  "firstStep": "まず普通に move jewel して見つかる tick を確かめ、on spotted のブロックを足す。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "まず普通に move jewel して、見つかる tick をログで確かめよう。",
   "hints": [
     "on spotted … end はプログラムのどこかに一つ書く。見つかった次の tick に今の命令を中断して始まり、resume で元の命令へ戻る。",
     "on spotted の中で move refuge → wait until safe → wait until guard_away → resume。通風口に入れば見失い、捜索が終わって離れれば safe になる。steal の途中で中断されたときのために、宝石をまだ持っていなければ move jewel してから resume。",

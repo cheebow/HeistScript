@@ -4,7 +4,7 @@
   "title": "物音の練習",
   "chapter": "第5章 通風口・鍵・物音",
   "difficulty": 1,
-  "description": "見張りが通路の入口を向いて立っている。distract で離れた場所に物音を立てれば、見張りは調べに行く。",
+  "description": "見張りが通路の入口を向いて立っている。distract で離れた場所に物音を立てると、見張りは調べに行く。",
   "width": 16,
   "height": 7,
   "tiles": [
@@ -37,7 +37,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# corner まで行って distract noise_spot。見張りが動いたらすき間へ。\n",
+      "starterScript": "# distract を試して、見張りがどこへ行って何 tick で戻るか見てみよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -92,8 +92,8 @@
   "learn": [
     "distract"
   ],
-  "goal": "物音で見張りを動かし、宝石を取って出口へ。",
-  "firstStep": "corner まで行って distract noise_spot。見張りが動いたらすき間へ。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "distract を試して、見張りがどこへ行って何 tick で戻るか見てみよう。",
   "hints": [
     "distract は自分から 6 マス以内の地点に物音を立てる。見張りはその場所へ行き、3 tick 見てから戻る。",
     "corner から distract noise_spot → wait 3 → move jewel → steal → move exit。見張りは左へ行くので、右側は背中側。",

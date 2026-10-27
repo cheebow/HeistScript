@@ -4,7 +4,7 @@
   "title": "最後の仕事",
   "width": 24,
   "height": 14,
-  "description": "事務室のカードキー、通風口、施錠された金庫、新人とベテラン。二人で物音と合図を使い分けて、すべてを組み合わせよう。",
+  "description": "事務室のカードキー、通風口、施錠された金庫、新人とベテラン。怪盗は二人。",
   "tiles": [
     "########################",
     "#E.........#...........#",
@@ -86,8 +86,8 @@
       "y": 2,
       "direction": "right",
       "label": "怪盗A",
-      "description": "鍵を取って金庫を開ける係",
-      "starterScript": "# 怪盗A: vent_o で待ち、見張りが離れたら keycard を取る\nmove vent_o\nwait 60\n"
+      "description": "",
+      "starterScript": "# 怪盗A\nmove vent_o\nwait 60\n"
     },
     {
       "id": "thief_b",
@@ -95,8 +95,8 @@
       "y": 2,
       "direction": "right",
       "label": "怪盗B",
-      "description": "物音で見張りを動かす係",
-      "starterScript": "# 怪盗B: desk から distract shelf で見張りを動かす\nmove desk\nwait 60\n"
+      "description": "",
+      "starterScript": "# 怪盗B\nmove desk\nwait 60\n"
     }
   ],
   "guards": [
@@ -205,8 +205,8 @@
   "learn": [
     "総合（鍵・通風口・物音・視界）"
   ],
-  "goal": "カードキーで金庫を開けて宝石を盗み、二人とも出口へ。",
-  "firstStep": "A を vent_o、B を desk に置き、B の distract shelf で見張りがどう動くか観察しよう。",
+  "goal": "宝石を盗み、二人とも出口へ。",
+  "firstStep": "二人を別々の場所に置いて、見張りと新人の動きをそれぞれ観察しよう。",
   "hints": [
     "鍵は事務室、金庫は下の部屋。事務室の見張りは 8 マス先まで見えるので、B が desk から distract shelf で動かし、A は通風口 vent_o から鍵を取りに行く（見張りが戻るまで 18 tick ほど）。下の部屋の新人は 3 マスしか見えないが、金庫の扉の前は折り返し点から見える。",
     "B は vent_side で見張り役。新人が真下を通るたびに guard_near → guard_away が成立し、通る向きは交互に変わる。新人が左へ向かった直後に signal go、A は vent_bottom から出て金庫へ。A は盗んだら宝石の場所で待ち、新人が扉を調べて左へ戻った直後の signal go2 で通風口へ。",

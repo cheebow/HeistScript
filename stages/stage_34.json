@@ -4,7 +4,7 @@
   "title": "二人で二つ",
   "chapter": "第4章 連携",
   "difficulty": 1,
-  "description": "怪盗は二人、宝石も二つ。警備員はいない。手分けして取り、二人とも出口へ。全員が出口に着いて初めてクリア。",
+  "description": "怪盗は二人、宝石も二つ。警備員はいない。全員が出口に着いて初めてクリア。",
   "width": 16,
   "height": 7,
   "tiles": [
@@ -21,8 +21,8 @@
     {
       "direction": "right",
       "label": "怪盗A",
-      "description": "左の宝石係",
-      "starterScript": "# タブで怪盗B に切り替えて、B にもスクリプトを書く。\n",
+      "description": "",
+      "starterScript": "# タブで怪盗B に切り替えて、B のスクリプトも見てみよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -30,8 +30,8 @@
     {
       "direction": "right",
       "label": "怪盗B",
-      "description": "右の宝石係",
-      "starterScript": "# タブで怪盗B に切り替えて、B にもスクリプトを書く。\n",
+      "description": "",
+      "starterScript": "# タブで怪盗B に切り替えて、B のスクリプトも見てみよう。\n",
       "id": "thief_b",
       "x": 2,
       "y": 1
@@ -78,8 +78,8 @@
   "learn": [
     "怪盗ごとのスクリプト"
   ],
-  "goal": "二人で宝石を一つずつ取り、二人とも出口へ。",
-  "firstStep": "タブで怪盗B に切り替えて、B にもスクリプトを書く。",
+  "goal": "二人で宝石を取り、二人とも出口へ。",
+  "firstStep": "タブで怪盗B に切り替えて、B のスクリプトも見てみよう。",
   "hints": [
     "スクリプトは怪盗ごと。B が何も書かれていないと、B は出口に来ない。",
     "A: move jewel_a → steal → move exit。B: move jewel_b → steal → move exit。",

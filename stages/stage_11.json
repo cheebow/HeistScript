@@ -4,7 +4,7 @@
   "title": "重さの合図",
   "width": 22,
   "height": 13,
-  "description": "宝物庫の扉は、床のスイッチに重さがかかっている間だけ開く。二人で役割を分けるか、眠らせた見張りをスイッチに乗せるか。",
+  "description": "宝物庫の扉は、床のスイッチに重さがかかっている間だけ開く。怪盗は二人。扉の横には見張りがいる。",
   "tiles": [
     "######################",
     "#E...................#",
@@ -64,8 +64,8 @@
       "y": 2,
       "direction": "right",
       "label": "怪盗A",
-      "description": "スイッチを押す係",
-      "starterScript": "# 怪盗A: スイッチ plate に乗って扉を開け、合図 ready を送る\nmove plate\nsignal ready\nwait 80\n"
+      "description": "",
+      "starterScript": "# スイッチ plate に乗っている間だけ、扉 vault_door が開く。\nmove plate\nsignal ready\nwait 80\n"
     },
     {
       "id": "thief_b",
@@ -73,8 +73,8 @@
       "y": 2,
       "direction": "right",
       "label": "怪盗B",
-      "description": "宝石を盗む係",
-      "starterScript": "# 怪盗B: 合図を待って宝物庫へ（見張りに注意）\nwait until signal_received(ready)\nmove nook\nwait 40\n"
+      "description": "",
+      "starterScript": "# 怪盗B\nwait until signal_received(ready)\nmove nook\nwait 40\n"
     }
   ],
   "guards": [
@@ -185,8 +185,8 @@
     "carry",
     "drop"
   ],
-  "goal": "スイッチで宝物庫の扉を開け、宝石を盗んで二人とも出口へ。",
-  "firstStep": "初期コードで A をスイッチに乗せ、扉が開くことと、見張りが扉の横に来るタイミングを観察しよう。",
+  "goal": "宝石を盗み、二人とも出口へ。",
+  "firstStep": "A をスイッチに乗せて、扉が開くことと見張りの動きを観察しよう。",
   "hints": [
     "扉はスイッチ plate が押されている間だけ開く（扉の上に誰かいる間は閉じない）。見張りは広間を回り、扉の横 (18,8) で 8 tick ほど扉の方を見張る。物陰 nook はそこから見えないが、見張りが扉の横に来ると guard_near になる。",
     "怪盗Aが plate に乗って signal ready。怪盗Bは nook で見張りが来て去る（guard_near → guard_away）のを待ってから宝物庫へ。盗んで広間に出たら signal done、Aはそれを待って出口へ。別解: 見張りを背後から眠らせ、担いで plate に乗せる（起きてもスイッチの上にいる間は扉が開いたまま）。",

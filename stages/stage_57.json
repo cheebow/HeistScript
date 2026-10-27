@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_57",
+  "title": "無音の廊下",
+  "chapter": "第7章 上級",
+  "difficulty": 5,
+  "description": "上の廊下にはレーザー、中の廊下へはタイマー扉、中の廊下には回転カメラと往復する警備員。四つの周期が重なる。",
+  "width": 24,
+  "height": 11,
+  "tiles": [
+    "########################",
+    "#......#...............#",
+    "#..H...................#",
+    "#......#...............#",
+    "##########D#############",
+    "#......................#",
+    "#......................#",
+    "##########.#############",
+    "#......................#",
+    "#.....................E#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "description": "上の廊下。ここで周期を観察する",
+      "id": "locker",
+      "x": 3,
+      "y": 2,
+      "label": "ロッカー"
+    },
+    {
+      "description": "扉の手前。中の廊下の警備員が扉の下を通ると guard_near",
+      "id": "door_top",
+      "x": 10,
+      "y": 3,
+      "label": "タイマー扉の上"
+    },
+    {
+      "description": "中の廊下から下の廊下へ",
+      "id": "gap",
+      "x": 10,
+      "y": 7,
+      "label": "下へのすき間"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# ロッカーに隠れて、レーザー・扉・カメラ・警備員の周期をひとつずつ書き出そう。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "警備員",
+      "description": "中の廊下の下の列を往復する",
+      "id": "guard_1",
+      "x": 20,
+      "y": 6,
+      "direction": "left",
+      "patrolRoute": [
+        {
+          "x": 2,
+          "y": 6,
+          "waitTicks": 3
+        },
+        {
+          "x": 20,
+          "y": 6,
+          "waitTicks": 3
+        }
+      ]
+    }
+  ],
+  "cameras": [
+    {
+      "range": 6,
+      "rotateEveryTicks": 15,
+      "label": "回転カメラ",
+      "description": "中の廊下の右上。15 tick ごとに右回り（上→右→下→左）。左か下を向くと扉の下が見える",
+      "id": "cam",
+      "x": 16,
+      "y": 5,
+      "direction": "up"
+    }
+  ],
+  "objects": [
+    {
+      "id": "laser",
+      "type": "laser",
+      "x": 7,
+      "y": 2,
+      "onTicks": 9,
+      "offTicks": 7,
+      "offset": 3,
+      "label": "レーザー",
+      "description": "上の廊下のすき間。9 tick 作動／7 tick 停止。ここしか通れない"
+    },
+    {
+      "id": "timer_door",
+      "type": "door",
+      "x": 10,
+      "y": 4,
+      "open": true,
+      "cycle": {
+        "openTicks": 6,
+        "closedTicks": 10,
+        "offset": 0
+      },
+      "label": "タイマー扉",
+      "description": "6 tick 開いて 10 tick 閉じる"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 5,
+      "y": 8,
+      "required": true,
+      "label": "宝石",
+      "description": "下の廊下"
+    }
+  ],
+  "exit": {
+    "x": 22,
+    "y": 9
+  },
+  "maxTicks": 600,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "noalarm",
+      "type": "noAlarm",
+      "title": "警報を鳴らさずにクリア"
+    }
+  ],
+  "learn": [
+    "四つの周期"
+  ],
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "ロッカーに隠れて、レーザー・扉・カメラ・警備員の周期をひとつずつ書き出そう。",
+  "hints": [
+    "上の廊下はレーザー、扉は 16 tick 周期、中の廊下はカメラと警備員、下の廊下は安全。ひとつずつ合わせる。",
+    "locker → wait → door_top → wait → gap。扉が開いていて、警備員が離れていて、カメラが上か右を向いている瞬間に、扉からすき間まで一気に降りる。待つ tick は表から逆算する。",
+    "--- thief_a ---\nmove locker\nhide\nwait 7\nmove door_top\nwait 0\nmove gap\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move locker\nhide\nwait 7\nmove door_top\nwait 0\nmove gap\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

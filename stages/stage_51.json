@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_51",
+  "title": "二重の鍵",
+  "chapter": "第7章 上級",
+  "difficulty": 4,
+  "description": "金庫は二重。外の扉の鍵は事務室、内の扉の鍵は外の金庫の中。事務室は事務員が巡回し、金庫の前は回転カメラが見張る。",
+  "width": 24,
+  "height": 12,
+  "tiles": [
+    "########################",
+    "#......#...............#",
+    "#......#...............#",
+    "#......D...............#",
+    "#......#...............#",
+    "#......#...............#",
+    "########.###############",
+    "#..............#.......#",
+    "#..............D...#...#",
+    "#..............#...D...#",
+    "#..............#...#...#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "description": "扉のすぐ外。閉じている間は中から見えない",
+      "id": "office_in",
+      "x": 6,
+      "y": 3,
+      "label": "事務室の扉の前"
+    },
+    {
+      "description": "事務室の下。ここから下の広間へ",
+      "id": "gap",
+      "x": 8,
+      "y": 6,
+      "label": "下へのすき間"
+    },
+    {
+      "description": "すき間の真下。カメラの射程の外。ここで向きを待つ",
+      "id": "nook",
+      "x": 8,
+      "y": 10,
+      "label": "広間の左下"
+    },
+    {
+      "description": "施錠された外の扉のすぐ左",
+      "id": "outer_in",
+      "x": 14,
+      "y": 8,
+      "label": "外の扉の前"
+    },
+    {
+      "description": "施錠された内の扉のすぐ左",
+      "id": "inner_in",
+      "x": 18,
+      "y": 9,
+      "label": "内の扉の前"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# 事務員の周期とカメラの周期を、別々の場所から数えよう。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "事務員",
+      "description": "事務室を四角く巡回する",
+      "id": "clerk",
+      "x": 9,
+      "y": 1,
+      "direction": "right",
+      "patrolRoute": [
+        {
+          "x": 21,
+          "y": 1,
+          "waitTicks": 2
+        },
+        {
+          "x": 21,
+          "y": 5,
+          "waitTicks": 2
+        },
+        {
+          "x": 9,
+          "y": 5,
+          "waitTicks": 2
+        },
+        {
+          "x": 9,
+          "y": 1,
+          "waitTicks": 2
+        }
+      ]
+    }
+  ],
+  "cameras": [
+    {
+      "range": 5,
+      "rotateEveryTicks": 12,
+      "label": "回転カメラ",
+      "description": "広間の右上、外の扉の真上。12 tick ごとに右回り（左→上→右→下）。左か下を向いている間は扉の前に近づけない",
+      "id": "cam",
+      "x": 14,
+      "y": 7,
+      "direction": "left"
+    }
+  ],
+  "objects": [
+    {
+      "id": "office_door",
+      "type": "door",
+      "x": 7,
+      "y": 3,
+      "open": false,
+      "label": "事務室の扉",
+      "description": "閉まっている。open で開く"
+    },
+    {
+      "id": "key_outer",
+      "type": "key",
+      "x": 12,
+      "y": 1,
+      "unlocks": "outer_door",
+      "label": "外の鍵",
+      "description": "事務室の入口近くの机"
+    },
+    {
+      "id": "outer_door",
+      "type": "door",
+      "x": 15,
+      "y": 8,
+      "open": false,
+      "locked": true,
+      "label": "外の扉",
+      "description": "施錠。外の鍵で開く"
+    },
+    {
+      "id": "key_inner",
+      "type": "key",
+      "x": 17,
+      "y": 10,
+      "unlocks": "inner_door",
+      "label": "内の鍵",
+      "description": "外の金庫の隅"
+    },
+    {
+      "id": "inner_door",
+      "type": "door",
+      "x": 19,
+      "y": 9,
+      "open": false,
+      "locked": true,
+      "label": "内の扉",
+      "description": "施錠。内の鍵で開く"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 21,
+      "y": 10,
+      "required": true,
+      "label": "宝石",
+      "description": "内の金庫"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 10
+  },
+  "maxTicks": 700,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "noalarm",
+      "type": "noAlarm",
+      "title": "警報を鳴らさずにクリア"
+    }
+  ],
+  "learn": [
+    "鍵を二つ",
+    "カメラと巡回"
+  ],
+  "goal": "宝石を盗んで出口へ。",
+  "firstStep": "事務員の周期とカメラの周期を、別々の場所から数えよう。",
+  "hints": [
+    "事務員が左の列を下りて行った直後に扉を開け、上の列から鍵を取ってすぐ戻る。開けた扉に事務員が気づいて調べに来るので、下のすき間から広間へ。",
+    "カメラは 48 tick で一周。左（0〜11）と下（12〜23）を向いている間は扉の前が見える。nook で待ち、上か右を向いている 24 tick のうちに扉を開けて中へ。内の鍵は外の金庫の隅。帰りも同じ向きのときに。",
+    "--- thief_a ---\nmove office_in\nwait until guard_near\nwait until guard_away\nopen office_door\nmove key_outer\nsteal key_outer\nmove gap\nmove nook\nwait 0\nmove outer_in\nopen outer_door\nmove key_inner\nsteal key_inner\nmove inner_in\nopen inner_door\nmove jewel\nsteal jewel\nmove nook\nwait 0\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move office_in\nwait until guard_near\nwait until guard_away\nopen office_door\nmove key_outer\nsteal key_outer\nmove gap\nmove nook\nwait 0\nmove outer_in\nopen outer_door\nmove key_inner\nsteal key_inner\nmove inner_in\nopen inner_door\nmove jewel\nsteal jewel\nmove nook\nwait 0\nmove exit\n"
+  }
+}

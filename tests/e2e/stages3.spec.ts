@@ -9,12 +9,12 @@ async function setScript(page: Page, thiefId: string, text: string) {
   await page.evaluate(([t, s]) => (window as unknown as { __heistTest: TestHook }).__heistTest.setScript(s!, t), [thiefId, text]);
 }
 
-test('追加ステージ（24〜50 の抜粋）がサンプル解答で UI 上クリアでき、共有ボックスが出る', async ({ page }) => {
+test('追加ステージ（24〜57 の抜粋）がサンプル解答で UI 上クリアでき、共有ボックスが出る', async ({ page }) => {
   test.setTimeout(300_000);
   await page.goto('/#play');
   await waitHook(page);
   await page.getByRole('button', { name: 'x4' }).click();
-  for (const id of ['stage_24', 'stage_31', 'stage_35', 'stage_42', 'stage_45', 'stage_48']) {
+  for (const id of ['stage_24', 'stage_31', 'stage_35', 'stage_42', 'stage_45', 'stage_48', 'stage_52', 'stage_56']) {
     await page.getByTestId('stage-select').selectOption(id);
     const sol = JSON.parse(readFileSync(`stages/${id}.json`, 'utf8')).solution as Record<string, string>;
     for (const [tid, src] of Object.entries(sol)) await setScript(page, tid, src);
@@ -33,6 +33,6 @@ test('ステージ選択は章ごとに見出しが出て、難しさの★が�
   await page.getByTestId('title-start').click();
   await expect(page.getByTestId('stage-select-screen')).toBeVisible();
   await expect(page.locator('.chapter-head').first()).toContainText('第1章');
-  await expect(page.locator('.chapter-head')).toHaveCount(6);
+  await expect(page.locator('.chapter-head')).toHaveCount(7);
   await expect(page.getByTestId('stage-card-stage_24').locator('.stage-diff')).toHaveText('★☆☆☆☆');
 });

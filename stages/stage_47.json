@@ -4,7 +4,7 @@
   "title": "合図を待つ",
   "chapter": "第4章 連携",
   "difficulty": 2,
-  "description": "左右の部屋をつなぐのは一人しか通れない細い通路。正面から鉢合わせると二人とも進めず、3 回ふさがれて止まる。合図で順番を決めよう。",
+  "description": "左右の部屋をつなぐのは一人しか通れない細い通路。怪盗は二人で、左右の部屋に分かれている。",
   "width": 16,
   "height": 8,
   "tiles": [
@@ -22,8 +22,8 @@
     {
       "direction": "right",
       "label": "怪盗A",
-      "description": "左の部屋から宝石へ",
-      "starterScript": "# A は move jewel、B は move exit にして、何が起きるか見る。\n",
+      "description": "",
+      "starterScript": "# A は move jewel、B は move exit にして、何が起きるか見てみよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -31,8 +31,8 @@
     {
       "direction": "right",
       "label": "怪盗B",
-      "description": "右の部屋から出口へ",
-      "starterScript": "# A は move jewel、B は move exit にして、何が起きるか見る。\n",
+      "description": "",
+      "starterScript": "# A は move jewel、B は move exit にして、何が起きるか見てみよう。\n",
       "id": "thief_b",
       "x": 13,
       "y": 1
@@ -74,8 +74,8 @@
     "signal を二つ",
     "進路の譲り合い"
   ],
-  "goal": "細い通路を順番に通り、二人とも出口へ。",
-  "firstStep": "A は move jewel、B は move exit にして、何が起きるか見る。",
+  "goal": "宝石を取り、二人とも出口へ。",
+  "firstStep": "A は move jewel、B は move exit にして、何が起きるか見てみよう。",
   "hints": [
     "通路の中で向かい合うと、どちらも進めない。片方が通路を抜けてから、もう片方が入る。",
     "A: move jewel → signal a_out（通路を抜けた）→ steal → wait until signal_received(b_out) → move exit。B: wait until signal_received(a_out) → move exit → signal b_out。",

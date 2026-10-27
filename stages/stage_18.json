@@ -4,7 +4,7 @@
   "title": "三人の役割",
   "width": 24,
   "height": 15,
-  "description": "怪盗は三人。見張りは金庫の扉の前から動かず、扉はスイッチが押されている間だけ開く。おとり役・スイッチ役・盗む役に分かれて連携しよう。",
+  "description": "怪盗は三人。見張りは金庫の扉の前から動かず、扉はスイッチが押されている間だけ開く。",
   "tiles": [
     "########################",
     "#E.....................#",
@@ -66,8 +66,8 @@
       "y": 2,
       "direction": "right",
       "label": "怪盗A",
-      "description": "スイッチ役",
-      "starterScript": "# 怪盗A: スイッチ役。plate に乗ると金庫の扉が開く\nmove plate\nwait 100\n"
+      "description": "",
+      "starterScript": "# 怪盗A\nmove plate\nwait 100\n"
     },
     {
       "id": "thief_b",
@@ -75,8 +75,8 @@
       "y": 2,
       "direction": "right",
       "label": "怪盗B",
-      "description": "盗む役",
-      "starterScript": "# 怪盗B: 盗む役。物陰で合図を待ってから金庫へ\nmove shadow\nwait 100\n"
+      "description": "",
+      "starterScript": "# 怪盗B\nmove shadow\nwait 100\n"
     },
     {
       "id": "thief_c",
@@ -84,8 +84,8 @@
       "y": 2,
       "direction": "right",
       "label": "怪盗C",
-      "description": "おとり役",
-      "starterScript": "# 怪盗C: おとり役。わざと見つかって見張りを引き離す\nmove corner\nwait 100\n"
+      "description": "",
+      "starterScript": "# 怪盗C\nmove corner\nwait 100\n"
     }
   ],
   "guards": [
@@ -172,8 +172,8 @@
     "三人の役割分担",
     "wait until safe"
   ],
-  "goal": "三人で役割を分け、宝石を盗んで全員が出口へ。",
-  "firstStep": "A を plate に乗せ、C を bait に立たせて、見張りがどう動くか観察しよう。",
+  "goal": "宝石を盗み、三人とも出口へ。",
+  "firstStep": "一人をスイッチに乗せ、別の一人を見張りの視界の端に立たせて、見張りの動きを見よう。",
   "hints": [
     "見張りは金庫の扉の前から動かない。扉はスイッチを押している間だけ開くので、スイッチ役（A）、おとり役（C）、盗む役（B）に分かれる。C が bait に立って見つかれば見張りは追いかけ、B はその隙に金庫へ。",
     "A: plate に乗って signal ready、done を待って出口へ。C: corner 経由で bait に立ち guard_visible で signal lured、locker へ逃げて hide。B: shadow で ready と lured を待ち、金庫へ。盗んだら金庫の外（shadow）まで戻ってから signal done（中にいるうちに A が降りると扉が閉じて閉じ込められる）。C は done のあと wait until safe で見張りが去るのを待って出口へ。",

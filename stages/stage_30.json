@@ -4,7 +4,7 @@
   "title": "レーザー一本",
   "chapter": "第3章 設備",
   "difficulty": 1,
-  "description": "廊下に 1 本のレーザー。6 tick 作動して 6 tick 止まる。止まっている間に通る。",
+  "description": "廊下に 1 本のレーザー。6 tick 作動して 6 tick 止まる。",
   "width": 16,
   "height": 4,
   "tiles": [
@@ -27,7 +27,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# move before で手前まで行き、何 tick 待てば消えるか数える。\n",
+      "starterScript": "# レーザーの手前まで行って、何 tick 後に消えるか数えよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -94,8 +94,8 @@
     "wait",
     "レーザーの周期"
   ],
-  "goal": "レーザーが止まっている間に通って宝石を取り、出口へ。",
-  "firstStep": "move before で手前まで行き、何 tick 待てば消えるか数える。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "レーザーの手前まで行って、何 tick 後に消えるか数えよう。",
   "hints": [
     "レーザーは tick 0〜5 作動、6〜11 停止、12〜17 作動…のくり返し。赤く光っているときに触れると警報。",
     "before に着くのは tick 10。wait 6 すると tick 16 で、次の停止（18〜23）に合わせてレーザーのマスに入れる。",

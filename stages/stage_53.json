@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_53",
+  "title": "見張りの交代",
+  "chapter": "第7章 上級",
+  "difficulty": 4,
+  "description": "広間の外周を回る警備員と、金庫のまわりを回る金庫番。二人の周期はずれている。開始地点は通風口の中。",
+  "width": 24,
+  "height": 12,
+  "tiles": [
+    "########################",
+    "#......................#",
+    "#......................#",
+    "#......................#",
+    "#........######.......##",
+    "#........#....#.......##",
+    "#........##.###.......##",
+    "#......................#",
+    "#...............VV.....#",
+    "#......................#",
+    "#......................#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "description": "開始地点。中にいれば見えない。金庫番が真上（下の列）を通ると guard_near",
+      "id": "vent",
+      "x": 16,
+      "y": 8,
+      "label": "通風口"
+    },
+    {
+      "description": "入口 (11,6) のすぐ下",
+      "id": "vault_in",
+      "x": 11,
+      "y": 7,
+      "label": "金庫の入口の下"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "up",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# 通風口の中から、二人がそれぞれ何 tick ごとに目の前を通るか数えよう。\n",
+      "id": "thief_a",
+      "x": 16,
+      "y": 8
+    }
+  ],
+  "guards": [
+    {
+      "label": "外周の警備員",
+      "description": "広間の外周を時計回りに回る",
+      "id": "outer",
+      "x": 1,
+      "y": 1,
+      "direction": "right",
+      "patrolRoute": [
+        {
+          "x": 22,
+          "y": 1,
+          "waitTicks": 2
+        },
+        {
+          "x": 22,
+          "y": 10,
+          "waitTicks": 2
+        },
+        {
+          "x": 1,
+          "y": 10,
+          "waitTicks": 2
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "waitTicks": 2
+        }
+      ]
+    },
+    {
+      "label": "金庫番",
+      "description": "金庫のまわりを反時計回りに回る（下の列は右へ）",
+      "id": "keeper",
+      "x": 8,
+      "y": 7,
+      "direction": "right",
+      "patrolRoute": [
+        {
+          "x": 15,
+          "y": 7,
+          "waitTicks": 2
+        },
+        {
+          "x": 15,
+          "y": 3,
+          "waitTicks": 2
+        },
+        {
+          "x": 8,
+          "y": 3,
+          "waitTicks": 2
+        },
+        {
+          "x": 8,
+          "y": 7,
+          "waitTicks": 2
+        }
+      ],
+      "visionRange": 4
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 12,
+      "y": 5,
+      "required": true,
+      "label": "宝石",
+      "description": "金庫の中。入口は下 (11,6)"
+    }
+  ],
+  "exit": {
+    "x": 22,
+    "y": 10
+  },
+  "maxTicks": 800,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "二つの周期",
+    "通風口で待つ"
+  ],
+  "goal": "宝石を盗んで出口へ。",
+  "firstStep": "通風口の中から、二人がそれぞれ何 tick ごとに目の前を通るか数えよう。",
+  "hints": [
+    "金庫番が右へ向かって通り過ぎた直後なら、背中側になる。入口は左なので、離れていく方向。外周の警備員が下の列にいるときは入口が見えるので避ける。",
+    "通風口で guard_near → guard_away を待ってから vault_in へ。金庫の中で wait して、二人とも遠い間に右下の出口へ。",
+    "--- thief_a ---\nwait 0\nwait until guard_near\nwait until guard_away\nmove vault_in\nmove jewel\nsteal jewel\nwait 11\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "wait 0\nwait until guard_near\nwait until guard_away\nmove vault_in\nmove jewel\nsteal jewel\nwait 11\nmove exit\n"
+  }
+}

@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_54",
+  "title": "二人の鍵",
+  "chapter": "第7章 上級",
+  "difficulty": 5,
+  "description": "鍵は二つ。事務室の鍵 A は左下の部屋の扉を、左下の部屋にある鍵 B は金庫の扉を開ける。鍵は取った本人しか使えない。廊下はベテランが往復し、通風口が廊下の上を通っている。",
+  "width": 24,
+  "height": 14,
+  "tiles": [
+    "########################",
+    "#..........#...........#",
+    "#..........#...........#",
+    "#..........V...........#",
+    "#..........#...........#",
+    "######VV################",
+    "######VV################",
+    "######VV################",
+    "######VV################",
+    "#.....VVVVVVVVVV.......#",
+    "#......................#",
+    "######D#########D#######",
+    "#..........#...........#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "description": "ここから shelf へ物音が届く",
+      "id": "desk",
+      "x": 10,
+      "y": 2,
+      "label": "事務室の壁ぎわ"
+    },
+    {
+      "description": "壁の中。見えない",
+      "id": "vent_o",
+      "x": 11,
+      "y": 3,
+      "label": "事務室への通風口"
+    },
+    {
+      "description": "物音を立てる場所",
+      "id": "shelf",
+      "x": 16,
+      "y": 2,
+      "label": "事務室の棚"
+    },
+    {
+      "description": "",
+      "id": "vent_top",
+      "x": 6,
+      "y": 5,
+      "label": "縦の通風口の上"
+    },
+    {
+      "description": "扉 A の真上。ベテランが真下を通ると guard_near",
+      "id": "vent_a",
+      "x": 6,
+      "y": 9,
+      "label": "横の通風口の左端"
+    },
+    {
+      "description": "待機場所",
+      "id": "vent_b",
+      "x": 7,
+      "y": 8,
+      "label": "縦の通風口の下（右）"
+    },
+    {
+      "description": "扉 B の左上。ベテランが真下あたりを通ると guard_near",
+      "id": "vent_e",
+      "x": 15,
+      "y": 9,
+      "label": "横の通風口の右端"
+    },
+    {
+      "description": "扉 A のすぐ上（廊下）",
+      "id": "door_a_in",
+      "x": 6,
+      "y": 10,
+      "label": "扉 A の前"
+    },
+    {
+      "description": "扉 B のすぐ上（廊下）",
+      "id": "door_b_in",
+      "x": 16,
+      "y": 10,
+      "label": "扉 B の前"
+    },
+    {
+      "description": "廊下から見えない。ベテランが扉の前を通ると guard_near",
+      "id": "room_wait",
+      "x": 6,
+      "y": 12,
+      "label": "左下の部屋の扉の内側"
+    },
+    {
+      "description": "廊下から見えない。ベテランが扉の前を通ると guard_near",
+      "id": "vault_wait",
+      "x": 16,
+      "y": 12,
+      "label": "金庫の扉の内側"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# まず二人を通風口の下まで行かせて、廊下のベテランの往復を眺めよう。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 2
+    },
+    {
+      "direction": "right",
+      "label": "怪盗B",
+      "description": "",
+      "starterScript": "# まず二人を通風口の下まで行かせて、廊下のベテランの往復を眺めよう。\n",
+      "id": "thief_b",
+      "x": 2,
+      "y": 2
+    }
+  ],
+  "guards": [
+    {
+      "label": "事務室の見張り",
+      "description": "視界 8 マス。物音がすれば調べに行く",
+      "id": "sentry",
+      "x": 21,
+      "y": 2,
+      "direction": "left",
+      "patrolRoute": [
+        {
+          "x": 21,
+          "y": 2,
+          "waitTicks": 0
+        }
+      ],
+      "visionRange": 8
+    },
+    {
+      "label": "ベテラン",
+      "description": "廊下を往復する。視界 8 マス",
+      "id": "veteran",
+      "x": 2,
+      "y": 10,
+      "direction": "right",
+      "patrolRoute": [
+        {
+          "x": 21,
+          "y": 10,
+          "waitTicks": 2
+        },
+        {
+          "x": 2,
+          "y": 10,
+          "waitTicks": 2
+        }
+      ],
+      "visionRange": 8
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "key_a",
+      "type": "key",
+      "x": 14,
+      "y": 4,
+      "unlocks": "door_a",
+      "label": "鍵 A",
+      "description": "事務室の机。扉 A を開ける"
+    },
+    {
+      "id": "door_a",
+      "type": "door",
+      "x": 6,
+      "y": 11,
+      "open": false,
+      "locked": true,
+      "label": "扉 A",
+      "description": "左下の部屋への扉。鍵 A で開く"
+    },
+    {
+      "id": "key_b",
+      "type": "key",
+      "x": 9,
+      "y": 12,
+      "unlocks": "door_b",
+      "label": "鍵 B",
+      "description": "左下の部屋の奥。扉 B を開ける"
+    },
+    {
+      "id": "door_b",
+      "type": "door",
+      "x": 16,
+      "y": 11,
+      "open": false,
+      "locked": true,
+      "label": "扉 B（金庫）",
+      "description": "金庫の扉。鍵 B で開く"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 21,
+      "y": 12,
+      "required": true,
+      "label": "宝石",
+      "description": "金庫の奥"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 12
+  },
+  "maxTicks": 900,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "鍵は本人しか使えない",
+    "役割の順番"
+  ],
+  "goal": "宝石を盗み、二人とも出口へ。",
+  "firstStep": "まず二人を通風口の下まで行かせて、廊下のベテランの往復を眺めよう。",
+  "hints": [
+    "鍵は取った人の持ち物。扉 A は A が、扉 B は B が開ける。扉 A の先に鍵 B と出口がある。横の通風口は廊下の上を通っていて、真下を通り過ぎた直後なら背中側。",
+    "A: 物音の間に鍵 A → 通風口を下りて vent_a で guard_near → guard_away → 扉 A を開けて出口へ、signal a_done。B: 物音 → 通風口で待機 → a_done 後に vent_a から鍵 B → room_wait で通過を待って通風口へ → vent_e で通過を待って扉 B → 宝石 → vault_wait で通過を待って通風口経由で出口へ。",
+    "--- thief_a ---\nmove vent_o\nwait until signal_received(noise)\nwait 18\nmove key_a\nsteal key_a\nmove vent_o\nmove vent_top\nmove vent_a\nwait until guard_near\nwait until guard_away\nmove door_a_in\nopen door_a\nmove exit\nsignal a_done\n--- thief_b ---\nmove desk\ndistract shelf\nsignal noise\nmove vent_top\nmove vent_b\nwait until signal_received(a_done)\nmove vent_a\nwait until guard_near\nwait until guard_away\nmove key_b\nsteal key_b\nmove room_wait\nwait until guard_near\nwait until guard_away\nmove vent_a\nmove vent_e\nwait until guard_near\nwait until guard_away\nmove door_b_in\nopen door_b\nmove jewel\nsteal jewel\nmove vault_wait\nwait until guard_near\nwait until guard_away\nmove vent_e\nmove vent_a\nwait until guard_near\nwait until guard_away\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move vent_o\nwait until signal_received(noise)\nwait 18\nmove key_a\nsteal key_a\nmove vent_o\nmove vent_top\nmove vent_a\nwait until guard_near\nwait until guard_away\nmove door_a_in\nopen door_a\nmove exit\nsignal a_done\n",
+    "thief_b": "move desk\ndistract shelf\nsignal noise\nmove vent_top\nmove vent_b\nwait until signal_received(a_done)\nmove vent_a\nwait until guard_near\nwait until guard_away\nmove key_b\nsteal key_b\nmove room_wait\nwait until guard_near\nwait until guard_away\nmove vent_a\nmove vent_e\nwait until guard_near\nwait until guard_away\nmove door_b_in\nopen door_b\nmove jewel\nsteal jewel\nmove vault_wait\nwait until guard_near\nwait until guard_away\nmove vent_e\nmove vent_a\nwait until guard_near\nwait until guard_away\nmove exit\n"
+  }
+}

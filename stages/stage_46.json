@@ -4,7 +4,7 @@
   "title": "扉の周期",
   "chapter": "第3章 設備",
   "difficulty": 3,
-  "description": "タイマー扉は 8 tick 開いて 8 tick 閉じる。左の部屋では警備員が往復し、宝石の両側から目を光らせる。扉の周期と警備員の周期、両方に合わせる。",
+  "description": "タイマー扉は 8 tick 開いて 8 tick 閉じる。左の部屋では警備員が下の列を往復し、宝石はその上にある。",
   "width": 16,
   "height": 8,
   "tiles": [
@@ -38,7 +38,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# move spot で扉の周期を観察し、宝石の上で警備員の動きを見る。\n",
+      "starterScript": "# move jewel で実行して、扉の前で待つ様子と、警備員がどこで見つけるか確かめよう。\n",
       "id": "thief_a",
       "x": 13,
       "y": 1
@@ -113,8 +113,8 @@
     "タイマー扉",
     "wait の計算"
   ],
-  "goal": "タイマー扉を抜けて宝石を取り、出口へ。",
-  "firstStep": "move spot で扉の周期を観察し、宝石の上で警備員の動きを見る。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "move jewel で実行して、扉の前で待つ様子と、警備員がどこで見つけるか確かめよう。",
   "hints": [
     "扉の前で待たずに済むよう、開いている間に着く。宝石の真上（above）は、警備員が真下を通る間だけ見えない。",
     "spot で guard_near を待ってすぐ above へ、steal して spot に戻る。帰りも扉が開くタイミングを wait で合わせる。",

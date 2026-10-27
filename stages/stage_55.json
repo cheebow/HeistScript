@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_55",
+  "title": "眠らせて運ぶ",
+  "chapter": "第7章 上級",
+  "difficulty": 4,
+  "description": "左右の区画をつなぐ扉を、左の見張りがじっと見ている。右の区画を回る警備員は扉を通って左にも顔を出し、眠った仲間を見れば警報を鳴らす。",
+  "width": 24,
+  "height": 9,
+  "tiles": [
+    "########################",
+    "#......................#",
+    "#.#######..#...######..#",
+    "#.#######..#...#....#..#",
+    "#.#######..D........#..#",
+    "#.#######..#...######..#",
+    "#......................#",
+    "#......................#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "description": "見張りの真上。右の警備員が上の列の左端に来ると見える",
+      "id": "behind_w",
+      "x": 10,
+      "y": 2,
+      "label": "見張りの背後"
+    },
+    {
+      "description": "左の区画の外周の隅。右の警備員からは見えない",
+      "id": "closet",
+      "x": 1,
+      "y": 7,
+      "label": "左下の隅"
+    },
+    {
+      "description": "右の警備員が扉の左側に来ると guard_near。見えない",
+      "id": "ring_sw",
+      "x": 9,
+      "y": 6,
+      "label": "扉の左下"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# 右の警備員が扉を通って左に来るタイミングと、左の見張りの向きを観察しよう。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "左の見張り",
+      "description": "扉を見て立っている。動かない",
+      "id": "west",
+      "x": 10,
+      "y": 3,
+      "direction": "down",
+      "patrolRoute": [
+        {
+          "x": 10,
+          "y": 3,
+          "waitTicks": 0
+        }
+      ]
+    },
+    {
+      "label": "右の警備員",
+      "description": "右の区画を回り、扉を通って左の区画の扉の前まで来る。気絶した仲間を見ると警報を鳴らして起こしに来る",
+      "id": "east",
+      "x": 22,
+      "y": 1,
+      "direction": "left",
+      "patrolRoute": [
+        {
+          "x": 12,
+          "y": 1,
+          "waitTicks": 2
+        },
+        {
+          "x": 12,
+          "y": 4,
+          "waitTicks": 0
+        },
+        {
+          "x": 10,
+          "y": 4,
+          "waitTicks": 2
+        },
+        {
+          "x": 12,
+          "y": 4,
+          "waitTicks": 0
+        },
+        {
+          "x": 12,
+          "y": 7,
+          "waitTicks": 2
+        },
+        {
+          "x": 22,
+          "y": 7,
+          "waitTicks": 2
+        },
+        {
+          "x": 22,
+          "y": 1,
+          "waitTicks": 2
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "mid_door",
+      "type": "door",
+      "x": 11,
+      "y": 4,
+      "open": true,
+      "label": "区画の扉",
+      "description": "開いている。右の警備員の通り道"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 18,
+      "y": 3,
+      "required": true,
+      "label": "宝石",
+      "description": "右の区画の柱のくぼみ"
+    }
+  ],
+  "exit": {
+    "x": 22,
+    "y": 7
+  },
+  "maxTicks": 700,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "noalarm",
+      "type": "noAlarm",
+      "title": "警報を鳴らさずにクリア"
+    }
+  ],
+  "learn": [
+    "knockout",
+    "carry/drop",
+    "周回を読む"
+  ],
+  "goal": "宝石を盗んで出口へ。",
+  "firstStep": "右の警備員が扉を通って左に来るタイミングと、左の見張りの向きを観察しよう。",
+  "hints": [
+    "左の見張りは下しか見ていない。真上の behind_w なら背後。ただし右の警備員が上の列の左端にいると見える。眠った見張りを放っておくと右の警備員が気づく。",
+    "behind_w → knockout west → carry west → closet で drop。ring_sw で右の警備員の guard_near → guard_away を待ち、扉を抜けて宝石へ。",
+    "--- thief_a ---\nwait 45\nmove behind_w\nknockout west\ncarry west\nmove closet\ndrop\nmove ring_sw\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "wait 45\nmove behind_w\nknockout west\ncarry west\nmove closet\ndrop\nmove ring_sw\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

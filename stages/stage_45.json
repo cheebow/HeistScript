@@ -4,7 +4,7 @@
   "title": "重しを置く",
   "chapter": "第3章 設備",
   "difficulty": 3,
-  "description": "金庫の扉はスイッチに乗っている間だけ開く。一人では乗ったまま入れない。眠らせた警備員を担いでスイッチに置けば、重しになる。",
+  "description": "金庫の扉はスイッチに乗っている間だけ開く。怪盗は一人。近くに下を向いた警備員が立っている。",
   "width": 16,
   "height": 8,
   "tiles": [
@@ -31,7 +31,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# behind から knockout guard_1 → carry guard_1 → move plate → drop。\n",
+      "starterScript": "# スイッチに乗ってから降りると、扉がどうなるか見てみよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -105,8 +105,8 @@
   "learn": [
     "carry → drop でスイッチを押す"
   ],
-  "goal": "警備員を重しにして扉を開け、宝石を取って出口へ。",
-  "firstStep": "behind から knockout guard_1 → carry guard_1 → move plate → drop。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "スイッチに乗ってから降りると、扉がどうなるか見てみよう。",
   "hints": [
     "スイッチは「乗っている人物」が押す。気絶した警備員でもよい。",
     "behind で knockout → carry → move plate → drop → move jewel → steal → move exit。担ぐと歩みが遅いので急ぐ。",

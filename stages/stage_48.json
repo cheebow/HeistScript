@@ -4,7 +4,7 @@
   "title": "三人で三つ",
   "chapter": "第4章 連携",
   "difficulty": 2,
-  "description": "怪盗は三人、宝石も三つ。それぞれ別の部屋にある。三人分のスクリプトを書いて、全員で出口へ。",
+  "description": "怪盗は三人、宝石も三つ。それぞれ別の部屋にある。制限時間は 55 tick。",
   "width": 16,
   "height": 8,
   "tiles": [
@@ -23,7 +23,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# タブで A・B・C を切り替えて、それぞれに move と steal を書く。\n",
+      "starterScript": "# 一人だけで全部取ろうとすると、何 tick かかるか試してみよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 6
@@ -32,7 +32,7 @@
       "direction": "right",
       "label": "怪盗B",
       "description": "",
-      "starterScript": "# タブで A・B・C を切り替えて、それぞれに move と steal を書く。\n",
+      "starterScript": "# 一人だけで全部取ろうとすると、何 tick かかるか試してみよう。\n",
       "id": "thief_b",
       "x": 2,
       "y": 6
@@ -41,7 +41,7 @@
       "direction": "right",
       "label": "怪盗C",
       "description": "",
-      "starterScript": "# タブで A・B・C を切り替えて、それぞれに move と steal を書く。\n",
+      "starterScript": "# 一人だけで全部取ろうとすると、何 tick かかるか試してみよう。\n",
       "id": "thief_c",
       "x": 3,
       "y": 6
@@ -97,8 +97,8 @@
   "learn": [
     "三人のスクリプト"
   ],
-  "goal": "三人で宝石を一つずつ取り、全員出口へ。",
-  "firstStep": "タブで A・B・C を切り替えて、それぞれに move と steal を書く。",
+  "goal": "三つの宝石を取り、三人とも出口へ。",
+  "firstStep": "一人だけで全部取ろうとすると、何 tick かかるか試してみよう。",
   "hints": [
     "出口のマスは何人でも重なれる。",
     "A: jewel_a、B: jewel_b、C: jewel_c。それぞれ steal して move exit。",

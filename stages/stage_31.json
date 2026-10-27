@@ -4,7 +4,7 @@
   "title": "通風口の入口",
   "chapter": "第5章 通風口・鍵・物音",
   "difficulty": 1,
-  "description": "通路のすき間は見張りが見ている。下の壁には通風口があり、怪盗だけが通れる。遠回りでも見つからない道を選ぼう。",
+  "description": "通路のすき間は見張りが見ている。下の壁には通風口があり、怪盗だけが通れる。",
   "width": 16,
   "height": 9,
   "tiles": [
@@ -32,7 +32,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# move vent_in を先に書いてから move jewel。\n",
+      "starterScript": "# move jewel だけで実行して、怪盗がどの道を選ぶか見てみよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -86,8 +86,8 @@
   "learn": [
     "通風口"
   ],
-  "goal": "通風口を通って宝石を取り、出口へ。",
-  "firstStep": "move vent_in を先に書いてから move jewel。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "move jewel だけで実行して、怪盗がどの道を選ぶか見てみよう。",
   "hints": [
     "move は最短経路を選ぶので、すき間を通ろうとして見つかる。経由地を指定して道を変える。",
     "move vent_in → move jewel の順なら、通風口から右の部屋に入る。",

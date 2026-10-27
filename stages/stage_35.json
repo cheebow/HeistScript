@@ -4,7 +4,7 @@
   "title": "扉を押さえる",
   "chapter": "第4章 連携",
   "difficulty": 1,
-  "description": "スイッチに乗っている間だけ扉が開く。一人が乗り、もう一人が通る。",
+  "description": "スイッチに乗っている間だけ扉が開く。怪盗は二人。宝石は扉の向こう。",
   "width": 16,
   "height": 8,
   "tiles": [
@@ -22,8 +22,8 @@
     {
       "direction": "right",
       "label": "怪盗A",
-      "description": "スイッチ係",
-      "starterScript": "# A は move plate で乗る。B は move jewel（閉じていれば扉の前で自動で待つ）。\n",
+      "description": "",
+      "starterScript": "# 一人をスイッチに乗せて、扉がどうなるか見てみよう。\n",
       "id": "thief_a",
       "x": 2,
       "y": 1
@@ -31,8 +31,8 @@
     {
       "direction": "right",
       "label": "怪盗B",
-      "description": "盗む係",
-      "starterScript": "# A は move plate で乗る。B は move jewel（閉じていれば扉の前で自動で待つ）。\n",
+      "description": "",
+      "starterScript": "# 一人をスイッチに乗せて、扉がどうなるか見てみよう。\n",
       "id": "thief_b",
       "x": 3,
       "y": 1
@@ -91,8 +91,8 @@
     "スイッチ",
     "signal"
   ],
-  "goal": "スイッチで扉を開け、宝石を取って二人とも出口へ。",
-  "firstStep": "A は move plate で乗る。B は move jewel（閉じていれば扉の前で自動で待つ）。",
+  "goal": "宝石を取って二人とも出口へ。",
+  "firstStep": "一人をスイッチに乗せて、扉がどうなるか見てみよう。",
   "hints": [
     "扉はスイッチから降りると閉じる。B が戻るまで A は乗ったまま。",
     "A: move plate → wait until signal_received(done) → move exit。B: move jewel → steal → move exit → signal done。",

@@ -4,7 +4,7 @@
   "title": "となりの部屋",
   "width": 24,
   "height": 12,
-  "description": "二人は別々の部屋にいる。A の部屋の扉は B のスイッチで、金庫の扉は A のスイッチで開く。お互いの部屋の警備員をかわしながら、合図で順番を合わせよう。",
+  "description": "二人は別々の部屋にいる。A の部屋の扉は B のスイッチで、金庫の扉は A のスイッチで開く。どちらの部屋にも警備員がいる。",
   "tiles": [
     "########################",
     "#.......#.E...#........#",
@@ -63,7 +63,7 @@
       "y": 10,
       "direction": "left",
       "label": "怪盗A",
-      "description": "西の部屋。スイッチを押して金庫を開ける係",
+      "description": "",
       "starterScript": "# 怪盗A: 西の部屋。plate_a に乗ると金庫の扉が開く。\n# 自分の部屋の扉 door_w は B が plate_b に乗っている間だけ開く\nmove plate_a\nwait 60\n"
     },
     {
@@ -72,7 +72,7 @@
       "y": 10,
       "direction": "up",
       "label": "怪盗B",
-      "description": "東の部屋。宝石を盗んでから A の扉を開ける係",
+      "description": "",
       "starterScript": "# 怪盗B: 東の部屋。金庫の扉 vault_door は A が plate_a に乗っている間だけ開く\nhide\nwait 60\n"
     }
   ],
@@ -237,8 +237,8 @@
     "合図の往復",
     "別々の部屋での役割分担"
   ],
-  "goal": "別々の部屋から合図で順番を合わせ、宝石を盗んで二人とも出口へ。",
-  "firstStep": "A を plate_a に乗せたまま、B を hide させて東の警備員の動きを観察しよう。柱を下りてくる瞬間が guard_near。",
+  "goal": "宝石を盗み、二人とも出口へ。",
+  "firstStep": "A を plate_a に乗せたまま、B を hide させて東の警備員の動きを観察しよう。",
   "hints": [
     "二つのスイッチは「乗っている間だけ」相手の部屋の扉を開ける。A は plate_a に乗ったまま、B が宝石を取って plate_b に乗るのを待つ。B が plate_b に乗っている間に A が西の扉を抜け、抜けたら合図で B を解放する。",
     "A: plate_a に乗って signal、got を待ち、guard_near → guard_away のあと door_w_in を通って出口へ、着いたら signal out。B: ロッカーで hide して guard_near → guard_away を待ち、金庫へ。盗んだら plate_b に乗って signal got。out を待ち、また guard_near → guard_away で door_e_in から出口へ。",

@@ -4,7 +4,7 @@
   "title": "ロッカーの列",
   "chapter": "第2章 警備員の癖",
   "difficulty": 2,
-  "description": "長い廊下を警備員が往復し、ロッカーが二つ。隠れて見送り、背中を追って次のロッカーへ。",
+  "description": "長い廊下を警備員が往復し、廊下の上の壁ぎわにロッカーが二つ。宝石と出口は廊下の先の下の部屋。",
   "width": 16,
   "height": 7,
   "tiles": [
@@ -44,7 +44,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# locker_a で hide し、guard_near → guard_away を待ってから locker_b へ。\n",
+      "starterScript": "# ロッカーに隠れて、警備員がどちら向きに通り過ぎるか観察しよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -105,8 +105,8 @@
     "hide",
     "guard_near → guard_away"
   ],
-  "goal": "ロッカーを使って廊下を抜け、宝石を取って出口へ。",
-  "firstStep": "locker_a で hide し、guard_near → guard_away を待ってから locker_b へ。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "ロッカーに隠れて、警備員がどちら向きに通り過ぎるか観察しよう。",
   "hints": [
     "ロッカーで hide していれば、目の前を通られても見つからない。",
     "警備員が右へ向かう直後に次のロッカーへ移れば背中側。locker_a では左へ通り過ぎてから戻ってくるのを待ち（near → away を 2 回）、右へ行く背中を追って locker_b へ。",

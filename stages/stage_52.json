@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_52",
+  "title": "影の回廊",
+  "chapter": "第7章 上級",
+  "difficulty": 4,
+  "description": "長い回廊に回転カメラが三台。周期は同じだが向きがずれていて、ロッカーが二つ。警報が鳴ると下の廊下の警備員が来る。",
+  "width": 24,
+  "height": 7,
+  "tiles": [
+    "########################",
+    "#......................#",
+    "#..H.........H.........#",
+    "#......................#",
+    "####################.###",
+    "#.....................E#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "description": "",
+      "id": "locker_a",
+      "x": 3,
+      "y": 2,
+      "label": "ロッカーA"
+    },
+    {
+      "description": "",
+      "id": "locker_b",
+      "x": 13,
+      "y": 2,
+      "label": "ロッカーB"
+    },
+    {
+      "description": "回廊の右端から下の廊下へ",
+      "id": "stairs",
+      "x": 20,
+      "y": 4,
+      "label": "下への階段"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# ロッカーに隠れて、三台のカメラがいつ回廊を向くか書き出そう。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "警備員",
+      "description": "下の廊下の左端で待機。警報が鳴ると現場へ来る",
+      "id": "guard_1",
+      "x": 2,
+      "y": 5,
+      "direction": "right",
+      "patrolRoute": [
+        {
+          "x": 2,
+          "y": 5,
+          "waitTicks": 0
+        }
+      ]
+    }
+  ],
+  "cameras": [
+    {
+      "range": 5,
+      "rotateEveryTicks": 20,
+      "label": "カメラ1",
+      "description": "回廊の左寄り。20 tick ごとに右回り（下→左→上→右）",
+      "id": "cam_1",
+      "x": 7,
+      "y": 1,
+      "direction": "down"
+    },
+    {
+      "range": 5,
+      "rotateEveryTicks": 20,
+      "label": "カメラ2",
+      "description": "回廊の中ほど下。最初は左を向き、20 tick ごとに右回り（左→上→右→下）",
+      "id": "cam_2",
+      "x": 15,
+      "y": 3,
+      "direction": "left"
+    },
+    {
+      "range": 5,
+      "rotateEveryTicks": 20,
+      "label": "カメラ3",
+      "description": "回廊の右端、階段の上。最初は右（壁）を向き、20 tick ごとに右回り",
+      "id": "cam_3",
+      "x": 21,
+      "y": 1,
+      "direction": "right"
+    }
+  ],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 10,
+      "y": 5,
+      "required": true,
+      "label": "宝石",
+      "description": "下の廊下"
+    }
+  ],
+  "exit": {
+    "x": 22,
+    "y": 5
+  },
+  "maxTicks": 600,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "noalarm",
+      "type": "noAlarm",
+      "title": "警報を鳴らさずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 200,
+      "title": "200tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "三つの周期",
+    "hide"
+  ],
+  "goal": "宝石を盗んで出口へ。",
+  "firstStep": "ロッカーに隠れて、三台のカメラがいつ回廊を向くか書き出そう。",
+  "hints": [
+    "カメラは 80 tick で一周（20 tick ごとに右回り）。各カメラが回廊を向いている tick を表にすると、通れる区間が見つかる。ロッカーで hide していれば見られない。",
+    "locker_a → wait → locker_b → wait → stairs。待つ tick はカメラの表から逆算する。カメラ1 の下を通れるのは上を向いている間、カメラ2 の上を通れるのは下を向いている間。",
+    "--- thief_a ---\nmove locker_a\nhide\nwait 32\nmove locker_b\nhide\nwait 0\nmove stairs\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move locker_a\nhide\nwait 32\nmove locker_b\nhide\nwait 0\nmove stairs\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

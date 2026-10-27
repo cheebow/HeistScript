@@ -4,7 +4,7 @@
   "title": "二つの扉",
   "chapter": "第1章 基本",
   "difficulty": 1,
-  "description": "扉が二つ。順番に開けて進む。open は隣接していないと失敗する。",
+  "description": "扉が二つ、順番に並んでいる。警備員はいない。",
   "width": 16,
   "height": 8,
   "tiles": [
@@ -38,7 +38,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# door1_in まで行って open door_1。その先も同じ。\n",
+      "starterScript": "# 一つ目の扉を開けたあと、怪盗がどこで止まるか見てみよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -95,8 +95,8 @@
     "open",
     "手順を分ける"
   ],
-  "goal": "扉を二つ開けて宝石を取り、出口へ。",
-  "firstStep": "door1_in まで行って open door_1。その先も同じ。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "一つ目の扉を開けたあと、怪盗がどこで止まるか見てみよう。",
   "hints": [
     "扉は一つずつ。隣まで move してから open。",
     "move door1_in → open door_1 → move door2_in → open door_2 → move jewel → steal jewel → move exit。",

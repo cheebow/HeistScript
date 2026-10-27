@@ -4,7 +4,7 @@
   "title": "見張りの背中",
   "chapter": "第2章 警備員の癖",
   "difficulty": 1,
-  "description": "見張りは動かず、上だけを見ている。前を横切れば見つかるが、背中側は見えない。遠回りして後ろを通ろう。",
+  "description": "見張りは動かず、上だけを見ている。宝石は見張りの近く、出口は右下。",
   "width": 16,
   "height": 8,
   "tiles": [
@@ -31,7 +31,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# move side で下に回ってから move jewel。\n",
+      "starterScript": "# 見張りをクリックして視界の形を確かめよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -92,8 +92,8 @@
   "learn": [
     "視界の向き"
   ],
-  "goal": "見張りの後ろを通って宝石を取り、出口へ。",
-  "firstStep": "move side で下に回ってから move jewel。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "見張りをクリックして視界の形を確かめよう。",
   "hints": [
     "警備員の視界は扇形で、向いている方向だけ。クリックすると視界が表示される。",
     "左の壁ぎわを下まで降りてから、下の列を右へ進めば見張りの背中側。",

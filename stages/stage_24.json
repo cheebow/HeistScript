@@ -4,7 +4,7 @@
   "title": "宝石は二つ",
   "chapter": "第1章 基本",
   "difficulty": 1,
-  "description": "警備員はいない。宝石が二つあるので、両方とも手に入れてから出口へ。",
+  "description": "警備員はいない。宝石が二つある。",
   "width": 14,
   "height": 7,
   "tiles": [
@@ -22,7 +22,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# move jewel_a → steal jewel_a のあと、同じことを jewel_b にも。\n",
+      "starterScript": "# 片方の宝石だけ取って出口へ行くと何が起きるか試してみよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -71,7 +71,7 @@
     "steal"
   ],
   "goal": "二つの宝石を両方手に入れて出口へ。",
-  "firstStep": "move jewel_a → steal jewel_a のあと、同じことを jewel_b にも。",
+  "firstStep": "片方の宝石だけ取って出口へ行くと何が起きるか試してみよう。",
   "hints": [
     "必須の宝物は二つ。片方だけ持って出口に着いても、ミッションは終わらない。",
     "move と steal を宝石ごとに 1 組ずつ書き、最後に move exit。",

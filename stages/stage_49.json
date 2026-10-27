@@ -4,7 +4,7 @@
   "title": "物音と鍵",
   "chapter": "第5章 通風口・鍵・物音",
   "difficulty": 2,
-  "description": "見張りはカードキーの机を見て立っている。物音で見張りを動かし、鍵を取って施錠された金庫を開けよう。",
+  "description": "見張りはカードキーの机を見て立っている。金庫は施錠されていて、下の部屋にある。",
   "width": 16,
   "height": 9,
   "tiles": [
@@ -46,7 +46,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# ledge まで行って distract noise_spot。見張りが右下へ行く間に keycard を取る。\n",
+      "starterScript": "# 見張りの視界の外から、物音を立てる場所を探そう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 3
@@ -123,8 +123,8 @@
     "distract",
     "鍵"
   ],
-  "goal": "見張りを物音で動かして鍵を取り、金庫を開けて宝石を取り、出口へ。",
-  "firstStep": "ledge まで行って distract noise_spot。見張りが右下へ行く間に keycard を取る。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "見張りの視界の外から、物音を立てる場所を探そう。",
   "hints": [
     "見張りの視界は 5 マス。机の左下（ledge）はぎりぎり外。物音の地点は自分からも見張りからも 6 マス以内に。",
     "ledge → distract noise_spot → wait 2 → move keycard → steal keycard → move door_in → open vault_door → move jewel → steal jewel → move exit。",

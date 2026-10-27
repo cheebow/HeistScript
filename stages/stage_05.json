@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "stage_05",
   "title": "二人の怪盗",
-  "description": "怪盗が二人。左の部屋と右の部屋は閉まった扉で仕切られている。怪盗Aが操作盤の前で扉を開けて合図を送り、怪盗Bが合図を待って右の部屋の宝石を盗む。右の部屋には巡回する警備員と監視カメラがいるので、見つかったら隠れ場所に逃げ込もう。",
+  "description": "怪盗は二人。左右の部屋は閉まった扉で仕切られ、扉は操作盤から開く。右の部屋には巡回する警備員と監視カメラがいて、隠れ場所もある。",
   "width": 24,
   "height": 14,
   "tiles": [
@@ -57,7 +57,7 @@
       "x": 2,
       "y": 2,
       "direction": "right",
-      "starterScript": "# 怪盗A: 操作盤 console の位置から扉 service_door を開けて、合図 ready を送る\n# （console のマスは通路なので開けたら離れる）\nmove console\nopen service_door\nsignal ready\nmove exit\n",
+      "starterScript": "# signal 名前 で合図を送れる。扉は隣接して open 扉ID で開く。\nmove console\nopen service_door\nsignal ready\nmove exit\n",
       "label": "怪盗A",
       "description": "扉を開ける係"
     },
@@ -66,7 +66,7 @@
       "x": 2,
       "y": 4,
       "direction": "right",
-      "starterScript": "# 怪盗B: 合図 ready を待って宝石 jewel を盗む\nwait until signal_received(ready)\nmove jewel\nsteal jewel\nmove exit\n",
+      "starterScript": "# wait until signal_received(名前) で、合図が来るまで待てる。\nwait until signal_received(ready)\nmove jewel\nsteal jewel\nmove exit\n",
       "label": "怪盗B",
       "description": "宝石を盗む係"
     }
@@ -182,8 +182,8 @@
     "on spotted",
     "resume"
   ],
-  "goal": "怪盗Aが扉を開けて合図し、怪盗Bが宝石を盗んで二人とも出口へ。",
-  "firstStep": "初期コードで二人を動かし、怪盗Bがどこで見つかるかを見る。見つかったときの逃げ方を on spotted ... end に書こう。",
+  "goal": "宝石を盗み、二人とも出口へ。",
+  "firstStep": "初期コードで二人を動かし、誰がどこで何に見つかるかを見る。",
   "chapter": "第4章 連携",
   "difficulty": 2
 }

@@ -4,7 +4,7 @@
   "title": "おとり作戦",
   "width": 24,
   "height": 15,
-  "description": "金庫の前の見張りは持ち場から動かない。だが怪盗を見つければ追いかけてくる。一人がおとりになって見張りを引きはがし、もう一人が宝石をいただく。",
+  "description": "金庫の前の見張りは持ち場から動かない。ただし怪盗を見つければ追いかけ、見失えば捜索してから持ち場に戻る。怪盗は二人。",
   "tiles": [
     "########################",
     "#E.....................#",
@@ -74,7 +74,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "おとり役。見つかって逃げる",
-      "starterScript": "# 怪盗A（おとり）: 右下から回り込んで bait に立ち、見つかったら locker へ逃げ込む\nmove corner\nmove bait\nwait until guard_visible\nmove locker\nhide\nwait 60\n"
+      "starterScript": "# 見張りは怪盗を見つけると追いかけ、見失うと捜索してから持ち場に戻る。\nmove corner\nmove bait\nwait until guard_visible\nmove locker\nhide\nwait 60\n"
     },
     {
       "id": "thief_b",
@@ -83,7 +83,7 @@
       "direction": "right",
       "label": "怪盗B",
       "description": "盗む役",
-      "starterScript": "# 怪盗B: 広間の左下で合図 lured を待って金庫へ\nmove shadow\nwait until signal_received(lured)\nwait 40\n"
+      "starterScript": "# 怪盗B\nmove shadow\nwait until signal_received(lured)\nwait 40\n"
     }
   ],
   "guards": [
@@ -153,8 +153,8 @@
     "on spotted",
     "safe"
   ],
-  "goal": "おとりで見張りを引きはがし、宝石を盗んで二人とも出口へ。",
-  "firstStep": "初期コードで A をおとりの位置へ。見張りが追ってきて、ロッカーで見失ったあとどうするかを観察しよう。",
+  "goal": "宝石を盗み、二人とも出口へ。",
+  "firstStep": "一人を見張りの視界の端に立たせて、見張りがどう動き、いつ戻るか観察しよう。",
   "hints": [
     "見張りは金庫の入口の前から動かないが、怪盗を見つけると追いかけ、見失うとその場で捜索してから持ち場へ戻る。つまり、遠くまで引きつければ金庫の前がしばらく空く。",
     "A は corner から回り込んで bait に立ち、wait until guard_visible で見つかった瞬間に signal lured、そのまま locker へ走って hide。B は視界のすぐ外 shadow で合図を待って金庫へ。B が出口に着いたら signal done で A に知らせ、A は見張りが持ち場に戻ったころに出口へ。",

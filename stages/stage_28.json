@@ -4,7 +4,7 @@
   "title": "角で待つ",
   "chapter": "第2章 警備員の癖",
   "difficulty": 2,
-  "description": "警備員は中央の柱のまわりを時計回りに回っている。通り過ぎた直後に出て、反対回りに進めば追いつかれない。",
+  "description": "警備員は中央の柱のまわりを時計回りに回っている。宝石は周回路の左側、出口は左下。",
   "width": 16,
   "height": 10,
   "tiles": [
@@ -33,7 +33,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# gap で guard_near → guard_away を待ち、警備員の進む向きと反対（左）へ。\n",
+      "starterScript": "# すき間の上で、警備員が真下を通る向きと間隔を観察しよう。\n",
       "id": "thief_a",
       "x": 1,
       "y": 1
@@ -104,8 +104,8 @@
     "wait until",
     "周回の裏をかく"
   ],
-  "goal": "周回路に降りて宝石を取り、左下の出口へ。",
-  "firstStep": "gap で guard_near → guard_away を待ち、警備員の進む向きと反対（左）へ。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "すき間の上で、警備員が真下を通る向きと間隔を観察しよう。",
   "hints": [
     "警備員は時計回り。すき間の真下を右へ通り過ぎた直後に降りれば、左へ進む自分は背中側。",
     "gap で guard_near → guard_away のあと move jewel。宝石は左の列なので警備員と反対方向。盗んだらそのまま左下の出口へ。",

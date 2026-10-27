@@ -4,7 +4,7 @@
   "title": "気絶の 30 tick",
   "chapter": "第2章 警備員の癖",
   "difficulty": 2,
-  "description": "見張りは金庫の入口を向いて立っている。眠らせても 30 tick で目覚める。起きたときにそこにいなければいい。担いで中に入れてしまう手もある。",
+  "description": "見張りは金庫の入口を向いて立っている。眠らせても 30 tick で目覚める。担いで運ぶこともできる。",
   "width": 16,
   "height": 13,
   "tiles": [
@@ -43,7 +43,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "",
-      "starterScript": "# behind へ回り込んで knockout guard_1。そのあと何 tick で出口に着くか数える。\n",
+      "starterScript": "# 見張りの後ろに回って眠らせ、そこから出口まで何 tick かかるか数えてみよう。\n",
       "id": "thief_a",
       "x": 14,
       "y": 1
@@ -107,8 +107,8 @@
     "carry",
     "drop"
   ],
-  "goal": "見張りを眠らせて宝石を取り、出口へ。",
-  "firstStep": "behind へ回り込んで knockout guard_1。そのあと何 tick で出口に着くか数える。",
+  "goal": "宝石を取って出口へ。",
+  "firstStep": "見張りの後ろに回って眠らせ、そこから出口まで何 tick かかるか数えてみよう。",
   "hints": [
     "見張りは入口を見ている。右の通路から下へ回れば背後に立てる。眠らせたら 30 tick の勝負。",
     "間に合わないなら、carry guard_1 で担いで金庫の奥（inside）に drop。起きても入口の方を向いていない。",

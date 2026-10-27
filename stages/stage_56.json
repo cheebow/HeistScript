@@ -1,0 +1,228 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_56",
+  "title": "三人の金庫",
+  "chapter": "第7章 上級",
+  "difficulty": 5,
+  "description": "金庫の扉はスイッチで開く。スイッチの部屋には見張りがいて、入口は通風口だけ。上の部屋には施錠された扉とカードキーもあるが、巡回の警備員の通り道だ。怪盗は三人。",
+  "width": 24,
+  "height": 13,
+  "tiles": [
+    "########################",
+    "#......#...............#",
+    "#......#...............#",
+    "#......D...............#",
+    "#......#...............#",
+    "########.......#########",
+    "#......#.......#...#...#",
+    "#.#....V...........D...#",
+    "#......#.......#...#...#",
+    "########.......#########",
+    "#......................#",
+    "#......................#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "description": "広間からスイッチ部屋へ。中は見えない。見張りが上の列の右端に来ると guard_near",
+      "id": "vent_in",
+      "x": 7,
+      "y": 7,
+      "label": "スイッチ部屋への通風口"
+    },
+    {
+      "description": "施錠された扉のすぐ左",
+      "id": "office_in",
+      "x": 6,
+      "y": 3,
+      "label": "上の部屋の扉の前"
+    },
+    {
+      "description": "スイッチで開く扉のすぐ左",
+      "id": "vault_in",
+      "x": 18,
+      "y": 7,
+      "label": "金庫の扉の前"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# 三人を別々の場所に歩かせて、どこが誰から見えるか確かめよう。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 10
+    },
+    {
+      "direction": "right",
+      "label": "怪盗B",
+      "description": "",
+      "starterScript": "# 三人を別々の場所に歩かせて、どこが誰から見えるか確かめよう。\n",
+      "id": "thief_b",
+      "x": 2,
+      "y": 10
+    },
+    {
+      "direction": "right",
+      "label": "怪盗C",
+      "description": "",
+      "starterScript": "# 三人を別々の場所に歩かせて、どこが誰から見えるか確かめよう。\n",
+      "id": "thief_c",
+      "x": 3,
+      "y": 10
+    }
+  ],
+  "guards": [
+    {
+      "label": "スイッチ部屋の見張り",
+      "description": "スイッチ部屋の上の列を往復する。視界 4 マス",
+      "id": "watch",
+      "x": 1,
+      "y": 6,
+      "direction": "right",
+      "patrolRoute": [
+        {
+          "x": 6,
+          "y": 6,
+          "waitTicks": 2
+        },
+        {
+          "x": 1,
+          "y": 6,
+          "waitTicks": 2
+        }
+      ],
+      "visionRange": 4
+    },
+    {
+      "label": "巡回の警備員",
+      "description": "上の部屋を四角く回る",
+      "id": "roamer",
+      "x": 9,
+      "y": 1,
+      "direction": "right",
+      "patrolRoute": [
+        {
+          "x": 22,
+          "y": 1,
+          "waitTicks": 2
+        },
+        {
+          "x": 22,
+          "y": 4,
+          "waitTicks": 2
+        },
+        {
+          "x": 9,
+          "y": 4,
+          "waitTicks": 2
+        },
+        {
+          "x": 9,
+          "y": 1,
+          "waitTicks": 2
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "top_door",
+      "type": "door",
+      "x": 7,
+      "y": 3,
+      "open": false,
+      "locked": true,
+      "label": "上の部屋の扉",
+      "description": "施錠。鍵で開く"
+    },
+    {
+      "id": "keycard",
+      "type": "key",
+      "x": 3,
+      "y": 1,
+      "unlocks": "top_door",
+      "label": "カードキー",
+      "description": "左上の小部屋。上の部屋の扉を開ける"
+    },
+    {
+      "id": "plate",
+      "type": "switch",
+      "x": 1,
+      "y": 8,
+      "targetDoorId": "vault_door",
+      "label": "スイッチ",
+      "description": "スイッチ部屋の左下。壁のでっぱりで見張りからは見えない。乗っている間、金庫の扉が開く"
+    },
+    {
+      "id": "vault_door",
+      "type": "door",
+      "x": 19,
+      "y": 7,
+      "open": false,
+      "label": "金庫の扉",
+      "description": "スイッチが押されている間だけ開く"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 21,
+      "y": 7,
+      "required": true,
+      "label": "宝石",
+      "description": "金庫の中"
+    }
+  ],
+  "exit": {
+    "x": 22,
+    "y": 11
+  },
+  "maxTicks": 900,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "pacifist",
+      "type": "noKnockout",
+      "title": "誰も眠らせずにクリア"
+    }
+  ],
+  "learn": [
+    "三人の順番",
+    "スイッチ・通風口"
+  ],
+  "goal": "宝石を盗み、三人とも出口へ。",
+  "firstStep": "三人を別々の場所に歩かせて、どこが誰から見えるか確かめよう。",
+  "hints": [
+    "金庫はスイッチでしか開かない。鍵と上の部屋は近道ではない。スイッチ部屋の見張りは上の列しか歩かず、左下のスイッチは壁のかげ。",
+    "A: vent_in で guard_near → guard_away → plate → signal ready。B: vault_in で ready を待って宝石 → signal done → 出口。C: 出口へ。A は done のあと見張りの通過を待って通風口から出口へ。",
+    "--- thief_a ---\nmove vent_in\nwait 0\nwait until guard_near\nwait until guard_away\nmove plate\nsignal ready\nwait until signal_received(done)\nwait until guard_near\nwait until guard_away\nmove vent_in\nmove exit\n--- thief_b ---\nmove vault_in\nwait until signal_received(ready)\nmove jewel\nsteal jewel\nmove vault_in\nsignal done\nmove exit\n--- thief_c ---\nwait 10\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move vent_in\nwait 0\nwait until guard_near\nwait until guard_away\nmove plate\nsignal ready\nwait until signal_received(done)\nwait until guard_near\nwait until guard_away\nmove vent_in\nmove exit\n",
+    "thief_b": "move vault_in\nwait until signal_received(ready)\nmove jewel\nsteal jewel\nmove vault_in\nsignal done\nmove exit\n",
+    "thief_c": "wait 10\nmove exit\n"
+  }
+}
