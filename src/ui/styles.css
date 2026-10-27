@@ -45,7 +45,13 @@ h2 { font-size: 12px; letter-spacing: 0.02em; color: var(--muted); }
 .seg button { border: none; border-radius: 0; padding: 4px 9px; }
 .timeline { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 220px; color: var(--muted); }
 .timeline input[type='range'] { flex: 1; accent-color: var(--accent); }
-.status { padding: 2px 8px; border-radius: 3px; border: 1px solid var(--border); font-size: 12px; white-space: nowrap; color: var(--muted); }
+/* 「実行／一時停止／リプレイ再生」で幅が変わってもスライダーの幅を変えない */
+.controls button.primary { min-width: 100px; }
+.tick-label { display: inline-grid; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tick-label > span { grid-area: 1 / 1; }
+.tick-sizer { visibility: hidden; }
+/* 文言が変わってもスライダーの幅が変わらないよう、幅を固定する */
+.status { padding: 2px 8px; border-radius: 3px; border: 1px solid var(--border); font-size: 12px; white-space: nowrap; color: var(--muted); min-width: 10.5em; box-sizing: border-box; text-align: center; }
 .status-running { color: var(--green); border-color: var(--green); }
 .status-paused { color: var(--yellow); border-color: var(--yellow); }
 .status-finished { color: var(--text); }
@@ -63,7 +69,8 @@ h2 { font-size: 12px; letter-spacing: 0.02em; color: var(--muted); }
 .game-panel { display: flex; flex-direction: column; min-width: 0; min-height: 0; position: relative; }
 .game-header { display: flex; align-items: baseline; gap: 12px; padding: 7px 12px; border-bottom: 1px solid var(--border); background: var(--panel); }
 .game-header h1 { white-space: nowrap; }
-.game-header .muted { flex: 1; font-size: 12px; }
+.game-header .muted { flex: 1; min-width: 80px; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.game-header button.subtle { white-space: nowrap; }
 .game-header .badge { white-space: nowrap; }
 .game-view { flex: 1; min-height: 0; position: relative; overflow: auto; background: #0d0f13; display: flex; align-items: center; justify-content: center; }
 .game-view > div, .game-view canvas { flex: none; }

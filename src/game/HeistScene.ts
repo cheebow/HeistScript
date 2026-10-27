@@ -40,6 +40,7 @@ export class HeistScene extends Phaser.Scene {
   private overlay!: Phaser.GameObjects.Rectangle;
   private walkPhase = 0;
   private lastFxTick = -1;
+  private effectsEnabled = true;
   private callbacks: SceneCallbacks;
   private dirty = true;
   private ready = false;
@@ -92,9 +93,10 @@ export class HeistScene extends Phaser.Scene {
     for (const [key, map] of Object.entries(buildAllSprites())) this.makeTexture(key, map);
   }
 
-  setWorld(world: WorldState, options: RenderOptions): void {
+  setWorld(world: WorldState, options: RenderOptions, effects = true): void {
     this.world = world;
     this.options = options;
+    this.effectsEnabled = effects;
     this.dirty = true;
     if (this.ready) this.render();
   }
@@ -437,7 +439,8 @@ export class HeistScene extends Phaser.Scene {
     if (world.tick === this.lastFxTick) return;
     const jumped = world.tick !== this.lastFxTick + 1; // シークなどで飛んだときは演出しない
     this.lastFxTick = world.tick;
-    if (jumped || world.tick === 0 || this.options.reducedMotion) return;
+    // スライダーでのシーク中は、1 tick ずつ進んでも演出（フラッシュ等）を出さない
+    if (jumped || !this.effectsEnabled || world.tick === 0 || this.options.reducedMotion) return;
     for (const entry of world.tickLog) this.effectFor(world, entry);
   }
 

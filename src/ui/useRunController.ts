@@ -20,6 +20,8 @@ export interface RunController {
   lastBreakpoint: { thiefId: string; line: number } | null;
   /** 状態更新ごとに増えるカウンタ（描画同期用） */
   version: number;
+  /** 直前の表示変更がスライダー等によるシークなら true（演出を抑える） */
+  seeked: boolean;
   start(scripts: Record<string, string>, autoPlay: boolean): CompileAllResult | null;
   play(): void;
   pause(): void;
@@ -39,6 +41,7 @@ export function useRunController(stage: StageDefinition | null, initialSpeed: Sp
   const [viewTick, setViewTick] = useState(0);
   const [version, setVersion] = useState(0);
   const [lastBreakpoint, setLastBreakpoint] = useState<{ thiefId: string; line: number } | null>(null);
+  const [seeked, setSeeked] = useState(false);
   const breakpointsRef = useRef(new Map<string, Set<number>>());
   const viewTickRef = useRef(0);
   const statusRef = useRef<RunStatus>('editing');
@@ -52,6 +55,7 @@ export function useRunController(stage: StageDefinition | null, initialSpeed: Sp
     setStatus('editing');
     setViewTick(0);
     setLastBreakpoint(null);
+    setSeeked(false);
     bump();
   }, [bump]);
 
@@ -79,6 +83,7 @@ export function useRunController(stage: StageDefinition | null, initialSpeed: Sp
       viewTickRef.current = 0;
       setViewTick(0);
       setLastBreakpoint(null);
+      setSeeked(false);
       setStatus(autoPlay ? 'running' : 'paused');
       bump();
       return r.compile;
@@ -90,6 +95,7 @@ export function useRunController(stage: StageDefinition | null, initialSpeed: Sp
   const advance = useCallback((): boolean => {
     const run = runRef.current;
     if (!run) return false;
+    setSeeked(false);
     if (viewTickRef.current < run.world.tick) {
       viewTickRef.current++;
       setViewTick(viewTickRef.current);
@@ -149,6 +155,7 @@ export function useRunController(stage: StageDefinition | null, initialSpeed: Sp
       const t = Math.max(0, Math.min(tick, run.world.tick));
       viewTickRef.current = t;
       setViewTick(t);
+      setSeeked(true);
       if (statusRef.current === 'running') setStatus('paused');
       bump();
     },
@@ -191,6 +198,7 @@ export function useRunController(stage: StageDefinition | null, initialSpeed: Sp
     speed,
     logs,
     lastBreakpoint,
+    seeked,
     version,
     start,
     play,

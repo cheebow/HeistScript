@@ -13,6 +13,8 @@ export interface GameViewProps {
   options: RenderOptions;
   /** world は同一オブジェクトが更新されるため、tick ごとに変わる値で再描画を促す */
   version: number;
+  /** false のとき、tick が進んでも演出（フラッシュ等）を出さない（シーク中） */
+  effects?: boolean;
   onSelect: (id: string | null) => void;
   /** マウス位置のタイルの説明（なければ null） */
   describeTile: (x: number, y: number) => TileInfo | null;
@@ -25,7 +27,7 @@ export interface GameViewProps {
 }
 
 /** Phaser キャンバスを保持する React コンテナ */
-export function GameView({ world, options, version, onSelect, describeTile, zoom, onZoomApplied, banner }: GameViewProps) {
+export function GameView({ world, options, version, effects = true, onSelect, describeTile, zoom, onZoomApplied, banner }: GameViewProps) {
   const onZoomRef = useRef(onZoomApplied);
   onZoomRef.current = onZoomApplied;
   const zoomRef = useRef(zoom);
@@ -60,8 +62,8 @@ export function GameView({ world, options, version, onSelect, describeTile, zoom
   }, [key]);
 
   useEffect(() => {
-    handleRef.current?.setWorld(world, options);
-  }, [world, options, version]);
+    handleRef.current?.setWorld(world, options, effects);
+  }, [world, options, version, effects]);
 
   useEffect(() => {
     if (banner && banner.key > 0) handleRef.current?.showBanner(banner.text, banner.color);

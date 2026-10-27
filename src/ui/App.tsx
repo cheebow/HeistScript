@@ -255,10 +255,12 @@ export function App() {
   }, [world, initialWorld, selectedId, ctl.run, ctl.logs]);
 
   const progress = save.stages[stage.id];
+  // tick 表示の桁数（最大 tick 基準）。文字幅の変化でスライダーの幅が揺れないよう固定幅に使う
+  const tickSizer = '0'.repeat(String(Math.max(stage.maxTicks, ctl.liveTick, 1)).length);
   const statusLabel = ctl.isReplay
     ? ctl.status === 'running'
       ? '過去のコマを再生中'
-      : '過去のコマを表示中（閲覧専用）'
+      : '過去のコマを表示中'
     : ctl.status === 'editing'
       ? '編集中'
       : ctl.status === 'running'
@@ -407,8 +409,14 @@ export function App() {
             ))}
           </div>
           <label className="timeline" title="経過時間。1 tick = 0.1 秒。スライダーで過去のコマに戻して見返せる（閲覧専用）">
-            <span data-testid="tick-label">
-              tick {ctl.viewTick}/{ctl.liveTick}
+            <span className="tick-label">
+              {/* 幅を固定するための見えない文字列（桁が変わってもスライダー幅を変えない） */}
+              <span className="tick-sizer" aria-hidden="true">
+                tick {tickSizer}/{tickSizer}
+              </span>
+              <span data-testid="tick-label">
+                tick {ctl.viewTick}/{ctl.liveTick}
+              </span>
             </span>
             <input type="range" min={0} max={Math.max(ctl.liveTick, 1)} value={ctl.viewTick} onChange={(e) => ctl.seek(Number(e.target.value))} disabled={!ctl.run} data-testid="timeline" aria-label="タイムライン" />
           </label>
@@ -493,7 +501,7 @@ export function App() {
         <section className="game-panel" aria-label="マップ">
           <div className="game-header">
             <h1>{stage.title}</h1>
-            <span className="muted">{stage.description}</span>
+            <span className="muted" title={stage.description}>{stage.description}</span>
             {progress?.cleared && (
               <span className="badge" title={progress.best ? `最速 ${progress.best.ticks} tick／命令 ${progress.best.instructions}／発見 ${progress.best.spotted}／気絶 ${progress.best.knockouts}／警報 ${progress.best.alarms}` : ''}>
                 クリア済み（最良 {progress.bestTicks} tick）
@@ -533,6 +541,7 @@ export function App() {
             world={previewWorld ?? initialWorld}
             options={renderOptions}
             version={ctl.version}
+            effects={!ctl.seeked}
             onSelect={(id) => {
               setSelectedId(id);
               if (id && stage.thieves.some((t) => t.id === id)) setActiveThief(id);

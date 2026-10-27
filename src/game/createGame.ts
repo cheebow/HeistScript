@@ -6,7 +6,7 @@ import type { WorldState } from '../core/model/types';
 export interface GameHandle {
   game: Phaser.Game;
   scene: HeistScene;
-  setWorld(world: WorldState, options: RenderOptions): void;
+  setWorld(world: WorldState, options: RenderOptions, effects?: boolean): void;
   /** 倍率を設定（0 = 自動）。戻り値は実際の倍率 */
   setZoom(level: number, containerWidth: number, containerHeight: number): number;
   /** 領域に収まる最大倍率 */
@@ -41,9 +41,9 @@ export function createGame(parent: HTMLElement, width: number, height: number, c
   const handle: GameHandle = {
     game,
     scene,
-    setWorld(world, options) {
+    setWorld(world, options, effects = true) {
       pending = { world, options };
-      scene.setWorld(world, options);
+      scene.setWorld(world, options, effects);
     },
     fitZoom(cw, ch) {
       return fit(cw, ch);
