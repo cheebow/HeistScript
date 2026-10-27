@@ -81,7 +81,21 @@ describe('気絶', () => {
     expect(g2.wakeTick).toBe(r.world.tick + remaining);
     expect(r.world.tick - t0).toBeGreaterThanOrEqual(13); // 3タイル×4tick + drop 1tick
     stepUntil(r, () => r.world.guards[0]!.state !== 'UNCONSCIOUS', 100);
-    expect(r.world.guards[0]!.state).toBe('SEARCH');
+    // 怪盗が下ろした警備員の上に立ったままなので、目覚めた直後に視認され追跡される (D-17)
+    expect(r.logs.some((l) => l.eventType === 'GUARD_WAKE')).toBe(true);
+    expect(r.world.guards[0]!.state).toBe('CHASE');
+  });
+
+  it('気絶した警備員の上に立ったまま目覚めると視認され、捕獲される（重なりの解消）', () => {
+    const stage = makeStage(['########', '#......#', '#......#', '#......#', '########'], {
+      thieves: [{ id: 'thief_a', x: 3, y: 2, direction: 'up', starterScript: '' }],
+      guards: [{ id: 'guard_1', x: 3, y: 1, direction: 'up', patrolRoute: [] }],
+      exit: { x: 6, y: 3 },
+      waypoints: [{ id: 'g', x: 3, y: 1 }],
+    });
+    const { world } = simulate(stage, { thief_a: 'knockout guard_1\nmove g\nwait 60\n' });
+    expect(world.result?.status).toBe('FAILED');
+    expect(world.thieves[0]!.captured).toBe(true);
   });
 
   it('意識のある警備員は運べない', () => {

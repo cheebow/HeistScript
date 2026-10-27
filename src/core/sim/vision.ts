@@ -67,8 +67,9 @@ export interface Viewer {
   range: number;
 }
 
-/** 視認判定: 円錐内・射程内・視線が通る */
+/** 視認判定: 円錐内・射程内・視線が通る。同一タイル（気絶から目覚めた警備員の上に怪盗がいる等）は常に見える。 */
 export function canSee(world: WorldState, viewer: Viewer, target: Position): boolean {
+  if (viewer.x === target.x && viewer.y === target.y) return true;
   if (!inCone(viewer, viewer.direction, target)) return false;
   if (euclid(viewer, target) > viewer.range + 1e-9) return false;
   return hasLineOfSight(world, viewer, target);

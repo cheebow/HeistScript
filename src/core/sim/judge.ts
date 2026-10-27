@@ -112,7 +112,8 @@ export function processGuardVision(world: WorldState, ctx: SimContext): void {
       continue;
     }
     const target = world.thieves.find((t) => t.id === g.chaseTargetId);
-    if (!target || target.captured || target.hidden || manhattan(g, target) !== 1) {
+    // 距離1で捕獲準備。同一タイル（目覚め時の重なり）も隣接とみなす (D-17)
+    if (!target || target.captured || target.hidden || manhattan(g, target) > 1) {
       g.capture = null;
       continue;
     }
