@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_14",
+  "title": "交代の時間",
+  "width": 22,
+  "height": 13,
+  "description": "二人の警備員が同じ経路を半周ずらして回っている。金庫へはレーザーの通路を抜けるしかない。警備員の間隔とレーザーの周期、両方を読もう。",
+  "tiles": [
+    "######################",
+    "#....................#",
+    "#....................#",
+    "#...##########.......#",
+    "#...#........#.......#",
+    "#...#........#.......#",
+    "#...#..####..#.......#",
+    "#...#..#..#..#.......#",
+    "#...#####.####.......#",
+    "#....................#",
+    "##########.###########",
+    "#E.........#.........#",
+    "######################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 1,
+      "y": 11,
+      "label": "出口",
+      "description": "左下の脱出口。巡回路の外にある"
+    },
+    {
+      "id": "nook",
+      "x": 10,
+      "y": 11,
+      "label": "物陰",
+      "description": "下の通路の右端。壁の角に隠れて巡回路から見えない。警備員が上を通ると近づいたのが分かる"
+    },
+    {
+      "id": "gate",
+      "x": 9,
+      "y": 9,
+      "label": "金庫の前",
+      "description": "レーザーの通路の手前。巡回路の上なので長居は禁物"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 2,
+      "y": 11,
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "あなたが操作する怪盗",
+      "starterScript": "# 警備員は二人。物陰 nook で間隔とレーザーの周期を観察しよう\nmove nook\nwait 80\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 2,
+      "y": 9,
+      "direction": "right",
+      "label": "警備員1",
+      "description": "外周を時計回りに巡回",
+      "patrolRoute": [
+        {
+          "x": 19,
+          "y": 9,
+          "waitTicks": 2
+        },
+        {
+          "x": 19,
+          "y": 1,
+          "waitTicks": 2
+        },
+        {
+          "x": 2,
+          "y": 1,
+          "waitTicks": 2
+        },
+        {
+          "x": 2,
+          "y": 9,
+          "waitTicks": 2
+        }
+      ]
+    },
+    {
+      "id": "guard_2",
+      "x": 19,
+      "y": 1,
+      "direction": "left",
+      "label": "警備員2",
+      "description": "警備員1と半周ずれて外周を巡回",
+      "patrolRoute": [
+        {
+          "x": 2,
+          "y": 1,
+          "waitTicks": 2
+        },
+        {
+          "x": 2,
+          "y": 9,
+          "waitTicks": 2
+        },
+        {
+          "x": 19,
+          "y": 9,
+          "waitTicks": 2
+        },
+        {
+          "x": 19,
+          "y": 1,
+          "waitTicks": 2
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 8,
+      "y": 7,
+      "required": true,
+      "label": "宝石",
+      "description": "金庫の中にある必須の宝物"
+    },
+    {
+      "id": "laser_a",
+      "type": "laser",
+      "x": 9,
+      "y": 8,
+      "onTicks": 10,
+      "offTicks": 6,
+      "offset": 12,
+      "label": "レーザー",
+      "description": "金庫の入口の通路。10 tick 作動・6 tick 停止"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 11
+  },
+  "maxTicks": 800,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "noalarm",
+      "type": "noAlarm",
+      "title": "警報を鳴らさずにクリア"
+    }
+  ],
+  "learn": [
+    "wait until",
+    "wait"
+  ],
+  "goal": "二人の警備員の隙に、レーザーを避けて金庫の宝石を盗む。",
+  "firstStep": "nook で、二人の警備員が通り過ぎる間隔とレーザーが止まる tick を数えよう。",
+  "hints": [
+    "二人は同じ外周を半周ずらして回る。片方が通り過ぎても、もう片方がじきに来る。レーザーは 10 tick 作動して 6 tick 止まる。下の通路は巡回路から見えず、物陰 nook の真上を警備員が通ると guard_near になる。",
+    "物陰で guard_near → guard_away を待ち、警備員が右へ去った直後に金庫の前 gate へ。gate で wait してレーザーが止まる瞬間に金庫へ入る。帰りは金庫の中で wait して、止まった瞬間に出て物陰へ戻る。",
+    "move nook\nwait until guard_near\nwait until guard_away\nmove gate\nwait 7\nmove jewel\nsteal jewel\nwait 5\nmove nook\nmove exit"
+  ],
+  "solution": {
+    "thief_a": "move nook\nwait until guard_near\nwait until guard_away\nmove gate\nwait 7\nmove jewel\nsteal jewel\nwait 5\nmove nook\nmove exit\n"
+  }
+}

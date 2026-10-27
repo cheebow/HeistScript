@@ -11,8 +11,12 @@ import stage08 from '../../../stages/stage_08.json';
 import stage09 from '../../../stages/stage_09.json';
 import stage10 from '../../../stages/stage_10.json';
 import stage11 from '../../../stages/stage_11.json';
+import stage13 from '../../../stages/stage_13.json';
+import stage14 from '../../../stages/stage_14.json';
+import stage15 from '../../../stages/stage_15.json';
 
-const RAW_STAGES: unknown[] = [stage01, stage02, stage03, stage04, stage05, stage06, stage07, stage08, stage09, stage10, stage11];
+const RAW_STAGES: unknown[] = [stage01, stage02, stage03, stage04, stage05, stage06, stage07, stage08, stage09, stage10, stage11, stage13, stage14, stage15];
+// stage12 / stage16 は調整中（解答未確定）のため未登録: stages/stage_12.json, stages/stage_16.json
 
 let cache: StageDefinition[] | null = null;
 

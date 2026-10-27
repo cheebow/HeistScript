@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_15",
+  "title": "おとり作戦",
+  "width": 24,
+  "height": 15,
+  "description": "金庫の前の見張りは持ち場から動かない。だが怪盗を見つければ追いかけてくる。一人がおとりになって見張りを引きはがし、もう一人が宝石をいただく。",
+  "tiles": [
+    "########################",
+    "#E.....................#",
+    "#......................#",
+    "#...H..................#",
+    "#......................#",
+    "#..........#####.......#",
+    "#..........#...#.......#",
+    "#..........#...#.......#",
+    "#..........##.##.......#",
+    "#......................#",
+    "#......................#",
+    "#......................#",
+    "#......................#",
+    "#....................H.#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上の脱出口"
+    },
+    {
+      "id": "bait",
+      "x": 16,
+      "y": 13,
+      "label": "おとりの位置",
+      "description": "見張りの視界のいちばん端。ここに立つと見つかるが、追いつかれるまでには余裕がある"
+    },
+    {
+      "id": "locker",
+      "x": 21,
+      "y": 13,
+      "label": "右下のロッカー",
+      "description": "おとりの位置のすぐ先にある隠れ場所。ここまで引きつければ金庫の前がしばらく空く"
+    },
+    {
+      "id": "corner",
+      "x": 22,
+      "y": 13,
+      "label": "右下の隅",
+      "description": "見張りの視界の外。ここから回り込めば、おとりの位置に入るまで見つからない"
+    },
+    {
+      "id": "locker_far",
+      "x": 4,
+      "y": 3,
+      "label": "左上のロッカー",
+      "description": "遠い隠れ場所"
+    },
+    {
+      "id": "shadow",
+      "x": 10,
+      "y": 11,
+      "label": "広間の左下",
+      "description": "見張りの視界のすぐ外。金庫に近い待機場所"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "おとり役。見つかって逃げる",
+      "starterScript": "# 怪盗A（おとり）: 右下から回り込んで bait に立ち、見つかったら locker へ逃げ込む\nmove corner\nmove bait\nwait until guard_visible\nmove locker\nhide\nwait 60\n"
+    },
+    {
+      "id": "thief_b",
+      "x": 2,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗B",
+      "description": "盗む役",
+      "starterScript": "# 怪盗B: 広間の左下で合図 lured を待って金庫へ\nmove shadow\nwait until signal_received(lured)\nwait 40\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 13,
+      "y": 9,
+      "direction": "down",
+      "label": "見張り",
+      "description": "金庫の入口の前に立って広間を見張る。怪盗を見れば追い、見失えば捜索してから持ち場に戻る",
+      "patrolRoute": [
+        {
+          "x": 13,
+          "y": 9,
+          "waitTicks": 0
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 13,
+      "y": 6,
+      "required": true,
+      "label": "宝石",
+      "description": "金庫の中にある必須の宝物"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 800,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "pacifist",
+      "type": "noKnockout",
+      "title": "誰も眠らせずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 160,
+      "title": "160tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "signal",
+    "on spotted",
+    "safe"
+  ],
+  "goal": "おとりで見張りを引きはがし、宝石を盗んで二人とも出口へ。",
+  "firstStep": "初期コードで A をおとりの位置へ。見張りが追ってきて、ロッカーで見失ったあとどうするかを観察しよう。",
+  "hints": [
+    "見張りは金庫の入口の前から動かないが、怪盗を見つけると追いかけ、見失うとその場で捜索してから持ち場へ戻る。つまり、遠くまで引きつければ金庫の前がしばらく空く。",
+    "A は corner から回り込んで bait に立ち、wait until guard_visible で見つかった瞬間に signal lured、そのまま locker へ走って hide。B は視界のすぐ外 shadow で合図を待って金庫へ。B が出口に着いたら signal done で A に知らせ、A は見張りが持ち場に戻ったころに出口へ。",
+    "--- thief_a ---\nmove corner\nmove bait\nwait until guard_visible\nsignal lured\nmove locker\nhide\nwait until signal_received(done)\nmove exit\n--- thief_b ---\nmove shadow\nwait until signal_received(lured)\nmove jewel\nsteal jewel\nmove exit\nsignal done\n"
+  ],
+  "solution": {
+    "thief_a": "move corner\nmove bait\nwait until guard_visible\nsignal lured\nmove locker\nhide\nwait until signal_received(done)\nmove exit\n",
+    "thief_b": "move shadow\nwait until signal_received(lured)\nmove jewel\nsteal jewel\nmove exit\nsignal done\n"
+  }
+}

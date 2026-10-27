@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_13",
+  "title": "宝石は二つ",
+  "width": 20,
+  "height": 11,
+  "description": "必要な宝石は二つ。左右の部屋に一つずつあり、間の広間を警備員が巡回している。片方を盗んだあとも気を抜かずに。",
+  "tiles": [
+    "####################",
+    "#E.......#.........#",
+    "#........#.........#",
+    "#........#.........#",
+    "#........#.........#",
+    "#..................#",
+    "#........#.........#",
+    "#........#.........#",
+    "######.#######.#####",
+    "#####...#####...####",
+    "####################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上の脱出口"
+    },
+    {
+      "id": "nook_w",
+      "x": 7,
+      "y": 9,
+      "label": "西の物陰",
+      "description": "左下の小部屋の右端。壁の角に隠れて巡回路から見えない。警備員が上の通路を通ると近づいたのが分かる"
+    },
+    {
+      "id": "nook_e",
+      "x": 15,
+      "y": 9,
+      "label": "東の物陰",
+      "description": "右下の小部屋の右端。壁の角に隠れて巡回路から見えない"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "あなたが操作する怪盗",
+      "starterScript": "# 宝石は二つとも必要。盗む順番と待つ場所を考えよう\nmove nook_w\nwait 60\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 17,
+      "y": 2,
+      "direction": "down",
+      "label": "警備員1",
+      "description": "左右の部屋を 8 の字に巡回する",
+      "patrolRoute": [
+        {
+          "x": 17,
+          "y": 7,
+          "waitTicks": 2
+        },
+        {
+          "x": 10,
+          "y": 7,
+          "waitTicks": 0
+        },
+        {
+          "x": 9,
+          "y": 5,
+          "waitTicks": 0
+        },
+        {
+          "x": 8,
+          "y": 7,
+          "waitTicks": 0
+        },
+        {
+          "x": 2,
+          "y": 7,
+          "waitTicks": 2
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "waitTicks": 2
+        },
+        {
+          "x": 8,
+          "y": 2,
+          "waitTicks": 0
+        },
+        {
+          "x": 9,
+          "y": 5,
+          "waitTicks": 0
+        },
+        {
+          "x": 10,
+          "y": 2,
+          "waitTicks": 0
+        },
+        {
+          "x": 17,
+          "y": 2,
+          "waitTicks": 2
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel_w",
+      "type": "treasure",
+      "x": 5,
+      "y": 4,
+      "required": true,
+      "label": "西の宝石",
+      "description": "左の部屋の中央。必須"
+    },
+    {
+      "id": "jewel_e",
+      "type": "treasure",
+      "x": 14,
+      "y": 4,
+      "required": true,
+      "label": "東の宝石",
+      "description": "右の部屋の中央。必須"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 800,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 260,
+      "title": "260tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "wait until",
+    "has_treasure"
+  ],
+  "goal": "二つの宝石を両方盗んで出口へ。",
+  "firstStep": "nook_w で警備員の 8 の字巡回を観察し、どのタイミングで両方の宝石を取りに行けるか考えよう。",
+  "hints": [
+    "警備員は左右の部屋を 8 の字に回る（右の部屋を下り、下の通路を左へ、中央の隙間を抜けて左の部屋を下り…）。下の小部屋の物陰 nook_w / nook_e は巡回路から見えず、警備員が上の通路を通ると guard_near になる。",
+    "nook_w で guard_near → guard_away を待ち、警備員が左の部屋の奥へ行っている間に西の宝石、続けて中央の隙間を抜けて東の宝石へ。盗んだら nook_e で次の通過を待ってから出口へ。",
+    "move nook_w\nwait until guard_near\nwait until guard_away\nmove jewel_w\nsteal jewel_w\nmove jewel_e\nsteal jewel_e\nmove nook_e\nwait until guard_near\nwait until guard_away\nmove exit"
+  ],
+  "solution": {
+    "thief_a": "move nook_w\nwait until guard_near\nwait until guard_away\nmove jewel_w\nsteal jewel_w\nmove jewel_e\nsteal jewel_e\nmove nook_e\nwait until guard_near\nwait until guard_away\nmove exit\n"
+  }
+}
