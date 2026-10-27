@@ -35,7 +35,9 @@ describe('組み込みステージ', () => {
       for (const t of s.thieves) scripts[t.id] = 'while true\n  wait 5\nend\n';
       const { world } = simulate({ ...s, unlockedCommands: ['wait', 'while'] }, scripts);
       expect(world.result?.status).toBe('FAILED');
-      expect(world.tick).toBe(s.maxTicks);
+      // 開始位置で待ち続けても必ず正常終了する（tick 上限、または巡回中の警備員による逮捕）
+      expect(world.tick).toBeLessThanOrEqual(s.maxTicks);
+      if (!world.thieves.some((t) => t.captured)) expect(world.tick).toBe(s.maxTicks);
     });
   }
 
