@@ -158,6 +158,23 @@ describe('組み込みステージ', () => {
     expect(noKey.result?.status).toBe('STOPPED');
   });
 
+  it('「宝物を順に取って出口へ」だけの無策スクリプトは、入門 3 面を除いて未発見では成功しない', () => {
+    const trivial = new Set(['stage_01', 'stage_24', 'stage_34']); // 無策が正解そのものである入門面
+    for (const s of stages) {
+      if (trivial.has(s.id)) continue;
+      const req = s.objects.filter((o) => o.type === 'treasure' && o.required !== false).map((o) => o.id);
+      const scripts: Record<string, string> = {};
+      s.thieves.forEach((t, i) => {
+        scripts[t.id] = i === 0 ? req.map((id) => `move ${id}\nsteal ${id}\n`).join('') + 'move exit\n' : 'move exit\n';
+      });
+      const r = createRun(s, scripts);
+      if (!r.run) continue;
+      r.run.runToEnd();
+      const w = r.run.world;
+      expect(w.result?.status !== 'SUCCESS' || w.stats.spottedCount > 0 || w.stats.alarmCount > 0, s.id).toBe(true);
+    }
+  });
+
   it('初期スクリプトのままではどのステージもクリアできない', () => {
     for (const s of stages) {
       const scripts: Record<string, string> = {};

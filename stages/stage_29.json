@@ -41,15 +41,15 @@
   "guards": [
     {
       "label": "警備員",
-      "description": "左下の部屋で待機。警報が鳴ると現場へ来る",
+      "description": "右下の部屋の隅で壁を向いて待機。警報が鳴ると現場へ来る",
       "id": "guard_1",
-      "x": 3,
-      "y": 6,
-      "direction": "up",
+      "x": 14,
+      "y": 5,
+      "direction": "right",
       "patrolRoute": [
         {
-          "x": 3,
-          "y": 6,
+          "x": 14,
+          "y": 5,
           "waitTicks": 0
         }
       ]
