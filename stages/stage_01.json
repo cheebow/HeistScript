@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "stage_01",
   "title": "はじめての盗み",
-  "description": "警備員はいない。宝石 jewel（ジュエル）まで歩いて盗み、出口 exit（エグジット）から脱出しよう。",
+  "description": "警備員のいない屋敷。右の部屋にある宝石を盗んで、左上の出口から脱出しよう。",
   "width": 16,
   "height": 12,
   "tiles": [

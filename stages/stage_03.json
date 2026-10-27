@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "stage_03",
   "title": "見つかるな!",
-  "description": "右の部屋を警備員 guard_1 が巡回している。緑のロッカー locker_a（ロッカーA）/ locker_b（ロッカーB）の上で hide すれば見つからない。壁の陰も視線を遮る。",
+  "description": "右の部屋を警備員が外周に沿って巡回している。緑のロッカーの上なら隠れられるので、見つかる前に隠れてやり過ごそう。壁の陰も視線を遮る。",
   "width": 20,
   "height": 12,
   "tiles": [

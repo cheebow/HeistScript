@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "stage_05",
   "title": "二人の怪盗",
-  "description": "怪盗A thief_a は操作盤 console（コンソール）の位置から通用口の扉 service_door を開けて signal ready で合図。怪盗B thief_b はそれを待って宝石を盗む。見つかったら on spotted で隠れ場所 safe_room（セーフルーム）へ。",
+  "description": "怪盗が二人。左の部屋と右の部屋は閉まった扉で仕切られている。怪盗Aが操作盤の前で扉を開けて合図を送り、怪盗Bが合図を待って右の部屋の宝石を盗む。右の部屋には巡回する警備員と監視カメラがいるので、見つかったら隠れ場所に逃げ込もう。",
   "width": 24,
   "height": 14,
   "tiles": [

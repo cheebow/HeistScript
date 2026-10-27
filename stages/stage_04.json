@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "stage_04",
   "title": "眠ってもらおう",
-  "description": "警備員 guard_1 が宝物庫の入口を見張っている。警備員の真後ろの地点 behind（ビハインド）に回り込み、knockout で眠らせよう。30tick 後に目を覚ますので急ぐこと。carry / drop で運ぶこともできる。",
+  "description": "警備員が宝物庫の入口を見張っている。真後ろに回り込んで気絶させよう。30tick 後に目を覚ますので、その前に宝石を盗んで逃げるか、眠った警備員を運んで隠しておくこと。",
   "width": 20,
   "height": 12,
   "tiles": [
