@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_35",
+  "title": "扉を押さえる",
+  "chapter": "第4章 連携",
+  "difficulty": 1,
+  "description": "スイッチに乗っている間だけ扉が開く。一人が乗り、もう一人が通る。",
+  "width": 16,
+  "height": 8,
+  "tiles": [
+    "################",
+    "#..............#",
+    "#..............#",
+    "#######D########",
+    "#..............#",
+    "#..............#",
+    "#..............#",
+    "################"
+  ],
+  "waypoints": [],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "スイッチ係",
+      "starterScript": "# A は move plate で乗る。B は move jewel（閉じていれば扉の前で自動で待つ）。\n",
+      "id": "thief_a",
+      "x": 2,
+      "y": 1
+    },
+    {
+      "direction": "right",
+      "label": "怪盗B",
+      "description": "盗む係",
+      "starterScript": "# A は move plate で乗る。B は move jewel（閉じていれば扉の前で自動で待つ）。\n",
+      "id": "thief_b",
+      "x": 3,
+      "y": 1
+    }
+  ],
+  "guards": [],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "plate",
+      "type": "switch",
+      "x": 13,
+      "y": 1,
+      "targetDoorId": "gate",
+      "label": "スイッチ",
+      "description": "乗っている間、扉が開く"
+    },
+    {
+      "id": "gate",
+      "type": "door",
+      "x": 7,
+      "y": 3,
+      "open": false,
+      "label": "扉",
+      "description": "スイッチが押されている間だけ開く"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 7,
+      "y": 5,
+      "required": true,
+      "label": "宝石"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "signal"
+  ],
+  "challenges": [
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 80,
+      "title": "80tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "スイッチ",
+    "signal"
+  ],
+  "goal": "スイッチで扉を開け、宝石を取って二人とも出口へ。",
+  "firstStep": "A は move plate で乗る。B は move jewel（閉じていれば扉の前で自動で待つ）。",
+  "hints": [
+    "扉はスイッチから降りると閉じる。B が戻るまで A は乗ったまま。",
+    "A: move plate → wait until signal_received(done) → move exit。B: move jewel → steal → move exit → signal done。",
+    "--- thief_a ---\nmove plate\nwait until signal_received(done)\nmove exit\n--- thief_b ---\nmove jewel\nsteal jewel\nmove exit\nsignal done\n"
+  ],
+  "solution": {
+    "thief_a": "move plate\nwait until signal_received(done)\nmove exit\n",
+    "thief_b": "move jewel\nsteal jewel\nmove exit\nsignal done\n"
+  }
+}

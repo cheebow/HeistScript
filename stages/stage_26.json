@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_26",
+  "title": "待てば通れる",
+  "chapter": "第2章 警備員の癖",
+  "difficulty": 1,
+  "description": "横に長い廊下を警備員が往復している。廊下を横切るのは一瞬。通り過ぎた直後なら背中しか見えない。",
+  "width": 14,
+  "height": 9,
+  "tiles": [
+    "##############",
+    "#............#",
+    "#............#",
+    "######.#######",
+    "#............#",
+    "######.#######",
+    "#............#",
+    "#........E...#",
+    "##############"
+  ],
+  "waypoints": [
+    {
+      "description": "廊下へ降りる手前。警備員が真下を通ると guard_near",
+      "id": "gap_top",
+      "x": 6,
+      "y": 2,
+      "label": "廊下の上のすき間"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# gap_top で wait until guard_near → wait until guard_away と書いてから横切る。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "警備員",
+      "description": "廊下を左右に往復する",
+      "id": "guard_1",
+      "x": 12,
+      "y": 4,
+      "direction": "left",
+      "patrolRoute": [
+        {
+          "x": 2,
+          "y": 4,
+          "waitTicks": 2
+        },
+        {
+          "x": 12,
+          "y": 4,
+          "waitTicks": 2
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 5,
+      "y": 7,
+      "required": true,
+      "label": "宝石"
+    }
+  ],
+  "exit": {
+    "x": 9,
+    "y": 7
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "wait until guard_near",
+    "wait until guard_away"
+  ],
+  "goal": "廊下を横切って宝石を取り、出口へ。",
+  "firstStep": "gap_top で wait until guard_near → wait until guard_away と書いてから横切る。",
+  "hints": [
+    "警備員は前しか見えない。通り過ぎた直後に横切れば、背中側になる。",
+    "gap_top で guard_near（近づいた）→ guard_away（離れた）の順に待ってから move jewel。",
+    "--- thief_a ---\nmove gap_top\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move gap_top\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

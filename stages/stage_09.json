@@ -153,5 +153,7 @@
   ],
   "solution": {
     "thief_a": "move gate\nwait 6\nmove jewel\nsteal jewel\nmove landing\nwait 8\nmove exit\n"
-  }
+  },
+  "chapter": "第3章 設備",
+  "difficulty": 3
 }

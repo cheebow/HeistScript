@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_37",
+  "title": "近道の扉",
+  "chapter": "第1章 基本",
+  "difficulty": 1,
+  "description": "制限時間が短い。遠回りの廊下では間に合わない。閉まった扉を開ければ近道になる。",
+  "width": 16,
+  "height": 9,
+  "tiles": [
+    "################",
+    "#......#.......#",
+    "#......D.......#",
+    "#......#.......#",
+    "#......#.......#",
+    "#......#......E#",
+    "#......#######.#",
+    "#..............#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "近道の扉のすぐ左",
+      "id": "door_in",
+      "x": 6,
+      "y": 2,
+      "label": "扉の前"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# まず move jewel だけで実行して、何 tick かかるか見る。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "short_door",
+      "type": "door",
+      "x": 7,
+      "y": 2,
+      "open": false,
+      "label": "近道の扉",
+      "description": "閉まっている。open で開けると 2 tick かかる"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 11,
+      "y": 2,
+      "required": true,
+      "label": "宝石"
+    }
+  ],
+  "exit": {
+    "x": 14,
+    "y": 5
+  },
+  "maxTicks": 60,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "open"
+  ],
+  "challenges": [
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 45,
+      "title": "45tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "制限時間",
+    "open"
+  ],
+  "goal": "60 tick 以内に宝石を取って出口へ。",
+  "firstStep": "まず move jewel だけで実行して、何 tick かかるか見る。",
+  "hints": [
+    "move は通れる道のうち最短を選ぶ。閉まった扉は通れないので、下の廊下を大回りして間に合わない。",
+    "扉を開ければ近道。move door_in → open short_door → move jewel → steal jewel → move exit。",
+    "--- thief_a ---\nmove door_in\nopen short_door\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move door_in\nopen short_door\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

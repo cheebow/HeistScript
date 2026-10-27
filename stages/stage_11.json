@@ -213,5 +213,7 @@
         "thief_b": "move corner_ne\nwait until signal_received(ready)\nmove jewel\nsteal jewel\nmove exit\n"
       }
     }
-  ]
+  ],
+  "chapter": "第4章 連携",
+  "difficulty": 3
 }

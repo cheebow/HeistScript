@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_46",
+  "title": "扉の周期",
+  "chapter": "第3章 設備",
+  "difficulty": 3,
+  "description": "タイマー扉は 8 tick 開いて 8 tick 閉じる。左の部屋では警備員が往復し、宝石の両側から目を光らせる。扉の周期と警備員の周期、両方に合わせる。",
+  "width": 16,
+  "height": 8,
+  "tiles": [
+    "################",
+    "#......#.......#",
+    "#......#.......#",
+    "#......D.......#",
+    "#......#.......#",
+    "#......#.......#",
+    "#......#.......#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "警備員の往復から見えない。真下を通ると guard_near",
+      "id": "spot",
+      "x": 4,
+      "y": 3,
+      "label": "宝石の上の壁ぎわ"
+    },
+    {
+      "description": "宝石に隣接。警備員が左右の端にいると見える",
+      "id": "above",
+      "x": 4,
+      "y": 4,
+      "label": "宝石の上"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# move spot で扉の周期を観察し、宝石の上で警備員の動きを見る。\n",
+      "id": "thief_a",
+      "x": 13,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "警備員",
+      "description": "左の部屋の下の列を往復する",
+      "id": "guard_1",
+      "x": 6,
+      "y": 6,
+      "direction": "left",
+      "patrolRoute": [
+        {
+          "x": 2,
+          "y": 6,
+          "waitTicks": 2
+        },
+        {
+          "x": 6,
+          "y": 6,
+          "waitTicks": 2
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "gate",
+      "type": "door",
+      "x": 7,
+      "y": 3,
+      "open": true,
+      "cycle": {
+        "openTicks": 8,
+        "closedTicks": 8,
+        "offset": 0
+      },
+      "label": "タイマー扉",
+      "description": "8 tick 開いて 8 tick 閉じる。閉じていると move は手前で待つ"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 4,
+      "y": 5,
+      "required": true,
+      "label": "宝石"
+    }
+  ],
+  "exit": {
+    "x": 14,
+    "y": 1
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "タイマー扉",
+    "wait の計算"
+  ],
+  "goal": "タイマー扉を抜けて宝石を取り、出口へ。",
+  "firstStep": "move spot で扉の周期を観察し、宝石の上で警備員の動きを見る。",
+  "hints": [
+    "扉の前で待たずに済むよう、開いている間に着く。宝石の真上（above）は、警備員が真下を通る間だけ見えない。",
+    "spot で guard_near を待ってすぐ above へ、steal して spot に戻る。帰りも扉が開くタイミングを wait で合わせる。",
+    "--- thief_a ---\nwait 4\nmove spot\nwait until guard_near\nmove above\nsteal jewel\nmove spot\nwait 2\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "wait 4\nmove spot\nwait until guard_near\nmove above\nsteal jewel\nmove spot\nwait 2\nmove exit\n"
+  }
+}

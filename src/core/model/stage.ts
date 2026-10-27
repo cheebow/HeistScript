@@ -29,6 +29,10 @@ export interface StageDefinition {
   solution?: Record<string, string>;
   /** 複数解法（それぞれテストで成功を担保） */
   solutions?: { id: string; title: string; scripts: Record<string, string> }[];
+  /** 章（ステージ選択で見出しにする） */
+  chapter?: string;
+  /** 難しさ 1〜5（★の数） */
+  difficulty?: number;
 }
 
 /** ID に付ける日本語名と説明（ヘルプ・補完・インスペクタで表示） */

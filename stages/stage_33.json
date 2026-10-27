@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_33",
+  "title": "新人だけ",
+  "chapter": "第5章 通風口・鍵・物音",
+  "difficulty": 1,
+  "description": "広間の見張りは新人で、3 マス先までしか見えない。クリックして視界の大きさを確かめ、届かない距離を通ろう。",
+  "width": 16,
+  "height": 8,
+  "tiles": [
+    "################",
+    "#..............#",
+    "#..............#",
+    "#..............#",
+    "#..............#",
+    "#..............#",
+    "#..............#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "新人から 3 マス離れた列",
+      "id": "top",
+      "x": 7,
+      "y": 1,
+      "label": "上の壁ぎわ"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# move top で上の壁ぎわを通ってから move jewel。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 4
+    }
+  ],
+  "guards": [
+    {
+      "label": "新人",
+      "description": "左を向いて立っている。視界は 3 マス",
+      "id": "rookie",
+      "x": 7,
+      "y": 4,
+      "direction": "left",
+      "patrolRoute": [
+        {
+          "x": 7,
+          "y": 4,
+          "waitTicks": 0
+        }
+      ],
+      "visionRange": 3
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 13,
+      "y": 4,
+      "required": true,
+      "label": "宝石"
+    }
+  ],
+  "exit": {
+    "x": 13,
+    "y": 6
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 45,
+      "title": "45tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "視界の広さ"
+  ],
+  "goal": "新人の視界の外を通って宝石を取り、出口へ。",
+  "firstStep": "move top で上の壁ぎわを通ってから move jewel。",
+  "hints": [
+    "新人の視界は 3 マス。扇形の外なら、正面でも見えない。",
+    "上の列（新人から 3 マス上）を通れば視界の外。move top → move jewel。",
+    "--- thief_a ---\nmove top\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move top\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

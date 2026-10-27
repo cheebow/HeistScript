@@ -30,6 +30,8 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
   if (s.schemaVersion !== 1) err('schemaVersion', 'schemaVersion は 1 である必要があります');
   if (typeof s.id !== 'string' || !s.id) err('id', 'id は空でない文字列');
   if (typeof s.title !== 'string') err('title', 'title は文字列');
+  if (s.chapter !== undefined && typeof s.chapter !== 'string') err('chapter', 'chapter は文字列');
+  if (s.difficulty !== undefined && (!isInt(s.difficulty) || (s.difficulty as number) < 1 || (s.difficulty as number) > 5)) err('difficulty', 'difficulty は 1〜5 の整数');
   if (!isInt(s.width) || (s.width as number) < 4) err('width', 'width は4以上の整数');
   if (!isInt(s.height) || (s.height as number) < 4) err('height', 'height は4以上の整数');
   if (!isInt(s.maxTicks) || (s.maxTicks as number) <= 0) err('maxTicks', 'maxTicks は正の整数');

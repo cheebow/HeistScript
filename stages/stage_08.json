@@ -58,7 +58,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "あなたが操作する怪盗",
-      "starterScript": "# 眠らせた見張りは carry で運び、見えない場所で drop して隠そう\nmove corner\nwait until guard_near\nwait until guard_away\nmove behind\nknockout guard_1\nmove jewel\nsteal jewel\nmove exit\n"
+      "starterScript": "# 眠らせた見張りは carry で運び、見えない場所で drop して隠そう\n# （眠らせただけだと、もう一人の見張りが見つけて起こしに来る）\nmove corner\nwait until guard_near\nwait until guard_away\nmove behind\nknockout guard_1\nwait 10\n"
     }
   ],
   "guards": [
@@ -159,5 +159,7 @@
   ],
   "solution": {
     "thief_a": "move corner\nwait until guard_near\nwait until guard_away\nmove behind\nknockout guard_1\ncarry guard_1\nmove vault_corner\ndrop\nmove jewel\nsteal jewel\nmove exit\n"
-  }
+  },
+  "chapter": "第2章 警備員の癖",
+  "difficulty": 3
 }

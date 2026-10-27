@@ -173,5 +173,7 @@
   ],
   "solution": {
     "thief_a": "move vent_e\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove vent_e\nmove vent_w\nwait until guard_near\nwait until guard_away\nmove exit\n"
-  }
+  },
+  "chapter": "第5章 通風口・鍵・物音",
+  "difficulty": 2
 }

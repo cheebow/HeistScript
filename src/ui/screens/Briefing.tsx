@@ -5,7 +5,7 @@ export function Briefing({ stage, index, onStart }: { stage: StageDefinition; in
     <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="作戦ブリーフィング" data-testid="briefing">
       <div className="modal briefing">
         <div className="briefing-head">
-          <span className="muted">MISSION {String(index + 1).padStart(2, '0')}</span>
+          <span className="muted">MISSION {String(index + 1).padStart(2, '0')}{stage.chapter ? ` ／ ${stage.chapter}` : ''}{stage.difficulty ? ` ／ 難しさ ${'★'.repeat(stage.difficulty)}` : ''}</span>
           <h2>{stage.title}</h2>
         </div>
         <p className="briefing-desc">{stage.description}</p>

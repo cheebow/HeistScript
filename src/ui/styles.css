@@ -133,6 +133,11 @@ h2 { font-size: 12px; letter-spacing: 0.02em; color: var(--muted); }
 .stats td { padding: 2px 12px 2px 0; }
 .challenges { padding-left: 18px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.share { margin-top: 12px; padding: 10px 12px; background: var(--panel2); border: 1px solid var(--border); border-radius: 4px; display: flex; flex-direction: column; gap: 8px; }
+.share-text { font-size: 13px; white-space: pre-wrap; }
+.share-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.share-actions .button { display: inline-block; padding: 4px 10px; border: 1px solid var(--border); border-radius: 3px; background: var(--panel); color: var(--text); text-decoration: none; font-size: 13px; }
+.share-actions .button:hover { background: var(--border); }
 
 .id-table td:nth-child(2) { line-height: 1.4; }
 .id-table strong { font-weight: 600; }
@@ -209,7 +214,9 @@ button.big { font-size: 16px; padding: 10px 28px; min-width: 220px; }
 .stage-card { text-align: left; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; background: var(--panel); }
 .stage-card.cleared { border-color: var(--green); }
 .stage-card:hover { background: var(--panel2); }
-.stage-card-top { display: flex; align-items: baseline; gap: 8px; }
+.stage-card-top { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.stage-diff { color: #f3d35a; font-size: 11px; letter-spacing: 1px; margin-left: auto; }
+.chapter-head { grid-column: 1 / -1; font-size: 15px; color: var(--accent-text); margin: 14px 0 0; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
 .stage-num { font-weight: 700; color: var(--accent-text); }
 .stage-title { font-weight: 600; flex: 1; }
 .stage-check { color: var(--green); font-size: 12px; }

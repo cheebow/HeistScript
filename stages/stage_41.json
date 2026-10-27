@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_41",
+  "title": "ロッカーの列",
+  "chapter": "第2章 警備員の癖",
+  "difficulty": 2,
+  "description": "長い廊下を警備員が往復し、ロッカーが二つ。隠れて見送り、背中を追って次のロッカーへ。",
+  "width": 16,
+  "height": 7,
+  "tiles": [
+    "################",
+    "#..H.....H.....#",
+    "#..............#",
+    "#..............#",
+    "#############.##",
+    "#............E.#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "廊下の上の壁ぎわ。警備員が真下を通ると guard_near",
+      "id": "locker_a",
+      "x": 3,
+      "y": 1,
+      "label": "ロッカーA"
+    },
+    {
+      "description": "",
+      "id": "locker_b",
+      "x": 9,
+      "y": 1,
+      "label": "ロッカーB"
+    },
+    {
+      "description": "廊下の右端の下。ここから下の部屋へ",
+      "id": "gate",
+      "x": 13,
+      "y": 3,
+      "label": "下への口"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# locker_a で hide し、guard_near → guard_away を待ってから locker_b へ。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "警備員",
+      "description": "廊下を左右に往復する",
+      "id": "guard_1",
+      "x": 13,
+      "y": 2,
+      "direction": "left",
+      "patrolRoute": [
+        {
+          "x": 2,
+          "y": 2,
+          "waitTicks": 3
+        },
+        {
+          "x": 13,
+          "y": 2,
+          "waitTicks": 3
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 7,
+      "y": 5,
+      "required": true,
+      "label": "宝石"
+    }
+  ],
+  "exit": {
+    "x": 13,
+    "y": 5
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "hide",
+    "guard_near → guard_away"
+  ],
+  "goal": "ロッカーを使って廊下を抜け、宝石を取って出口へ。",
+  "firstStep": "locker_a で hide し、guard_near → guard_away を待ってから locker_b へ。",
+  "hints": [
+    "ロッカーで hide していれば、目の前を通られても見つからない。",
+    "警備員が右へ向かう直後に次のロッカーへ移れば背中側。locker_a では左へ通り過ぎてから戻ってくるのを待ち（near → away を 2 回）、右へ行く背中を追って locker_b へ。",
+    "--- thief_a ---\nmove locker_a\nhide\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nmove locker_b\nhide\nwait until guard_near\nwait until guard_away\nmove gate\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move locker_a\nhide\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nmove locker_b\nhide\nwait until guard_near\nwait until guard_away\nmove gate\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

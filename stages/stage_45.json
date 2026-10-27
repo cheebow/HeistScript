@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_45",
+  "title": "重しを置く",
+  "chapter": "第3章 設備",
+  "difficulty": 3,
+  "description": "金庫の扉はスイッチに乗っている間だけ開く。一人では乗ったまま入れない。眠らせた警備員を担いでスイッチに置けば、重しになる。",
+  "width": 16,
+  "height": 8,
+  "tiles": [
+    "################",
+    "#..............#",
+    "#..............#",
+    "#..............#",
+    "########D#######",
+    "#..............#",
+    "#.............E#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "警備員の真後ろ（上）",
+      "id": "behind",
+      "x": 11,
+      "y": 1,
+      "label": "警備員の背後"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# behind から knockout guard_1 → carry guard_1 → move plate → drop。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "警備員",
+      "description": "下を向いて立っている",
+      "id": "guard_1",
+      "x": 11,
+      "y": 2,
+      "direction": "down",
+      "patrolRoute": [
+        {
+          "x": 11,
+          "y": 2,
+          "waitTicks": 0
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "plate",
+      "type": "switch",
+      "x": 3,
+      "y": 3,
+      "targetDoorId": "gate",
+      "label": "スイッチ",
+      "description": "乗っている間、扉が開く。眠った警備員を乗せてもよい"
+    },
+    {
+      "id": "gate",
+      "type": "door",
+      "x": 8,
+      "y": 4,
+      "open": false,
+      "label": "金庫の扉"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 7,
+      "y": 5,
+      "required": true,
+      "label": "宝石"
+    }
+  ],
+  "exit": {
+    "x": 14,
+    "y": 6
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "knockout",
+    "carry",
+    "drop"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "carry → drop でスイッチを押す"
+  ],
+  "goal": "警備員を重しにして扉を開け、宝石を取って出口へ。",
+  "firstStep": "behind から knockout guard_1 → carry guard_1 → move plate → drop。",
+  "hints": [
+    "スイッチは「乗っている人物」が押す。気絶した警備員でもよい。",
+    "behind で knockout → carry → move plate → drop → move jewel → steal → move exit。担ぐと歩みが遅いので急ぐ。",
+    "--- thief_a ---\nmove behind\nknockout guard_1\ncarry guard_1\nmove plate\ndrop\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move behind\nknockout guard_1\ncarry guard_1\nmove plate\ndrop\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

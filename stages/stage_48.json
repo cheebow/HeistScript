@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_48",
+  "title": "三人で三つ",
+  "chapter": "第4章 連携",
+  "difficulty": 2,
+  "description": "怪盗は三人、宝石も三つ。それぞれ別の部屋にある。三人分のスクリプトを書いて、全員で出口へ。",
+  "width": 16,
+  "height": 8,
+  "tiles": [
+    "################",
+    "#....#....#....#",
+    "#....#....#....#",
+    "#....#....#....#",
+    "#....#....#....#",
+    "#.......E......#",
+    "#..............#",
+    "################"
+  ],
+  "waypoints": [],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# タブで A・B・C を切り替えて、それぞれに move と steal を書く。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 6
+    },
+    {
+      "direction": "right",
+      "label": "怪盗B",
+      "description": "",
+      "starterScript": "# タブで A・B・C を切り替えて、それぞれに move と steal を書く。\n",
+      "id": "thief_b",
+      "x": 2,
+      "y": 6
+    },
+    {
+      "direction": "right",
+      "label": "怪盗C",
+      "description": "",
+      "starterScript": "# タブで A・B・C を切り替えて、それぞれに move と steal を書く。\n",
+      "id": "thief_c",
+      "x": 3,
+      "y": 6
+    }
+  ],
+  "guards": [],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel_a",
+      "type": "treasure",
+      "x": 2,
+      "y": 3,
+      "required": true,
+      "label": "左の宝石"
+    },
+    {
+      "id": "jewel_b",
+      "type": "treasure",
+      "x": 7,
+      "y": 3,
+      "required": true,
+      "label": "中央の宝石"
+    },
+    {
+      "id": "jewel_c",
+      "type": "treasure",
+      "x": 12,
+      "y": 3,
+      "required": true,
+      "label": "右の宝石"
+    }
+  ],
+  "exit": {
+    "x": 8,
+    "y": 5
+  },
+  "maxTicks": 55,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "signal"
+  ],
+  "challenges": [
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 40,
+      "title": "40tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "三人のスクリプト"
+  ],
+  "goal": "三人で宝石を一つずつ取り、全員出口へ。",
+  "firstStep": "タブで A・B・C を切り替えて、それぞれに move と steal を書く。",
+  "hints": [
+    "出口のマスは何人でも重なれる。",
+    "A: jewel_a、B: jewel_b、C: jewel_c。それぞれ steal して move exit。",
+    "--- thief_a ---\nmove jewel_a\nsteal jewel_a\nmove exit\n--- thief_b ---\nmove jewel_b\nsteal jewel_b\nmove exit\n--- thief_c ---\nmove jewel_c\nsteal jewel_c\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move jewel_a\nsteal jewel_a\nmove exit\n",
+    "thief_b": "move jewel_b\nsteal jewel_b\nmove exit\n",
+    "thief_c": "move jewel_c\nsteal jewel_c\nmove exit\n"
+  }
+}

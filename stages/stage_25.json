@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_25",
+  "title": "扉を開ける",
+  "chapter": "第1章 基本",
+  "difficulty": 1,
+  "description": "閉まった扉は、隣まで行って open すると開く。宝石は扉の向こう。",
+  "width": 14,
+  "height": 7,
+  "tiles": [
+    "##############",
+    "#.....#......#",
+    "#.....#......#",
+    "#.....D......#",
+    "#.....#......#",
+    "#.....#....E.#",
+    "##############"
+  ],
+  "waypoints": [
+    {
+      "description": "扉のすぐ左。ここで open する",
+      "id": "door_in",
+      "x": 5,
+      "y": 3,
+      "label": "扉の前"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# move door_in で扉の前まで行き、open door_1。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "door_1",
+      "type": "door",
+      "x": 6,
+      "y": 3,
+      "open": false,
+      "label": "扉",
+      "description": "閉まっている。隣接して open door_1"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 9,
+      "y": 3,
+      "required": true,
+      "label": "宝石"
+    }
+  ],
+  "exit": {
+    "x": 11,
+    "y": 5
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "open"
+  ],
+  "challenges": [
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 40,
+      "title": "40tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "open"
+  ],
+  "goal": "扉を開けて宝石を取り、出口へ。",
+  "firstStep": "move door_in で扉の前まで行き、open door_1。",
+  "hints": [
+    "閉まった扉の向こうへは move できない（経路が見つからない）。先に扉の隣まで行く。",
+    "move door_in → open door_1 → move jewel → steal jewel → move exit。",
+    "--- thief_a ---\nmove door_in\nopen door_1\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move door_in\nopen door_1\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

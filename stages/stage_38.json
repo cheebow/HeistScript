@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_38",
+  "title": "二人の往復",
+  "chapter": "第2章 警備員の癖",
+  "difficulty": 2,
+  "description": "廊下が二本。それぞれ警備員が往復している。一本ずつ、通り過ぎた直後に横切る。",
+  "width": 16,
+  "height": 10,
+  "tiles": [
+    "################",
+    "#..............#",
+    "#######.########",
+    "#..............#",
+    "#######.########",
+    "#..............#",
+    "#######.########",
+    "#..............#",
+    "#............E.#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "",
+      "id": "gap1",
+      "x": 7,
+      "y": 2,
+      "label": "一本目の手前"
+    },
+    {
+      "description": "一本目と二本目の間。どちらの警備員からも見えない",
+      "id": "gap2",
+      "x": 7,
+      "y": 4,
+      "label": "二本目の手前"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# gap1 で guard_near → guard_away、gap2 でもう一度。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "警備員1",
+      "description": "一本目の廊下を往復",
+      "id": "guard_1",
+      "x": 13,
+      "y": 3,
+      "direction": "left",
+      "patrolRoute": [
+        {
+          "x": 2,
+          "y": 3,
+          "waitTicks": 2
+        },
+        {
+          "x": 13,
+          "y": 3,
+          "waitTicks": 2
+        }
+      ]
+    },
+    {
+      "label": "警備員2",
+      "description": "二本目の廊下を往復",
+      "id": "guard_2",
+      "x": 2,
+      "y": 5,
+      "direction": "right",
+      "patrolRoute": [
+        {
+          "x": 13,
+          "y": 5,
+          "waitTicks": 2
+        },
+        {
+          "x": 2,
+          "y": 5,
+          "waitTicks": 2
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 6,
+      "y": 8,
+      "required": true,
+      "label": "宝石"
+    }
+  ],
+  "exit": {
+    "x": 13,
+    "y": 8
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "wait until を二回"
+  ],
+  "goal": "二本の廊下を横切って宝石を取り、出口へ。",
+  "firstStep": "gap1 で guard_near → guard_away、gap2 でもう一度。",
+  "hints": [
+    "guard_near は「どれかの警備員が 3 マス以内」。廊下の間（gap2）なら、二本目の警備員だけが近づく。",
+    "gap1 で guard_near → guard_away → move gap2 → guard_near → guard_away → move jewel。",
+    "--- thief_a ---\nmove gap1\nwait until guard_near\nwait until guard_away\nmove gap2\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move gap1\nwait until guard_near\nwait until guard_away\nmove gap2\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

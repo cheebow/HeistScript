@@ -23,8 +23,36 @@ import stage20 from '../../../stages/stage_20.json';
 import stage21 from '../../../stages/stage_21.json';
 import stage22 from '../../../stages/stage_22.json';
 import stage23 from '../../../stages/stage_23.json';
+import stage24 from '../../../stages/stage_24.json';
+import stage25 from '../../../stages/stage_25.json';
+import stage26 from '../../../stages/stage_26.json';
+import stage27 from '../../../stages/stage_27.json';
+import stage28 from '../../../stages/stage_28.json';
+import stage29 from '../../../stages/stage_29.json';
+import stage30 from '../../../stages/stage_30.json';
+import stage31 from '../../../stages/stage_31.json';
+import stage32 from '../../../stages/stage_32.json';
+import stage33 from '../../../stages/stage_33.json';
+import stage34 from '../../../stages/stage_34.json';
+import stage35 from '../../../stages/stage_35.json';
+import stage36 from '../../../stages/stage_36.json';
+import stage37 from '../../../stages/stage_37.json';
+import stage38 from '../../../stages/stage_38.json';
+import stage39 from '../../../stages/stage_39.json';
+import stage40 from '../../../stages/stage_40.json';
+import stage41 from '../../../stages/stage_41.json';
+import stage42 from '../../../stages/stage_42.json';
+import stage43 from '../../../stages/stage_43.json';
+import stage44 from '../../../stages/stage_44.json';
+import stage45 from '../../../stages/stage_45.json';
+import stage46 from '../../../stages/stage_46.json';
+import stage47 from '../../../stages/stage_47.json';
+import stage48 from '../../../stages/stage_48.json';
+import stage49 from '../../../stages/stage_49.json';
+import stage50 from '../../../stages/stage_50.json';
 
-const RAW_STAGES: unknown[] = [stage01, stage02, stage03, stage04, stage05, stage06, stage07, stage08, stage09, stage10, stage11, stage12, stage13, stage14, stage15, stage16, stage17, stage18, stage19, stage20, stage21, stage22, stage23];
+// 表示順（章ごと）。ID は固定なので、順番を変えてもセーブデータは壊れない
+const RAW_STAGES: unknown[] = [stage01, stage02, stage03, stage24, stage25, stage36, stage37, stage26, stage27, stage04, stage28, stage06, stage08, stage13, stage38, stage39, stage41, stage40, stage42, stage30, stage29, stage43, stage07, stage09, stage10, stage46, stage12, stage14, stage44, stage45, stage34, stage35, stage47, stage48, stage05, stage11, stage15, stage17, stage18, stage31, stage32, stage33, stage50, stage49, stage19, stage20, stage21, stage22, stage16, stage23];
 
 let cache: StageDefinition[] | null = null;
 

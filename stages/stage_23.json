@@ -215,5 +215,7 @@
   "solution": {
     "thief_a": "move vent_o\nwait until signal_received(noise)\nwait 18\nmove keycard\nsteal keycard\nmove vent_o\nmove vent_top\nmove vent_bottom\nwait until signal_received(go)\nmove vault_in\nopen vault_door\nmove jewel\nsteal jewel\nwait until signal_received(go2)\nmove vent_bottom\nmove exit\n",
     "thief_b": "move desk\ndistract shelf\nsignal noise\nmove vent_top\nmove vent_side\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nsignal go\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nsignal go2\nmove exit\n"
-  }
+  },
+  "chapter": "第6章 総合",
+  "difficulty": 5
 }

@@ -161,5 +161,7 @@
   ],
   "solution": {
     "thief_a": "move ledge\ndistract crate_e\nwait 4\nmove jewel\nsteal jewel\nmove locker_sw\nhide\nwait until safe\nmove mid\ndistract crate_w\nwait 4\nmove exit\n"
-  }
+  },
+  "chapter": "第5章 通風口・鍵・物音",
+  "difficulty": 3
 }

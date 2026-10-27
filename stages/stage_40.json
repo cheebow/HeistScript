@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_40",
+  "title": "扉で呼ぶ",
+  "chapter": "第2章 警備員の癖",
+  "difficulty": 3,
+  "description": "見張りは広間の下に立ち、上を見ている。金庫の入口は見張りの視界の中。見張りは「開いている扉」に気づくと調べに行く。上の扉をわざと開けて呼び出し、その間に金庫へ。",
+  "width": 14,
+  "height": 11,
+  "tiles": [
+    "##############",
+    "#............#",
+    "#####.#D######",
+    "#.........####",
+    "#...#.....####",
+    "#...#.....####",
+    "#...#.....####",
+    "#...#.....####",
+    "#####.....####",
+    "#######.######",
+    "##############"
+  ],
+  "waypoints": [
+    {
+      "description": "上の部屋の扉のすぐ上。見張りの視界の外（8 マス先）",
+      "id": "door_top",
+      "x": 7,
+      "y": 1,
+      "label": "扉の上"
+    },
+    {
+      "description": "見張りから遠く、見えない",
+      "id": "corner",
+      "x": 1,
+      "y": 1,
+      "label": "左上の隅"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# door_top で open bait_door して、見張りがどう動くか見る。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "見張り",
+      "description": "広間の下の持ち場で上を見ている。視界 7 マス。開いた扉に気づくと調べに行き、3 tick 見て戻る",
+      "id": "guard_1",
+      "x": 7,
+      "y": 9,
+      "direction": "up",
+      "patrolRoute": [
+        {
+          "x": 7,
+          "y": 9,
+          "waitTicks": 0
+        }
+      ],
+      "visionRange": 7
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "bait_door",
+      "type": "door",
+      "x": 7,
+      "y": 2,
+      "open": false,
+      "label": "おとりの扉",
+      "description": "上の部屋と広間をつなぐ扉。開けると見張りが気づく"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 2,
+      "y": 5,
+      "required": true,
+      "label": "宝石",
+      "description": "左の金庫。入口は広間の左上 (4,3)"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 7
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "open",
+    "hide",
+    "if",
+    "while"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "開いた扉で誘う"
+  ],
+  "goal": "扉を開けて見張りを呼び、金庫の入口が死角になった間に宝石を取って出口へ。",
+  "firstStep": "door_top で open bait_door して、見張りがどう動くか見る。",
+  "hints": [
+    "見張りは「開始時に閉まっていた扉が開いている」のを見ると、その扉まで歩いて行き、3 tick 見てから持ち場に戻る。扉の近くにいる間、広間の左上は横か後ろ。",
+    "扉を開けたら corner へ退く。見張りが扉へ向かって歩き出したら、左のすき間から金庫へ（move jewel）。見張りが扉の近くにいる間、広間の左上は横か後ろ。出口は金庫の中。",
+    "--- thief_a ---\nmove door_top\nopen bait_door\nmove corner\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move door_top\nopen bait_door\nmove corner\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

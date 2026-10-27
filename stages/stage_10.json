@@ -150,5 +150,7 @@
   ],
   "solution": {
     "thief_a": "move pillar\nwait 10\nmove jewel\nsteal jewel\nmove pillar\nwait until guard_away\nmove exit\n"
-  }
+  },
+  "chapter": "第3章 設備",
+  "difficulty": 3
 }

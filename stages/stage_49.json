@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_49",
+  "title": "物音と鍵",
+  "chapter": "第5章 通風口・鍵・物音",
+  "difficulty": 2,
+  "description": "見張りはカードキーの机を見て立っている。物音で見張りを動かし、鍵を取って施錠された金庫を開けよう。",
+  "width": 16,
+  "height": 9,
+  "tiles": [
+    "################",
+    "#..............#",
+    "#..............#",
+    "#..............#",
+    "####D###########",
+    "#..............#",
+    "#..............#",
+    "#.............E#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "見張りの視界のぎりぎり外（5 マスより遠い）。ここから noise_spot へ物音が届く",
+      "id": "ledge",
+      "x": 7,
+      "y": 3,
+      "label": "机の左下"
+    },
+    {
+      "description": "物音を立てる場所。見張りの背後",
+      "id": "noise_spot",
+      "x": 13,
+      "y": 3,
+      "label": "右下の隅"
+    },
+    {
+      "description": "施錠された扉のすぐ上",
+      "id": "door_in",
+      "x": 4,
+      "y": 3,
+      "label": "金庫の扉の前"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# ledge まで行って distract noise_spot。見張りが右下へ行く間に keycard を取る。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 3
+    }
+  ],
+  "guards": [
+    {
+      "label": "見張り",
+      "description": "右上の隅で左を向き、机の鍵を見張る。物音がすれば調べに行き、3 tick 見て戻る",
+      "id": "guard_1",
+      "x": 12,
+      "y": 1,
+      "direction": "left",
+      "patrolRoute": [
+        {
+          "x": 12,
+          "y": 1,
+          "waitTicks": 0
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "keycard",
+      "type": "key",
+      "x": 8,
+      "y": 1,
+      "unlocks": "vault_door",
+      "label": "カードキー",
+      "description": "机の上。見張りの正面"
+    },
+    {
+      "id": "vault_door",
+      "type": "door",
+      "x": 4,
+      "y": 4,
+      "open": false,
+      "locked": true,
+      "label": "金庫の扉",
+      "description": "施錠されている。鍵を持って open"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 10,
+      "y": 7,
+      "required": true,
+      "label": "宝石",
+      "description": "金庫（下の部屋）"
+    }
+  ],
+  "exit": {
+    "x": 14,
+    "y": 7
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "open",
+    "distract"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "distract",
+    "鍵"
+  ],
+  "goal": "見張りを物音で動かして鍵を取り、金庫を開けて宝石を取り、出口へ。",
+  "firstStep": "ledge まで行って distract noise_spot。見張りが右下へ行く間に keycard を取る。",
+  "hints": [
+    "見張りの視界は 5 マス。机の左下（ledge）はぎりぎり外。物音の地点は自分からも見張りからも 6 マス以内に。",
+    "ledge → distract noise_spot → wait 2 → move keycard → steal keycard → move door_in → open vault_door → move jewel → steal jewel → move exit。",
+    "--- thief_a ---\nmove ledge\ndistract noise_spot\nwait 2\nmove keycard\nsteal keycard\nmove door_in\nopen vault_door\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move ledge\ndistract noise_spot\nwait 2\nmove keycard\nsteal keycard\nmove door_in\nopen vault_door\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

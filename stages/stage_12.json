@@ -159,5 +159,7 @@
   ],
   "solution": {
     "thief_a": "move locker_a\nhide\nwait 6\nmove locker_b\nhide\nwait 4\nmove locker_c\nhide\nwait 20\nmove jewel\nsteal jewel\nmove locker_c\nhide\nwait 40\nmove exit\n"
-  }
+  },
+  "chapter": "第3章 設備",
+  "difficulty": 4
 }

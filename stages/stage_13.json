@@ -181,5 +181,7 @@
   ],
   "solution": {
     "thief_a": "move nook_w\nwait until guard_near\nwait until guard_away\nmove jewel_w\nsteal jewel_w\nmove jewel_e\nsteal jewel_e\nmove nook_e\nwait until guard_near\nwait until guard_away\nmove exit\n"
-  }
+  },
+  "chapter": "第2章 警備員の癖",
+  "difficulty": 3
 }

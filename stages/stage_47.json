@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_47",
+  "title": "合図を待つ",
+  "chapter": "第4章 連携",
+  "difficulty": 2,
+  "description": "左右の部屋をつなぐのは一人しか通れない細い通路。正面から鉢合わせると二人とも進めず、3 回ふさがれて止まる。合図で順番を決めよう。",
+  "width": 16,
+  "height": 8,
+  "tiles": [
+    "################",
+    "#...########...#",
+    "#...########...#",
+    "#..............#",
+    "#...########...#",
+    "#...########...#",
+    "#E..########...#",
+    "################"
+  ],
+  "waypoints": [],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "左の部屋から宝石へ",
+      "starterScript": "# A は move jewel、B は move exit にして、何が起きるか見る。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    },
+    {
+      "direction": "right",
+      "label": "怪盗B",
+      "description": "右の部屋から出口へ",
+      "starterScript": "# A は move jewel、B は move exit にして、何が起きるか見る。\n",
+      "id": "thief_b",
+      "x": 13,
+      "y": 1
+    }
+  ],
+  "guards": [],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 13,
+      "y": 4,
+      "required": true,
+      "label": "宝石",
+      "description": "右の部屋"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 6
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "signal"
+  ],
+  "challenges": [
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 90,
+      "title": "90tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "signal を二つ",
+    "進路の譲り合い"
+  ],
+  "goal": "細い通路を順番に通り、二人とも出口へ。",
+  "firstStep": "A は move jewel、B は move exit にして、何が起きるか見る。",
+  "hints": [
+    "通路の中で向かい合うと、どちらも進めない。片方が通路を抜けてから、もう片方が入る。",
+    "A: move jewel → signal a_out（通路を抜けた）→ steal → wait until signal_received(b_out) → move exit。B: wait until signal_received(a_out) → move exit → signal b_out。",
+    "--- thief_a ---\nmove jewel\nsignal a_out\nsteal jewel\nwait until signal_received(b_out)\nmove exit\n--- thief_b ---\nwait until signal_received(a_out)\nmove exit\nsignal b_out\n"
+  ],
+  "solution": {
+    "thief_a": "move jewel\nsignal a_out\nsteal jewel\nwait until signal_received(b_out)\nmove exit\n",
+    "thief_b": "wait until signal_received(a_out)\nmove exit\nsignal b_out\n"
+  }
+}

@@ -188,5 +188,7 @@
   ],
   "solution": {
     "thief_a": "move office_in\nwait until guard_near\nwait until guard_away\nopen office_door\nmove keycard\nsteal keycard\nmove office_in\nmove pillar\nwait until guard_near\nwait until guard_away\nmove vault_in\nopen vault_door\nmove jewel\nsteal jewel\nmove exit\n"
-  }
+  },
+  "chapter": "第5章 通風口・鍵・物音",
+  "difficulty": 2
 }

@@ -203,5 +203,7 @@
         "thief_c": "move corner\nmove bait\nwait until guard_visible\nsignal lured\nmove locker\nhide\nwait until signal_received(done)\nmove exit\n"
       }
     }
-  ]
+  ],
+  "chapter": "第4章 連携",
+  "difficulty": 4
 }

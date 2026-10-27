@@ -48,7 +48,7 @@
       "x": 1,
       "y": 2,
       "direction": "right",
-      "starterScript": "# ロッカー(H)の上で hide すると隠れられる。\n# if <条件> ... end で分岐できる。\nmove locker_a\nhide\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n",
+      "starterScript": "# ロッカー(H)の上で hide すると隠れられる。\n# wait until <条件> で、条件が成立するまで待てる。\n# if <条件> ... end で分岐できる。\nmove locker_a\nhide\nwait 30\n",
       "label": "怪盗A",
       "description": "あなたが操作する怪盗"
     }
@@ -135,5 +135,7 @@
     "if"
   ],
   "goal": "ロッカーで隠れながら宝石を盗み、出口へ戻る。",
-  "firstStep": "1コマ進めるで警備員の巡回を観察し、どのタイミングなら locker_a から出られるか考えよう。"
+  "firstStep": "1コマ進めるで警備員の巡回を観察し、どのタイミングなら locker_a から出られるか考えよう。",
+  "chapter": "第1章 基本",
+  "difficulty": 2
 }

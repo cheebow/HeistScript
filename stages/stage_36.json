@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_36",
+  "title": "二つの扉",
+  "chapter": "第1章 基本",
+  "difficulty": 1,
+  "description": "扉が二つ。順番に開けて進む。open は隣接していないと失敗する。",
+  "width": 16,
+  "height": 8,
+  "tiles": [
+    "################",
+    "#....#....#....#",
+    "#....D....D....#",
+    "#....#....#....#",
+    "#....#....#....#",
+    "#....#....#....#",
+    "#....#....#...E#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "",
+      "id": "door1_in",
+      "x": 4,
+      "y": 2,
+      "label": "一つ目の扉の前"
+    },
+    {
+      "description": "",
+      "id": "door2_in",
+      "x": 9,
+      "y": 2,
+      "label": "二つ目の扉の前"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# door1_in まで行って open door_1。その先も同じ。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "door_1",
+      "type": "door",
+      "x": 5,
+      "y": 2,
+      "open": false,
+      "label": "一つ目の扉"
+    },
+    {
+      "id": "door_2",
+      "type": "door",
+      "x": 10,
+      "y": 2,
+      "open": false,
+      "label": "二つ目の扉"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 13,
+      "y": 4,
+      "required": true,
+      "label": "宝石"
+    }
+  ],
+  "exit": {
+    "x": 14,
+    "y": 6
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "open"
+  ],
+  "challenges": [
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 60,
+      "title": "60tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "open",
+    "手順を分ける"
+  ],
+  "goal": "扉を二つ開けて宝石を取り、出口へ。",
+  "firstStep": "door1_in まで行って open door_1。その先も同じ。",
+  "hints": [
+    "扉は一つずつ。隣まで move してから open。",
+    "move door1_in → open door_1 → move door2_in → open door_2 → move jewel → steal jewel → move exit。",
+    "--- thief_a ---\nmove door1_in\nopen door_1\nmove door2_in\nopen door_2\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move door1_in\nopen door_1\nmove door2_in\nopen door_2\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_29",
+  "title": "数えて待つ",
+  "chapter": "第3章 設備",
+  "difficulty": 2,
+  "description": "廊下の端に回転カメラ。10 tick ごとに右回りに向きを変え、廊下を向いている間に通ると警報が鳴って警備員が来る。",
+  "width": 16,
+  "height": 9,
+  "tiles": [
+    "################",
+    "#..............#",
+    "#######.########",
+    "#..............#",
+    "###########.####",
+    "#.........#....#",
+    "#.........#....#",
+    "#.........#...E#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "廊下に降りる手前。ここはカメラから見えない",
+      "id": "gap",
+      "x": 7,
+      "y": 2,
+      "label": "廊下の上のすき間"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# gap まで行って、カメラの向きが変わる tick を数える。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "警備員",
+      "description": "左下の部屋で待機。警報が鳴ると現場へ来る",
+      "id": "guard_1",
+      "x": 3,
+      "y": 6,
+      "direction": "up",
+      "patrolRoute": [
+        {
+          "x": 3,
+          "y": 6,
+          "waitTicks": 0
+        }
+      ]
+    }
+  ],
+  "cameras": [
+    {
+      "range": 8,
+      "rotateEveryTicks": 10,
+      "label": "回転カメラ",
+      "description": "廊下の左端。上 → 右（廊下）→ 下 → 左 の順に 10 tick ごとに回る",
+      "id": "cam_1",
+      "x": 1,
+      "y": 3,
+      "direction": "up"
+    }
+  ],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 13,
+      "y": 6,
+      "required": true,
+      "label": "宝石"
+    }
+  ],
+  "exit": {
+    "x": 14,
+    "y": 7
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "on",
+    "resume"
+  ],
+  "challenges": [
+    {
+      "id": "noalarm",
+      "type": "noAlarm",
+      "title": "警報を鳴らさずにクリア"
+    },
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "wait",
+    "カメラの周期"
+  ],
+  "goal": "カメラが廊下を向いていない間に通り抜け、宝石を取って出口へ。",
+  "firstStep": "gap まで行って、カメラの向きが変わる tick を数える。",
+  "hints": [
+    "カメラは 10 tick ごとに右回り。廊下を向いているのは 40 tick のうち 10 tick だけ。",
+    "gap に着くのは tick 14。カメラは tick 10〜19 に廊下（右）を向く。wait 6 で tick 20 まで待ってから進む。",
+    "--- thief_a ---\nmove gap\nwait 6\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move gap\nwait 6\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

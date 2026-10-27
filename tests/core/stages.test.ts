@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { simulate } from '../../src/core/runner';
+import { createRun, simulate } from '../../src/core/runner';
 import { getStages } from '../../src/core/stages';
 import { validateStage } from '../../src/core/stages/validate';
 
@@ -156,6 +156,17 @@ describe('組み込みステージ', () => {
     const s20 = stages.find((x) => x.id === 'stage_20')!;
     const noKey = simulate(s20, { thief_a: 'move vault_in\nopen vault_door\nmove jewel\nsteal jewel\nmove exit\n' }).world;
     expect(noKey.result?.status).toBe('STOPPED');
+  });
+
+  it('初期スクリプトのままではどのステージもクリアできない', () => {
+    for (const s of stages) {
+      const scripts: Record<string, string> = {};
+      for (const t of s.thieves) scripts[t.id] = t.starterScript;
+      const r = createRun(s, scripts);
+      if (!r.run) continue; // コンパイルできない初期コードは「クリアできない」
+      r.run.runToEnd();
+      expect(r.run.world.result?.status, s.id).not.toBe('SUCCESS');
+    }
   });
 
   it('stage_02: 何も考えず進むと捕まる', () => {

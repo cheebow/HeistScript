@@ -184,5 +184,7 @@
   ],
   "solution": {
     "thief_a": "move nook\nwait until guard_near\nwait until guard_away\nmove gate\nwait 7\nmove jewel\nsteal jewel\nwait 5\nmove nook\nmove exit\n"
-  }
+  },
+  "chapter": "第3章 設備",
+  "difficulty": 4
 }

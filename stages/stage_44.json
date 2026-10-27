@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_44",
+  "title": "警報を利用する",
+  "chapter": "第3章 設備",
+  "difficulty": 3,
+  "description": "警報が鳴ると、警備員は鳴った場所へ駆けつける。金庫の見張りを遠くへ呼び出すために、わざとレーザーに触れてみよう。",
+  "width": 16,
+  "height": 13,
+  "tiles": [
+    "################",
+    "#..............#",
+    "#......#.......#",
+    "#......#.......#",
+    "#......#.......#",
+    "#......#.......#",
+    "#......#.#####.#",
+    "#......#.#...#.#",
+    "#......#.#...#.#",
+    "#......#.##.##.#",
+    "#......#.......#",
+    "#.............E#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "左の通路の途中。乗ると警報が鳴り、見張りはここへ来る",
+      "id": "tripwire",
+      "x": 1,
+      "y": 5,
+      "label": "レーザーのマス（左）"
+    },
+    {
+      "description": "右側の通路の入口。見張りの帰り道（下の列）から遠い",
+      "id": "top_right",
+      "x": 14,
+      "y": 1,
+      "label": "右上の隅"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# move tripwire でわざと触れてから、見張りがどこへ行くか見る。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "見張り",
+      "description": "金庫の入口の下に立って入口を見ている。警報が鳴ると現場へ行き、3 tick 見てから持ち場に戻る",
+      "id": "guard_1",
+      "x": 11,
+      "y": 11,
+      "direction": "up",
+      "patrolRoute": [
+        {
+          "x": 11,
+          "y": 11,
+          "waitTicks": 0
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "laser_1",
+      "type": "laser",
+      "x": 1,
+      "y": 5,
+      "onTicks": 100,
+      "offTicks": 1,
+      "offset": 0,
+      "label": "レーザー",
+      "description": "ほぼ常時作動。触れると警報"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 11,
+      "y": 7,
+      "required": true,
+      "label": "宝石",
+      "description": "金庫の中。入口は下 (11,9)"
+    }
+  ],
+  "exit": {
+    "x": 14,
+    "y": 11
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "on",
+    "resume"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "警報の使い方"
+  ],
+  "goal": "見張りを警報で呼び出し、その間に宝石を取って出口へ。",
+  "firstStep": "move tripwire でわざと触れてから、見張りがどこへ行くか見る。",
+  "hints": [
+    "警報の現場は遠いほど、見張りが戻るまでの時間が長い。見張りは下の列を通って左へ来る。",
+    "move tripwire（警報）→ move top_right（右上へ回る）→ move jewel → steal → move exit。見張りが戻る前に右下の出口へ。",
+    "--- thief_a ---\nmove tripwire\nmove top_right\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move tripwire\nmove top_right\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

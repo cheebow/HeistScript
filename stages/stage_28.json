@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_28",
+  "title": "角で待つ",
+  "chapter": "第2章 警備員の癖",
+  "difficulty": 2,
+  "description": "警備員は中央の柱のまわりを時計回りに回っている。通り過ぎた直後に出て、反対回りに進めば追いつかれない。",
+  "width": 16,
+  "height": 10,
+  "tiles": [
+    "################",
+    "#..............#",
+    "#..............#",
+    "#######.########",
+    "#..............#",
+    "#.############.#",
+    "#.############.#",
+    "#.############.#",
+    "#..............#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "上の部屋から周回路へ降りる口。警備員が真下を通ると guard_near",
+      "id": "gap",
+      "x": 7,
+      "y": 3,
+      "label": "すき間"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# gap で guard_near → guard_away を待ち、警備員の進む向きと反対（左）へ。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "警備員",
+      "description": "柱のまわりを時計回りに回る",
+      "id": "guard_1",
+      "x": 1,
+      "y": 8,
+      "direction": "up",
+      "patrolRoute": [
+        {
+          "x": 1,
+          "y": 4,
+          "waitTicks": 2
+        },
+        {
+          "x": 14,
+          "y": 4,
+          "waitTicks": 2
+        },
+        {
+          "x": 14,
+          "y": 8,
+          "waitTicks": 2
+        },
+        {
+          "x": 1,
+          "y": 8,
+          "waitTicks": 2
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 1,
+      "y": 6,
+      "required": true,
+      "label": "宝石",
+      "description": "周回路の左側"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 8
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "wait until",
+    "周回の裏をかく"
+  ],
+  "goal": "周回路に降りて宝石を取り、左下の出口へ。",
+  "firstStep": "gap で guard_near → guard_away を待ち、警備員の進む向きと反対（左）へ。",
+  "hints": [
+    "警備員は時計回り。すき間の真下を右へ通り過ぎた直後に降りれば、左へ進む自分は背中側。",
+    "gap で guard_near → guard_away のあと move jewel。宝石は左の列なので警備員と反対方向。盗んだらそのまま左下の出口へ。",
+    "--- thief_a ---\nmove gap\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move gap\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

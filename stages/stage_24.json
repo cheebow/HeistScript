@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_24",
+  "title": "宝石は二つ",
+  "chapter": "第1章 基本",
+  "difficulty": 1,
+  "description": "警備員はいない。宝石が二つあるので、両方とも手に入れてから出口へ。",
+  "width": 14,
+  "height": 7,
+  "tiles": [
+    "##############",
+    "#............#",
+    "#............#",
+    "#............#",
+    "#............#",
+    "#..........E.#",
+    "##############"
+  ],
+  "waypoints": [],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# move jewel_a → steal jewel_a のあと、同じことを jewel_b にも。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel_a",
+      "type": "treasure",
+      "x": 5,
+      "y": 2,
+      "required": true,
+      "label": "青い宝石"
+    },
+    {
+      "id": "jewel_b",
+      "type": "treasure",
+      "x": 9,
+      "y": 4,
+      "required": true,
+      "label": "赤い宝石"
+    }
+  ],
+  "exit": {
+    "x": 11,
+    "y": 5
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait"
+  ],
+  "challenges": [
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 40,
+      "title": "40tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "move",
+    "steal"
+  ],
+  "goal": "二つの宝石を両方手に入れて出口へ。",
+  "firstStep": "move jewel_a → steal jewel_a のあと、同じことを jewel_b にも。",
+  "hints": [
+    "必須の宝物は二つ。片方だけ持って出口に着いても、ミッションは終わらない。",
+    "move と steal を宝石ごとに 1 組ずつ書き、最後に move exit。",
+    "--- thief_a ---\nmove jewel_a\nsteal jewel_a\nmove jewel_b\nsteal jewel_b\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move jewel_a\nsteal jewel_a\nmove jewel_b\nsteal jewel_b\nmove exit\n"
+  }
+}

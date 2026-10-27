@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { buildShareInfo } from './share';
 import { compileScript } from '../core/hsl/compile';
 import type { HslError } from '../core/hsl/errors';
 import type { StageDefinition } from '../core/model/stage';
@@ -751,6 +752,9 @@ export function App() {
                 ))}
               </ul>
             )}
+            {result.status === 'SUCCESS' && (
+              <ShareBox stage={stage} index={stages.findIndex((s) => s.id === stage.id) < getStages().length ? stages.findIndex((s) => s.id === stage.id) : -1} world={ctl.run.world} earned={save.stages[stage.id]?.challenges ?? []} />
+            )}
             <div className="modal-actions">
               <button onClick={() => setShowResult(false)} data-testid="result-close">
                 閉じる（リプレイを見る）
@@ -764,6 +768,38 @@ export function App() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/** クリア結果を SNS に投稿する（投稿画面を新しいタブで開くだけで、こちらから送信はしない） */
+function ShareBox({ stage, index, world, earned }: { stage: StageDefinition; index: number; world: import('../core/model/types').WorldState; earned: string[] }) {
+  const [copied, setCopied] = useState(false);
+  const info = useMemo(() => buildShareInfo(stage, index, world, earned), [stage, index, world, earned]);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(info.full);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.prompt('コピーしてください', info.full);
+    }
+  };
+  return (
+    <div className="share" data-testid="share-box">
+      <div className="share-text">{info.text}</div>
+      <div className="share-actions">
+        <a className="button" href={info.xUrl} target="_blank" rel="noreferrer noopener" data-testid="share-x">
+          X に投稿
+        </a>
+        <a className="button" href={info.blueskyUrl} target="_blank" rel="noreferrer noopener" data-testid="share-bluesky">
+          Bluesky に投稿
+        </a>
+        <button onClick={copy} data-testid="share-copy">
+          {copied ? 'コピーしました' : '文章をコピー'}
+        </button>
+      </div>
+      <div className="muted small">投稿にはこのステージへのリンクが付きます。コードは含まれません。</div>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import type { StageDefinition } from '../../core/model/stage';
 import type { SaveData } from '../../storage/repository';
 
@@ -23,11 +24,17 @@ export function StageSelect({ stages, builtInCount, save, onSelect, onBack }: St
         {stages.map((s, i) => {
           const p = save.stages[s.id];
           const custom = i >= builtInCount;
+          const chapterOf = (idx: number) => (idx >= builtInCount ? 'カスタムステージ' : (stages[idx]!.chapter ?? 'その他'));
+          const chapter = chapterOf(i);
+          const head = i === 0 || chapter !== chapterOf(i - 1) ? <h2 className="chapter-head">{chapter}</h2> : null;
           return (
-            <button key={s.id} className={`stage-card ${p?.cleared ? 'cleared' : ''}`} onClick={() => onSelect(s.id)} data-testid={`stage-card-${s.id}`}>
+            <Fragment key={s.id}>
+            {head}
+            <button className={`stage-card ${p?.cleared ? 'cleared' : ''}`} onClick={() => onSelect(s.id)} data-testid={`stage-card-${s.id}`}>
               <div className="stage-card-top">
                 <span className="stage-num">{custom ? 'C' : i + 1}</span>
                 <span className="stage-title">{s.title}</span>
+                {s.difficulty && <span className="stage-diff" title={`難しさ ${s.difficulty}/5`}>{'★'.repeat(s.difficulty)}{'☆'.repeat(5 - s.difficulty)}</span>}
                 {p?.cleared && <span className="stage-check">済</span>}
               </div>
               <div className="stage-learn">{s.learn?.length ? s.learn.map((l) => <code key={l}>{l}</code>) : <span className="muted">{custom ? 'カスタム' : ''}</span>}</div>
@@ -45,6 +52,7 @@ export function StageSelect({ stages, builtInCount, save, onSelect, onBack }: St
                 )}
               </div>
             </button>
+            </Fragment>
           );
         })}
       </div>

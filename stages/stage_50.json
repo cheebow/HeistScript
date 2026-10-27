@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_50",
+  "title": "物音の練習",
+  "chapter": "第5章 通風口・鍵・物音",
+  "difficulty": 1,
+  "description": "見張りが通路の入口を向いて立っている。distract で離れた場所に物音を立てれば、見張りは調べに行く。",
+  "width": 16,
+  "height": 7,
+  "tiles": [
+    "################",
+    "#..............#",
+    "#..............#",
+    "########.#######",
+    "#..............#",
+    "#.............E#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "ここから物音の地点へ届く",
+      "id": "corner",
+      "x": 1,
+      "y": 2,
+      "label": "左上の隅"
+    },
+    {
+      "description": "物音を立てる場所。見張りから 6 マス",
+      "id": "noise_spot",
+      "x": 2,
+      "y": 4,
+      "label": "下の部屋の左"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# corner まで行って distract noise_spot。見張りが動いたらすき間へ。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "見張り",
+      "description": "通路のすき間の下に立ち、上を見張る",
+      "id": "guard_1",
+      "x": 8,
+      "y": 4,
+      "direction": "up",
+      "patrolRoute": [
+        {
+          "x": 8,
+          "y": 4,
+          "waitTicks": 0
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 7,
+      "y": 5,
+      "required": true,
+      "label": "宝石"
+    }
+  ],
+  "exit": {
+    "x": 14,
+    "y": 5
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "distract"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "distract"
+  ],
+  "goal": "物音で見張りを動かし、宝石を取って出口へ。",
+  "firstStep": "corner まで行って distract noise_spot。見張りが動いたらすき間へ。",
+  "hints": [
+    "distract は自分から 6 マス以内の地点に物音を立てる。見張りはその場所へ行き、3 tick 見てから戻る。",
+    "corner から distract noise_spot → wait 3 → move jewel → steal → move exit。見張りは左へ行くので、右側は背中側。",
+    "--- thief_a ---\nmove corner\ndistract noise_spot\nwait 3\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move corner\ndistract noise_spot\nwait 3\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

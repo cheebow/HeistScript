@@ -247,5 +247,7 @@
   "solution": {
     "thief_a": "move plate_a\nsignal vault\nwait until signal_received(got)\nwait until guard_near\nwait until guard_away\nmove door_w_in\nmove exit\nsignal out\n",
     "thief_b": "hide\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove plate_b\nsignal got\nwait until signal_received(out)\nwait until guard_near\nwait until guard_away\nmove door_e_in\nmove exit\n"
-  }
+  },
+  "chapter": "第4章 連携",
+  "difficulty": 4
 }

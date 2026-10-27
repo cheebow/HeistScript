@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_42",
+  "title": "見つかったら",
+  "chapter": "第2章 警備員の癖",
+  "difficulty": 3,
+  "description": "警備員の周期は読みにくい。見つかることもある。on spotted で「見つかったら通風口へ逃げて、安全になったら続きをする」保険をかけよう。",
+  "width": 16,
+  "height": 9,
+  "tiles": [
+    "################",
+    "#..............#",
+    "#..............#",
+    "#..............#",
+    "#......VV......#",
+    "#..............#",
+    "#..............#",
+    "#.............E#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "警備員は入れず、中は見えない。逃げ込む場所",
+      "id": "refuge",
+      "x": 7,
+      "y": 4,
+      "label": "通風口"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# まず普通に move jewel して見つかる tick を確かめ、on spotted のブロックを足す。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "警備員",
+      "description": "部屋の右半分を回る",
+      "id": "guard_1",
+      "x": 9,
+      "y": 4,
+      "direction": "up",
+      "patrolRoute": [
+        {
+          "x": 9,
+          "y": 1,
+          "waitTicks": 1
+        },
+        {
+          "x": 13,
+          "y": 1,
+          "waitTicks": 1
+        },
+        {
+          "x": 13,
+          "y": 6,
+          "waitTicks": 1
+        },
+        {
+          "x": 9,
+          "y": 6,
+          "waitTicks": 1
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 12,
+      "y": 3,
+      "required": true,
+      "label": "宝石",
+      "description": "警備員の周回路の中"
+    }
+  ],
+  "exit": {
+    "x": 14,
+    "y": 7
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "on",
+    "resume",
+    "if",
+    "while"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "on spotted",
+    "resume",
+    "safe"
+  ],
+  "goal": "見つかっても逃げ切って、宝石を取り出口へ。",
+  "firstStep": "まず普通に move jewel して見つかる tick を確かめ、on spotted のブロックを足す。",
+  "hints": [
+    "on spotted … end はプログラムのどこかに一つ書く。見つかった次の tick に今の命令を中断して始まり、resume で元の命令へ戻る。",
+    "on spotted の中で move refuge → wait until safe → wait until guard_away → resume。通風口に入れば見失い、捜索が終わって離れれば safe になる。steal の途中で中断されたときのために、宝石をまだ持っていなければ move jewel してから resume。",
+    "--- thief_a ---\nmove jewel\nsteal jewel\nmove exit\n\non spotted\n  move refuge\n  wait until safe\n  wait until guard_away\n  if not has_treasure\n    move jewel\n  end\n  resume\nend\n"
+  ],
+  "solution": {
+    "thief_a": "move jewel\nsteal jewel\nmove exit\n\non spotted\n  move refuge\n  wait until safe\n  wait until guard_away\n  if not has_treasure\n    move jewel\n  end\n  resume\nend\n"
+  }
+}

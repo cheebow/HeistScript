@@ -203,5 +203,7 @@
   "solution": {
     "thief_a": "move door_in\nwait 10\nmove plate\nsignal ready\nwait until signal_received(done)\nwait 14\nmove exit\n",
     "thief_b": "move corner_ne\nmove nook\nwait until signal_received(ready)\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove nook\nsignal done\nmove corner_ne\nmove exit\n"
-  }
+  },
+  "chapter": "第6章 総合",
+  "difficulty": 4
 }
