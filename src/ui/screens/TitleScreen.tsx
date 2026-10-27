@@ -47,6 +47,8 @@ export function TitleScreen({ hasProgress, onStart, onContinue }: TitleScreenPro
               使用ライブラリ: Phaser 3 (MIT), Monaco Editor (MIT), React (MIT), Vite (MIT)。
               <br />
               本作のコードは MIT License で公開されています。
+              <br />
+              &copy; 2026 CHEEBOW
             </p>
             <div className="modal-actions">
               <button onClick={() => setCredits(false)}>閉じる</button>

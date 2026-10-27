@@ -121,3 +121,7 @@ stages/          ステージ JSON
 tests/core       Vitest / tests/e2e Playwright
 scripts/sim.ts   ステージ検証 CLI
 ```
+
+---
+
+© 2026 CHEEBOW

@@ -8,7 +8,7 @@
     <meta property="og:title" content="HeistScript — 怪盗団にスクリプトで指令を出すステルスパズル" />
     <meta property="og:description" content="怪盗団に指令を書け。警備の目をかいくぐり、宝を盗み、全員で脱出せよ。全 23 ステージ、無料・ブラウザだけで遊べる。" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="./shot-play.jpg" />
+    <meta property="og:image" content="./shot-play.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <style>
       :root {
@@ -36,7 +36,7 @@
       .cta { display: inline-block; background: var(--accent); color: #0f1419; font-weight: 700; padding: 12px 28px; border-radius: 6px; text-decoration: none; font-size: 18px; }
       .cta:hover { filter: brightness(1.08); }
       .sub { color: var(--muted); font-size: 13px; margin-top: 12px; }
-      .shot { width: 100%; border: 1px solid var(--border); border-radius: 6px; display: block; background: #000; }
+      .shot { width: 100%; height: auto; border: 1px solid var(--border); border-radius: 6px; display: block; background: #000; }
       figure { margin: 24px 0; }
       figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; text-align: center; }
       h2 { font-size: 22px; margin: 48px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
@@ -53,6 +53,7 @@
       .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
       @media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
       footer { color: var(--muted); font-size: 13px; text-align: center; margin-top: 56px; border-top: 1px solid var(--border); padding-top: 20px; }
+      .copy { display: inline-block; margin-top: 10px; color: var(--text); letter-spacing: 0.04em; }
       .badge { display: inline-block; border: 1px solid var(--green); color: var(--green); border-radius: 3px; padding: 1px 8px; font-size: 12px; margin-left: 6px; vertical-align: middle; }
     </style>
   </head>
@@ -66,7 +67,7 @@
 
     <main class="wrap">
       <figure>
-        <img class="shot" src="./shot-play.jpg" alt="HeistScript のゲーム画面。左にコードエディタ、右にドット絵のマップ。警備員の視界が扇形で表示されている" />
+        <img class="shot" src="./shot-play.png" width="1440" height="900" alt="HeistScript のゲーム画面。左にコードエディタ、右にドット絵のマップ。警備員の視界が扇形で表示されている" />
         <figcaption>左でスクリプトを書き、右のマップで怪盗が動く。警備員の視界やカメラの範囲は常に表示される。</figcaption>
       </figure>
 
@@ -106,7 +107,7 @@
       </div>
 
       <figure>
-        <img class="shot" src="./shot-title.jpg" alt="HeistScript のタイトル画面" />
+        <img class="shot" src="./shot-title.png" width="1440" height="900" alt="HeistScript のタイトル画面" />
         <figcaption>タイトル画面。進み具合はブラウザに保存され、次に開いたときに続きから遊べる。</figcaption>
       </figure>
 
@@ -134,7 +135,8 @@
 
       <footer>
         HeistScript — 8 ビット風プログラミング・ステルスパズル<span class="badge">v1.0</span><br />
-        <a href="../">遊ぶ</a> ・ <a href="https://github.com/cheebow/HeistScript">GitHub</a>
+        <a href="../">遊ぶ</a> ・ <a href="https://github.com/cheebow/HeistScript">GitHub</a><br />
+        <span class="copy">&copy; 2026 CHEEBOW</span>
       </footer>
     </main>
   </body>
