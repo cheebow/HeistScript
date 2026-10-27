@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { buildShareInfo } from './share';
+
+/** ステージの読込/書出（自作ステージ）。ファイルを手で書き換える方式は難しすぎるため、ステージエディタができるまで無効にしておく */
+const ENABLE_STAGE_IO = false;
 import { compileScript } from '../core/hsl/compile';
 import type { HslError } from '../core/hsl/errors';
 import type { StageDefinition } from '../core/model/stage';
@@ -534,9 +537,11 @@ export function App() {
             <button className="subtle" onClick={() => setShowBriefing(true)} data-testid="btn-briefing" title="作戦ブリーフィングをもう一度見る">
               ブリーフィング
             </button>
-            <button className="subtle" onClick={() => setShowStageIO(true)} data-testid="btn-stage-io" title="ステージ JSON の読み込み・書き出し">
-              ステージの読込/書出
-            </button>
+            {ENABLE_STAGE_IO && (
+              <button className="subtle" onClick={() => setShowStageIO(true)} data-testid="btn-stage-io" title="ステージの読み込み・書き出し">
+                ステージの読込/書出
+              </button>
+            )}
           </div>
           <GameView
             world={previewWorld ?? initialWorld}
@@ -606,7 +611,7 @@ export function App() {
         )}
       </footer>
 
-      {showStageIO && (
+      {ENABLE_STAGE_IO && showStageIO && (
         <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="ステージの読込/書出" data-testid="stage-io-dialog">
           <div className="modal">
             <h2>ステージの読込 / 書出</h2>

@@ -30,7 +30,8 @@ test.describe('Phase 11 やり込み・カスタムステージ', () => {
     await expect(page.getByTestId('btn-load-best')).toBeVisible();
   });
 
-  test('カスタムステージを読み込んで試遊できる。不正な JSON は理由を表示', async ({ page }) => {
+  // ステージの読込/書出はステージエディタができるまで UI から外している（App.tsx の ENABLE_STAGE_IO）
+  test.skip('カスタムステージを読み込んで試遊できる。不正な JSON は理由を表示', async ({ page }) => {
     await page.goto('/#play');
     await waitHook(page);
     await page.getByTestId('btn-stage-io').click();

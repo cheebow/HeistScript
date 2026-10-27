@@ -55,9 +55,7 @@ test.describe('Phase 12 仕上げ', () => {
     await page.getByTestId('btn-briefing').click();
     await expect(page.getByTestId('briefing')).toBeVisible();
     await page.getByTestId('briefing-start').click();
-    await page.getByTestId('btn-stage-io').click();
-    await page.keyboard.press('Escape');
-    await expect(page.getByTestId('stage-io-dialog')).toBeHidden();
+    await expect(page.getByTestId('btn-stage-io')).toHaveCount(0); // 読込/書出はエディタ実装まで無効
   });
 
   test('#stage= で直接ステージを開ける', async ({ page }) => {
