@@ -24,7 +24,7 @@ for (const [w, h] of [
     test.use({ viewport: { width: w, height: h } });
     for (const stageId of ['stage_01', 'stage_05']) {
       test(`${stageId}: マップが領域内に収まり、怪盗をクリックすると選択される`, async ({ page }) => {
-        await page.goto('/');
+        await page.goto('/#play');
         await waitHook(page);
         await page.getByTestId('stage-select').selectOption(stageId);
         await page.waitForTimeout(300);
@@ -63,7 +63,7 @@ for (const [w, h] of [
 
 test.describe('Phase 8 操作', () => {
   test('オーバーレイを切り替えても結果と tick は変わらない', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     await page.getByTestId('stage-select').selectOption('stage_02');
     for (const [tid, src] of Object.entries(solution('stage_02'))) await setScript(page, tid, src);
@@ -81,7 +81,7 @@ test.describe('Phase 8 操作', () => {
   });
 
   test('失敗画面から原因の直前へ移動でき、ログ行クリックでシークできる', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     await page.getByTestId('stage-select').selectOption('stage_02');
     await setScript(page, 'thief_a', 'move jewel\nsteal jewel\nmove exit\n');
@@ -98,7 +98,7 @@ test.describe('Phase 8 操作', () => {
   });
 
   test('下部パネルの最小化と復元、演出を減らす設定の保存', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     await page.getByRole('button', { name: '最小化' }).click();
     await expect(page.getByTestId('bottom-restore')).toBeVisible();

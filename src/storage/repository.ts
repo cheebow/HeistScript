@@ -42,6 +42,8 @@ export interface SaveData {
     /** 0 = 自動 */
     zoom: 0 | 1 | 2 | 3 | 4;
     muted: boolean;
+    /** 0〜1 */
+    volume: number;
     speed: 1 | 2 | 4;
     lastStageId: string | null;
   };
@@ -52,7 +54,7 @@ export function defaultSaveData(): SaveData {
     schemaVersion: SAVE_SCHEMA_VERSION,
     stages: {},
     customStages: [],
-    settings: { showVision: true, showCameraVision: true, showPaths: true, reducedMotion: false, zoom: 0, muted: true, speed: 1, lastStageId: null },
+    settings: { showVision: true, showCameraVision: true, showPaths: true, reducedMotion: false, zoom: 0, muted: false, volume: 0.5, speed: 1, lastStageId: null },
   };
 }
 
@@ -104,6 +106,7 @@ export function sanitizeSaveData(raw: unknown): SaveData {
     if (typeof s.reducedMotion === 'boolean') d.settings.reducedMotion = s.reducedMotion;
     if (s.zoom === 0 || s.zoom === 1 || s.zoom === 2 || s.zoom === 3 || s.zoom === 4) d.settings.zoom = s.zoom;
     if (typeof s.muted === 'boolean') d.settings.muted = s.muted;
+    if (typeof s.volume === 'number' && s.volume >= 0 && s.volume <= 1) d.settings.volume = s.volume;
     if (s.speed === 1 || s.speed === 2 || s.speed === 4) d.settings.speed = s.speed;
     if (typeof s.lastStageId === 'string') d.settings.lastStageId = s.lastStageId;
   }

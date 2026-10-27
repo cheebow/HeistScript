@@ -14,8 +14,13 @@ async function typeInEditor(page: Page, text: string) {
   const lines = text.split('\n');
   for (let i = 0; i < lines.length; i++) {
     await page.keyboard.type(lines[i]!);
-    await page.waitForTimeout(350); // 補完ウィジェットの表示を待ってから閉じる（高負荷時の取りこぼし防止）
-    await page.keyboard.press('Escape');
+    // 補完ウィジェットが出ていれば閉じ、消えたことを確認してから改行（Enter で候補を確定しないように）
+    await page.waitForTimeout(250);
+    for (let attempt = 0; attempt < 5; attempt++) {
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(100);
+      if ((await page.locator('.suggest-widget.visible').count()) === 0) break;
+    }
     if (i < lines.length - 1) await page.keyboard.press('Enter');
   }
 }
@@ -28,7 +33,7 @@ async function setEditorText(page: Page, text: string) {
 
 test.describe('Stage 1', () => {
   test('エディタで修正→再生→クリア→結果画面', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await expect(page.getByTestId('btn-play')).toBeVisible();
     await expect(page.locator('.editor .monaco-editor')).toBeVisible();
     await typeInEditor(page, 'move jewel\nsteal jewel\nmove exit');
@@ -43,7 +48,7 @@ test.describe('Stage 1', () => {
   });
 
   test('エラーのあるコードは実行禁止で分かりやすいメッセージ', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await setEditorText(page, 'move vault\nsteal jewel');
     await expect(page.getByTestId('error-list')).toBeVisible();
     await expect(page.getByTestId('error-list')).toContainText('vault');
@@ -52,7 +57,7 @@ test.describe('Stage 1', () => {
   });
 
   test('一時停止→ステップ→巻き戻し→再再生で同じ状態', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await setEditorText(page, 'move jewel\nsteal jewel\nmove exit');
     // 1tick ずつ 5 回
     for (let i = 0; i < 5; i++) await page.getByTestId('btn-step').click();
@@ -72,7 +77,7 @@ test.describe('Stage 1', () => {
   });
 
   test('リロード後もコードとクリア記録が残る', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await setEditorText(page, 'move jewel\nsteal jewel\nmove exit');
     await page.getByRole('button', { name: 'x4' }).click();
     await page.getByTestId('btn-play').click();

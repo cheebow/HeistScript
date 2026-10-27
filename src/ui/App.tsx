@@ -10,6 +10,10 @@ import { describeTile } from './describeTile';
 import { formatHsl } from './format';
 import { explainThief } from './explain';
 import { DEFAULT_CONFIG } from '../core/model/config';
+import { audio, type SfxName } from '../game/audio';
+import { TitleScreen } from './screens/TitleScreen';
+import { StageSelect } from './screens/StageSelect';
+import { Briefing } from './screens/Briefing';
 import { GameView } from './GameView';
 import { ErrorList, HelpPanel, HintPanel, InspectorPanel, LogPanel } from './panels';
 import { setStageCompletions } from './monaco/setup';
@@ -32,7 +36,11 @@ export function App() {
     }
     return [...builtIn, ...custom];
   }, [customKey]);
-  const [stageId, setStageId] = useState<string>(() => save.settings.lastStageId && stages.some((s) => s.id === save.settings.lastStageId) ? save.settings.lastStageId : stages[0]!.id);
+  const [stageId, setStageId] = useState<string>(() => {
+    const m = /^#stage=([A-Za-z0-9_]+)/.exec(typeof window !== 'undefined' ? window.location.hash : '');
+    if (m && stages.some((s) => s.id === m[1])) return m[1]!;
+    return save.settings.lastStageId && stages.some((s) => s.id === save.settings.lastStageId) ? save.settings.lastStageId : stages[0]!.id;
+  });
   const stage = useMemo(() => stages.find((s) => s.id === stageId) ?? stages[0]!, [stages, stageId]);
   const [scripts, setScripts] = useState<Record<string, string>>(() => initialScripts(stage, save));
   const [activeThief, setActiveThief] = useState<string>(stage.thieves[0]!.id);
@@ -50,6 +58,13 @@ export function App() {
   const [breakpoints, setBreakpointsState] = useState<Record<string, Set<number>>>({});
   const [showResult, setShowResult] = useState(false);
   const [showStageIO, setShowStageIO] = useState(false);
+  // URL ハッシュ: #play でタイトルを飛ばしてゲーム画面、#stage=ID でそのステージを直接開く（テスト・共有用）
+  const initialHash = typeof window !== 'undefined' ? window.location.hash : '';
+  const [screen, setScreen] = useState<'title' | 'select' | 'game'>(initialHash.startsWith('#play') || initialHash.startsWith('#stage=') ? 'game' : 'title');
+  const [showBriefing, setShowBriefing] = useState(false);
+  const [muted, setMuted] = useState(save.settings.muted);
+  const [volume, setVolume] = useState(save.settings.volume);
+  const sfxIndexRef = useRef(0);
   const [importError, setImportError] = useState<string[] | null>(null);
   const [editorWidth, setEditorWidth] = useState(460);
   const editorManualRef = useRef(false);
@@ -89,8 +104,41 @@ export function App() {
       d.settings.reducedMotion = reducedMotion;
       d.settings.zoom = zoom as 0 | 1 | 2 | 3 | 4;
       d.settings.speed = ctl.speed;
+      d.settings.muted = muted;
+      d.settings.volume = volume;
     });
-  }, [stage.id, showVision, showCameraVision, showPaths, reducedMotion, zoom, ctl.speed, persist]);
+  }, [stage.id, showVision, showCameraVision, showPaths, reducedMotion, zoom, ctl.speed, muted, volume, persist]);
+
+  // 音: 設定の反映、BGM の切替、効果音
+  useEffect(() => {
+    audio.setMuted(muted);
+    audio.setVolume(volume);
+  }, [muted, volume]);
+  useEffect(() => {
+    audio.setBgm(screen !== 'game' ? 'plan' : ctl.status === 'running' && !ctl.isReplay ? 'infiltrate' : 'plan');
+  }, [screen, ctl.status, ctl.isReplay]);
+  useEffect(() => {
+    const unlock = () => audio.unlock();
+    window.addEventListener('pointerdown', unlock);
+    window.addEventListener('keydown', unlock);
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+  }, []);
+  useEffect(() => {
+    const logs = ctl.logs;
+    if (!ctl.run || ctl.isReplay) {
+      sfxIndexRef.current = logs.length;
+      return;
+    }
+    const SFX: Record<string, SfxName> = { STEAL: 'treasure', ALARM: 'alarm', SPOTTED: 'spotted', KNOCKOUT: 'knockout', HIDE: 'hide', CAPTURED: 'captured', SUCCESS: 'success', SIGNAL: 'signal', OPEN: 'door', DOOR_OPEN: 'door', GUARD_WAKE: 'wake', GUARD_REVIVE: 'wake' };
+    for (let i = sfxIndexRef.current; i < logs.length; i++) {
+      const name = SFX[logs[i]!.eventType];
+      if (name) audio.playSfx(name);
+    }
+    sfxIndexRef.current = logs.length;
+  }, [ctl.logs, ctl.run, ctl.isReplay]);
 
   // コンパイル結果（エラー表示用）
   const compileErrors = useMemo(() => {
@@ -144,7 +192,10 @@ export function App() {
       const compile = ctl.start(scripts, autoPlay);
       if (compile && !compile.ok) return;
       setShowResult(false);
-      if (autoPlay) setBanner((b) => ({ key: (b?.key ?? 0) + 1, text: '作戦開始' }));
+      if (autoPlay) {
+        setBanner((b) => ({ key: (b?.key ?? 0) + 1, text: '作戦開始' }));
+        audio.playSfx('start');
+      }
     },
     [ctl, scripts],
   );
@@ -284,6 +335,37 @@ export function App() {
     window.addEventListener('mouseup', up);
   };
 
+  // キーボード操作（エディタや入力欄にフォーカスがあるときは無効）
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      const active = document.activeElement as HTMLElement | null;
+      const inEditor = (el: HTMLElement | null) =>
+        !!el && (el.closest('.monaco-editor') !== null || el.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName) || el.classList.contains('native-edit-context'));
+      if (inEditor(t) || inEditor(active)) return;
+      if (e.key === 'Escape') {
+        setShowResult(false);
+        setShowStageIO(false);
+        return;
+      }
+      if (screen !== 'game' || showBriefing) return;
+      if (e.key === ' ') {
+        e.preventDefault();
+        if (ctl.status === 'running') ctl.pause();
+        else if (ctl.run && ctl.status !== 'finished') ctl.play();
+        else if (!hasErrors) startRun(true);
+      } else if (e.key === 'n' || e.key === 'N') {
+        if (hasErrors) return;
+        if (!ctl.run) startRun(false);
+        ctl.stepOnce();
+      } else if (e.key === 'r' || e.key === 'R') {
+        if (!hasErrors) startRun(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [screen, showBriefing, ctl, hasErrors, startRun]);
+
   const onBottomDragStart = (e: React.MouseEvent) => {
     e.preventDefault();
     const startY = e.clientY;
@@ -297,13 +379,30 @@ export function App() {
     window.addEventListener('mouseup', up);
   };
 
+  const builtInCount = getStages().length;
+  const hasProgress = Object.values(save.stages).some((p) => p.cleared || Object.keys(p.scripts).length > 0);
+  const openStage = (id: string) => {
+    setStageId(id);
+    setScreen('game');
+    setShowBriefing(true);
+    audio.playSfx('ui');
+  };
+
+  if (screen === 'title') {
+    return <TitleScreen hasProgress={hasProgress} onStart={() => { setScreen('select'); audio.playSfx('ui'); }} onContinue={() => openStage(stage.id)} />;
+  }
+  if (screen === 'select') {
+    return <StageSelect stages={stages} builtInCount={builtInCount} save={save} onSelect={openStage} onBack={() => setScreen('title')} />;
+  }
+
   return (
     <div className="app" style={{ ['--editor-width' as string]: `${editorWidth}px`, ['--bottom-height' as string]: bottomMinimized ? '34px' : `${bottomHeight}px` }}>
+      {showBriefing && <Briefing stage={stage} index={stages.findIndex((s) => s.id === stage.id)} onStart={() => { setShowBriefing(false); audio.playSfx('ui'); }} />}
       <header className="topbar">
-        <div className="brand">
+        <button className="brand subtle" onClick={() => setScreen('select')} title="ステージ選択へ戻る" data-testid="btn-to-select">
           <span className="logo">Heist</span>
           <span className="logo2">Script</span>
-        </div>
+        </button>
         <label className="stage-select">
           ステージ
           <select value={stage.id} onChange={(e) => setStageId(e.target.value)} data-testid="stage-select">
@@ -356,8 +455,15 @@ export function App() {
             {statusLabel}
           </span>
           <details className="menu">
-            <summary title="表示の設定">表示</summary>
+            <summary title="表示と音の設定">設定</summary>
             <div className="menu-body">
+              <label className="toggle">
+                <input type="checkbox" checked={!muted} onChange={(e) => setMuted(!e.target.checked)} data-testid="toggle-sound" /> 音を鳴らす
+              </label>
+              <label className="toggle">
+                音量
+                <input type="range" min={0} max={1} step={0.05} value={volume} onChange={(e) => setVolume(Number(e.target.value))} data-testid="volume" />
+              </label>
               <label className="toggle">
                 <input type="checkbox" checked={showVision} onChange={(e) => setShowVision(e.target.checked)} data-testid="toggle-guard-vision" /> 警備員の視界
               </label>
@@ -462,6 +568,9 @@ export function App() {
                 ベストのコードを読み込む
               </button>
             )}
+            <button className="subtle" onClick={() => setShowBriefing(true)} data-testid="btn-briefing" title="作戦ブリーフィングをもう一度見る">
+              ブリーフィング
+            </button>
             <button className="subtle" onClick={() => setShowStageIO(true)} data-testid="btn-stage-io" title="ステージ JSON の読み込み・書き出し">
               ステージの読込/書出
             </button>
@@ -682,7 +791,7 @@ export function App() {
                 閉じる（リプレイを見る）
               </button>
               {result.status === 'SUCCESS' && stages.findIndex((s) => s.id === stage.id) < stages.length - 1 && (
-                <button className="primary" onClick={() => { setShowResult(false); setStageId(stages[stages.findIndex((s) => s.id === stage.id) + 1]!.id); }} data-testid="result-next">
+                <button className="primary" onClick={() => { setShowResult(false); openStage(stages[stages.findIndex((s) => s.id === stage.id) + 1]!.id); }} data-testid="result-next">
                   次のステージへ
                 </button>
               )}

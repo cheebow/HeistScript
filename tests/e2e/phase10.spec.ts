@@ -13,7 +13,7 @@ async function getScript(page: Page, thiefId: string) {
 
 test.describe('Phase 10 学習体験', () => {
   test('構文エラー→修正→実行時エラー→修正→成功 が UI で完結する', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     // 1) 構文エラー（end 忘れ）
     await setScript(page, 'thief_a', 'if safe\nmove jewel\n');
@@ -38,7 +38,7 @@ test.describe('Phase 10 学習体験', () => {
   });
 
   test('整形ボタンでインデントが整う', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     await page.getByTestId('stage-select').selectOption('stage_05');
     await setScript(page, 'thief_a', 'on spotted\nmove safe_room\nresume\nend\nmove exit\n');
@@ -47,7 +47,7 @@ test.describe('Phase 10 学習体験', () => {
   });
 
   test('条件待ちの理由と述語の値が状態パネルに出る', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     await page.getByTestId('stage-select').selectOption('stage_05');
     await page.getByTestId('btn-step').click();
@@ -59,7 +59,7 @@ test.describe('Phase 10 学習体験', () => {
   });
 
   test('学習パネルとホバーヘルプ', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     await expect(page.getByTestId('learn-panel')).toContainText('学ぶ命令');
     await expect(page.getByTestId('learn-panel')).toContainText('最初の一歩');

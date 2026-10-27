@@ -63,4 +63,15 @@ Stage1 の縦切り（編集→実行→宝石取得→脱出→クリア）を�
 | 5. 複数人 | 完了 | 2怪盗・signal・イベント割込/resume・HANDLER_TIMEOUT、Stage5 |
 | 6. UXと完成 | ほぼ完了 | React+Phaser+Monaco、ログ/リプレイ/ブレークポイント、ヒント、保存、E2E。音は未実装 |
 
-未実装・今後: BGM/SFX、Phaser/Monaco のチャンク分割によるロード最適化、追加ステージ、固定 seed PRNG。詳細は README「未実装項目 / 既知の制限」。
+## Phase 7–12（ROADMAP_PHASE7_12.md、2026-10-27）
+
+| フェーズ | 状態 | 成果物 |
+|---|---|---|
+| 7. 実装監査・安定化 | 完了 | `docs/PHASE7_AUDIT.md`, `docs/PHASE7_TEST_RESULTS.md`、D-17 |
+| 8. 見やすさ・プレイ体験 | 完了 | `docs/PHASE8_PLAN.md`, `docs/PHASE8_RESULTS.md`、D-18 |
+| 9. ステルス AI・複数解法 | 完了 | `docs/PHASE9_PLAN.md`, `docs/PHASE9_RESULTS.md`、stage_06、D-19〜21 |
+| 10. HSL・エディタ・学習体験 | 完了 | `docs/PHASE10_PLAN.md`, `docs/PHASE10_RESULTS.md` |
+| 11. ステージ拡充・やり込み・エディタ | 完了（GUI エディタは後続） | `docs/PHASE11_PLAN.md`, `docs/PHASE11_RESULTS.md`, `docs/STAGES.md`、stage_07〜11、D-22 |
+| 12. 仕上げ・リリース準備 | 完了 | `docs/PHASE12_PLAN.md`, `docs/PHASE12_RESULTS.md`、LICENSE |
+
+未実装・今後: GUI ステージエディタ、固定 seed PRNG、Safari/Firefox の検証、音のバリエーション。

@@ -18,7 +18,7 @@ function solution(stageId: string): Record<string, string> {
 test.describe('ステージ2〜5', () => {
   for (const stageId of ['stage_02', 'stage_03', 'stage_04', 'stage_05']) {
     test(`${stageId}: サンプル解答で UI 上クリアできる`, async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/#play');
       await waitHook(page);
       await page.getByTestId('stage-select').selectOption(stageId);
       for (const [tid, src] of Object.entries(solution(stageId))) await setScript(page, tid, src);
@@ -30,7 +30,7 @@ test.describe('ステージ2〜5', () => {
   }
 
   test('stage_02: 無策だと捕まり、失敗画面に理由が出る', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     await page.getByTestId('stage-select').selectOption('stage_02');
     await setScript(page, 'thief_a', 'move jewel\nsteal jewel\nmove exit\n');
@@ -42,7 +42,7 @@ test.describe('ステージ2〜5', () => {
   });
 
   test('ヒントの最終段階はサンプルコードをエディタに入れられる', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     await page.getByTestId('stage-select').selectOption('stage_05');
     await page.getByTestId('hint-next').click();
@@ -59,7 +59,7 @@ test.describe('ステージ2〜5', () => {
   });
 
   test('ブレークポイントで実行前に停止する', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     await setScript(page, 'thief_a', 'move jewel\nsteal jewel\nmove exit\n');
     // 2行目のグリフマージンをクリックしてブレークポイント設定

@@ -14,7 +14,7 @@ async function getScript(page: Page, thiefId: string) {
 
 test.describe('Phase 11 やり込み・カスタムステージ', () => {
   test('クリア後にベストのコードを読み込める', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     await setScript(page, 'thief_a', 'move jewel\nsteal jewel\nmove exit\n');
     await page.getByRole('button', { name: 'x4' }).click();
@@ -31,7 +31,7 @@ test.describe('Phase 11 やり込み・カスタムステージ', () => {
   });
 
   test('カスタムステージを読み込んで試遊できる。不正な JSON は理由を表示', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     await page.getByTestId('btn-stage-io').click();
     // 不正: 出口が壁
@@ -58,7 +58,7 @@ test.describe('Phase 11 やり込み・カスタムステージ', () => {
 
   test('新ステージ 7〜11 がサンプル解答で UI 上クリアできる', async ({ page }) => {
     test.setTimeout(180_000);
-    await page.goto('/');
+    await page.goto('/#play');
     await waitHook(page);
     await page.getByRole('button', { name: 'x4' }).click();
     for (const id of ['stage_07', 'stage_09', 'stage_10', 'stage_11']) {
