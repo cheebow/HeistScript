@@ -28,7 +28,7 @@ describe('組み込みステージ', () => {
     it(`${s.id}: 同一コードで100回実行しても結果が一致する`, () => {
       const first = JSON.stringify(simulate(s, s.solution!).world);
       for (let i = 0; i < 99; i++) expect(JSON.stringify(simulate(s, s.solution!).world)).toBe(first);
-    });
+    }, 60_000); // 長いステージ（400 tick 超）は CI の遅い環境で 5 秒を超える
 
     it(`${s.id}: tick上限に達しても正常終了する`, () => {
       const scripts: Record<string, string> = {};
