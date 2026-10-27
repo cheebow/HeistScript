@@ -62,7 +62,7 @@ export function App() {
   const initialHash = typeof window !== 'undefined' ? window.location.hash : '';
   const [screen, setScreen] = useState<'title' | 'select' | 'game'>(initialHash.startsWith('#play') || initialHash.startsWith('#stage=') ? 'game' : 'title');
   const [showBriefing, setShowBriefing] = useState(false);
-  const [muted, setMuted] = useState(save.settings.muted);
+  const [soundOn, setSoundOn] = useState(save.settings.soundOn);
   const [volume, setVolume] = useState(save.settings.volume);
   const sfxIndexRef = useRef(0);
   const [importError, setImportError] = useState<string[] | null>(null);
@@ -104,16 +104,16 @@ export function App() {
       d.settings.reducedMotion = reducedMotion;
       d.settings.zoom = zoom as 0 | 1 | 2 | 3 | 4;
       d.settings.speed = ctl.speed;
-      d.settings.muted = muted;
+      d.settings.soundOn = soundOn;
       d.settings.volume = volume;
     });
-  }, [stage.id, showVision, showCameraVision, showPaths, reducedMotion, zoom, ctl.speed, muted, volume, persist]);
+  }, [stage.id, showVision, showCameraVision, showPaths, reducedMotion, zoom, ctl.speed, soundOn, volume, persist]);
 
   // 音: 設定の反映、BGM の切替、効果音
   useEffect(() => {
-    audio.setMuted(muted);
+    audio.setMuted(!soundOn);
     audio.setVolume(volume);
-  }, [muted, volume]);
+  }, [soundOn, volume]);
   useEffect(() => {
     audio.setBgm(screen !== 'game' ? 'plan' : ctl.status === 'running' && !ctl.isReplay ? 'infiltrate' : 'plan');
   }, [screen, ctl.status, ctl.isReplay]);
@@ -458,7 +458,7 @@ export function App() {
             <summary title="表示と音の設定">設定</summary>
             <div className="menu-body">
               <label className="toggle">
-                <input type="checkbox" checked={!muted} onChange={(e) => setMuted(!e.target.checked)} data-testid="toggle-sound" /> 音を鳴らす
+                <input type="checkbox" checked={soundOn} onChange={(e) => setSoundOn(e.target.checked)} data-testid="toggle-sound" /> 音を鳴らす（既定はオフ）
               </label>
               <label className="toggle">
                 音量

@@ -64,13 +64,14 @@ test.describe('Phase 12 仕上げ', () => {
     await page.goto('/#play');
     await waitHook(page);
     await page.locator('.menu summary').click();
-    await page.getByTestId('toggle-sound').uncheck();
+    await expect(page.getByTestId('toggle-sound')).not.toBeChecked(); // 既定はオフ
+    await page.getByTestId('toggle-sound').check();
     await page.getByTestId('volume').fill('0.2');
-    await expect.poll(async () => page.evaluate(() => localStorage.getItem('heistscript.save') ?? '')).toContain('"muted":true');
+    await expect.poll(async () => page.evaluate(() => localStorage.getItem('heistscript.save') ?? '')).toContain('"soundOn":true');
     await page.reload();
     await waitHook(page);
     await page.locator('.menu summary').click();
-    await expect(page.getByTestId('toggle-sound')).not.toBeChecked();
+    await expect(page.getByTestId('toggle-sound')).toBeChecked();
     await expect(page.getByTestId('volume')).toHaveValue('0.2');
   });
 
