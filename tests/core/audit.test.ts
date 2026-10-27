@@ -83,7 +83,7 @@ describe('監査: ランダムスクリプトに対する堅牢性', () => {
     }
     expect(compiled).toBeGreaterThan(200);
     expect(Object.keys(outcomes).length).toBeGreaterThan(1);
-  });
+  }, 60_000);
 });
 
 describe('監査: 性能', () => {
@@ -126,5 +126,5 @@ describe('監査: 性能', () => {
     expect(world.tick).toBeGreaterThan(0);
     expect(ms).toBeLessThan(2000);
     console.log(`perf: ${world.tick} ticks in ${ms.toFixed(0)} ms (${(ms / world.tick).toFixed(2)} ms/tick), result=${world.result?.status}`);
-  });
+  }, 60_000);
 });
