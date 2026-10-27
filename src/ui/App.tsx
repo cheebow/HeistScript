@@ -624,7 +624,7 @@ export function App() {
             </details>
             <div className="modal-actions" style={{ justifyContent: 'flex-start' }}>
               <label className="file-btn">
-                JSON を読み込む
+                ファイルを読み込む
                 <input
                   type="file"
                   accept="application/json,.json"
@@ -669,7 +669,7 @@ export function App() {
                 }}
                 data-testid="stage-export"
               >
-                現在のステージを書き出す
+                今のステージを書き出す
               </button>
               {!getStages().some((b) => b.id === stage.id) && (
                 <button
