@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HeistScript — 怪盗団にスクリプトで指令を出すステルスパズル</title>
+    <meta name="description" content="HeistScript は、怪盗団に小さなスクリプトで指令を書き、警備員やカメラをかいくぐって宝を盗む 8 ビット風のプログラミングパズル。ブラウザだけで遊べて、オフラインでも動きます。" />
+    <meta property="og:title" content="HeistScript — 怪盗団にスクリプトで指令を出すステルスパズル" />
+    <meta property="og:description" content="怪盗団に指令を書け。警備の目をかいくぐり、宝を盗み、全員で脱出せよ。全 23 ステージ、無料・ブラウザだけで遊べる。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="./shot-play.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <style>
+      :root {
+        --bg: #0d0f13;
+        --panel: #15171c;
+        --panel2: #1c1f26;
+        --border: #2a2e38;
+        --text: #e6e8ee;
+        --muted: #9aa1b1;
+        --accent: #8fb8d8;
+        --accent-text: #9fc3df;
+        --yellow: #f3d35a;
+        --green: #73cf93;
+        --red: #d8434e;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; background: var(--bg); color: var(--text); font-family: "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif; line-height: 1.7; }
+      a { color: var(--accent-text); }
+      code { font-family: ui-monospace, Menlo, Consolas, monospace; background: var(--panel2); padding: 1px 5px; border-radius: 3px; font-size: 0.95em; }
+      .wrap { max-width: 920px; margin: 0 auto; padding: 0 16px 64px; }
+      header { text-align: center; padding: 72px 16px 40px; background: radial-gradient(ellipse at 50% 0%, #1b2233 0%, var(--bg) 60%); }
+      .logo { font-size: clamp(40px, 8vw, 64px); font-weight: 700; letter-spacing: 0.06em; line-height: 1.1; }
+      .logo span:last-child { color: var(--accent-text); }
+      .tag { color: var(--muted); font-size: 18px; margin: 12px 0 28px; }
+      .cta { display: inline-block; background: var(--accent); color: #0f1419; font-weight: 700; padding: 12px 28px; border-radius: 6px; text-decoration: none; font-size: 18px; }
+      .cta:hover { filter: brightness(1.08); }
+      .sub { color: var(--muted); font-size: 13px; margin-top: 12px; }
+      .shot { width: 100%; border: 1px solid var(--border); border-radius: 6px; display: block; background: #000; }
+      figure { margin: 24px 0; }
+      figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; text-align: center; }
+      h2 { font-size: 22px; margin: 48px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+      .card { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 16px; }
+      .card h3 { margin: 0 0 6px; font-size: 16px; }
+      .card p { margin: 0; color: var(--muted); font-size: 14px; }
+      pre { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font-size: 14px; line-height: 1.6; }
+      pre .k { color: #c9a84c; }
+      pre .c { color: #6c7384; font-style: italic; }
+      pre .p { color: #9fc3df; }
+      ul { padding-left: 1.3em; }
+      li { margin: 4px 0; }
+      .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+      @media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
+      footer { color: var(--muted); font-size: 13px; text-align: center; margin-top: 56px; border-top: 1px solid var(--border); padding-top: 20px; }
+      .badge { display: inline-block; border: 1px solid var(--green); color: var(--green); border-radius: 3px; padding: 1px 8px; font-size: 12px; margin-left: 6px; vertical-align: middle; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo"><span>Heist</span><span>Script</span></div>
+      <p class="tag">怪盗団に指令を書け。警備の目をかいくぐり、宝を盗み、全員で脱出せよ。</p>
+      <a class="cta" href="../">ブラウザで遊ぶ（無料）</a>
+      <p class="sub">インストール不要・会員登録なし・オフラインでも動作。PC のブラウザ推奨（Chrome / Edge / Firefox / Safari）。</p>
+    </header>
+
+    <main class="wrap">
+      <figure>
+        <img class="shot" src="./shot-play.jpg" alt="HeistScript のゲーム画面。左にコードエディタ、右にドット絵のマップ。警備員の視界が扇形で表示されている" />
+        <figcaption>左でスクリプトを書き、右のマップで怪盗が動く。警備員の視界やカメラの範囲は常に表示される。</figcaption>
+      </figure>
+
+      <h2>どんなゲーム？</h2>
+      <p>
+        HeistScript は「考えるステルスゲーム」です。怪盗をキーで操作するのではなく、<strong>短いスクリプトで指令</strong>を書きます。
+        実行ボタンを押すと怪盗はその通りに動き、警備員の巡回や監視カメラの回転は毎回まったく同じ。
+        見つかったら、ログを読んで「どの tick に、なぜ見つかったか」を確かめ、コードを直してもう一度。乱数はありません。
+      </p>
+      <div class="two">
+        <pre><span class="c"># ロッカーで隠れ、警備員が離れたら宝石へ</span>
+<span class="k">move</span> locker_a
+<span class="k">hide</span>
+<span class="k">wait until</span> <span class="p">guard_away</span>
+<span class="k">move</span> jewel
+<span class="k">steal</span> jewel
+<span class="k">move</span> exit</pre>
+        <div>
+          <p>
+            命令は <code>move</code>・<code>wait</code>・<code>hide</code>・<code>steal</code> など十数個だけ。
+            <code>wait until guard_away</code> のように「条件が成立するまで待つ」書き方が中心で、プログラミングが初めてでも読めます。
+          </p>
+          <p>
+            エディタには補完とヒント、エラーの直し方が出ます。1 コマずつ進めたり、タイムラインを戻して見返したりもできます。
+          </p>
+        </div>
+      </div>
+
+      <h2>できること</h2>
+      <div class="grid">
+        <div class="card"><h3>隠れる・待つ・盗む</h3><p>ロッカーに隠れ、巡回の周期を読み、背後から近づく。基本はこの 3 つ。</p></div>
+        <div class="card"><h3>眠らせて運ぶ</h3><p>背後から警備員を気絶させ、担いで物陰に隠す。見つかれば仲間が起こしに来る。</p></div>
+        <div class="card"><h3>カメラ・レーザー・タイマー扉</h3><p>回転する監視カメラ、周期で作動するレーザー、開閉する扉。周期を数えて <code>wait</code> を合わせる。</p></div>
+        <div class="card"><h3>二人・三人で連携</h3><p>スイッチを押す役、おとり役、盗む役。<code>signal</code> で合図を送り合って順番を合わせる。</p></div>
+        <div class="card"><h3>通風口・鍵・物音</h3><p>怪盗だけが通れる通風口、施錠扉を開けるカードキー、<code>distract</code> で立てる物音。</p></div>
+        <div class="card"><h3>全 23 ステージ + 自作ステージ</h3><p>チュートリアルから総合問題まで。JSON でステージを作って読み込むこともできる。</p></div>
+      </div>
+
+      <figure>
+        <img class="shot" src="./shot-title.jpg" alt="HeistScript のタイトル画面" />
+        <figcaption>タイトル画面。進み具合はブラウザに保存され、次に開いたときに続きから遊べる。</figcaption>
+      </figure>
+
+      <h2>こんな人に</h2>
+      <ul>
+        <li>パズルゲームが好きで、「あと 1 tick 早ければ」をじっくり考えるのが楽しい人</li>
+        <li>プログラミングの「待つ・条件分岐・くり返し」を、手を動かしながら体で覚えたい人</li>
+        <li>音も派手な演出もない、静かに集中できるゲームを探している人</li>
+      </ul>
+
+      <h2>遊び方</h2>
+      <ol>
+        <li><a href="../">ゲームを開く</a>。タイトルで「はじめる」を押し、ステージ 1 を選ぶ。</li>
+        <li>作戦ブリーフィングで「学ぶ命令」「ゴール」「最初の一歩」を読む。</li>
+        <li>左のエディタに書いて「実行」。見つかったら下のログで原因の tick を確かめて直す。</li>
+        <li>行き詰まったら「ヒント」を 3 段階まで開ける。最後の段階は実行できるサンプルコード。</li>
+      </ol>
+
+      <h2>技術</h2>
+      <p>
+        TypeScript + React + Phaser 3 + Monaco Editor。固定 tick の決定的シミュレーションと、独自の小さな言語 HSL（Lexer / Parser / VM）で動いています。
+        ドット絵はすべてコードで生成したオリジナル素材。プレイヤーのコードは端末の外に送られません。
+        ソースコードは <a href="https://github.com/cheebow/HeistScript">GitHub</a> で MIT License として公開しています。
+      </p>
+
+      <footer>
+        HeistScript — 8 ビット風プログラミング・ステルスパズル<span class="badge">v1.0</span><br />
+        <a href="../">遊ぶ</a> ・ <a href="https://github.com/cheebow/HeistScript">GitHub</a>
+      </footer>
+    </main>
+  </body>
+</html>

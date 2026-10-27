@@ -198,6 +198,9 @@ button.link { background: transparent; border: none; color: var(--accent-text); 
 .title-logo2 { color: var(--accent-text); }
 .title-tag { color: var(--muted); margin: 8px 0 28px; }
 .title-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-bottom: 20px; }
+.title-links { display: flex; gap: 12px; align-items: center; }
+.subtle-link { color: var(--muted); font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+.subtle-link:hover { color: var(--text); }
 button.big { font-size: 16px; padding: 10px 28px; min-width: 220px; }
 .select-screen { justify-content: flex-start; padding: 24px; overflow: auto; }
 .select-header { display: flex; align-items: center; gap: 16px; width: 100%; max-width: 1100px; margin-bottom: 16px; }

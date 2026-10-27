@@ -25,9 +25,14 @@ export function TitleScreen({ hasProgress, onStart, onContinue }: TitleScreenPro
           <button className={hasProgress ? 'big' : 'primary big'} onClick={onStart} data-testid="title-start">
             {hasProgress ? 'ステージを選ぶ' : 'はじめる'}
           </button>
-          <button className="subtle" onClick={() => setCredits(true)}>
-            クレジット
-          </button>
+          <div className="title-links">
+            <a className="subtle-link" href="./about/" target="_blank" rel="noreferrer">
+              ゲームの紹介
+            </a>
+            <button className="subtle" onClick={() => setCredits(true)}>
+              クレジット
+            </button>
+          </div>
         </div>
         <p className="muted small">キーボード: Space 実行/一時停止、N 1コマ進める、R 最初に戻す、Esc 閉じる</p>
       </div>
