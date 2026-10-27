@@ -161,5 +161,21 @@
     "thief_a": "move corner\nwait until guard_near\nwait until guard_away\nmove behind\nknockout guard_1\ncarry guard_1\nmove vault_corner\ndrop\nmove jewel\nsteal jewel\nmove exit\n"
   },
   "chapter": "第2章 警備員の癖",
-  "difficulty": 3
+  "difficulty": 3,
+  "solutions": [
+    {
+      "id": "main",
+      "title": "想定解",
+      "scripts": {
+        "thief_a": "move corner\nwait until guard_near\nwait until guard_away\nmove behind\nknockout guard_1\ncarry guard_1\nmove vault_corner\ndrop\nmove jewel\nsteal jewel\nmove exit\n"
+      }
+    },
+    {
+      "id": "rush",
+      "title": "運ばずに急ぐ（見つかるが逃げ切る）",
+      "scripts": {
+        "thief_a": "move corner\nwait until guard_near\nwait until guard_away\nmove behind\nknockout guard_1\nmove jewel\nsteal jewel\nmove exit\n"
+      }
+    }
+  ]
 }

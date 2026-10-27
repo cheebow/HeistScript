@@ -13,6 +13,8 @@ export interface GameHandle {
   fitZoom(containerWidth: number, containerHeight: number): number;
   resize(containerWidth: number, containerHeight: number): void;
   showBanner(text: string, color?: string): void;
+  /** 成功演出 */
+  celebrate(): void;
   /** 画面座標（clientX/Y）からタイル座標を求める。キャンバス外なら null */
   tileAt(clientX: number, clientY: number): { x: number; y: number } | null;
   destroy(): void;
@@ -59,6 +61,9 @@ export function createGame(parent: HTMLElement, width: number, height: number, c
     },
     showBanner(text, color) {
       scene.showBanner(text, color);
+    },
+    celebrate() {
+      scene.celebrate();
     },
     tileAt(clientX, clientY) {
       const rect = game.canvas.getBoundingClientRect();

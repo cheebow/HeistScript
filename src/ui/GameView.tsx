@@ -24,10 +24,12 @@ export interface GameViewProps {
   onZoomApplied?: (zoom: number, maxFit: number) => void;
   /** バナー表示要求（key が変わるたびに表示） */
   banner?: { key: number; text: string; color?: string } | null;
+  /** 成功演出の要求（key が変わるたびに再生） */
+  celebrate?: number;
 }
 
 /** Phaser キャンバスを保持する React コンテナ */
-export function GameView({ world, options, version, effects = true, onSelect, describeTile, zoom, onZoomApplied, banner }: GameViewProps) {
+export function GameView({ world, options, version, effects = true, onSelect, describeTile, zoom, onZoomApplied, banner, celebrate = 0 }: GameViewProps) {
   const onZoomRef = useRef(onZoomApplied);
   onZoomRef.current = onZoomApplied;
   const zoomRef = useRef(zoom);
@@ -68,6 +70,10 @@ export function GameView({ world, options, version, effects = true, onSelect, de
   useEffect(() => {
     if (banner && banner.key > 0) handleRef.current?.showBanner(banner.text, banner.color);
   }, [banner]);
+
+  useEffect(() => {
+    if (celebrate > 0) handleRef.current?.celebrate();
+  }, [celebrate]);
 
   useEffect(() => {
     const el = containerRef.current;

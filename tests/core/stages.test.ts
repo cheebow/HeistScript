@@ -175,6 +175,15 @@ describe('組み込みステージ', () => {
     }
   });
 
+  it('登録済みの別解（solutions）はすべて成功する', () => {
+    for (const s of stages) {
+      for (const sol of s.solutions ?? []) {
+        const { world } = simulate(s, sol.scripts);
+        expect(world.result?.status, `${s.id}/${sol.id}`).toBe('SUCCESS');
+      }
+    }
+  });
+
   it('初期スクリプトのままではどのステージもクリアできない', () => {
     for (const s of stages) {
       const scripts: Record<string, string> = {};

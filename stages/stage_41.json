@@ -92,7 +92,17 @@
     "move",
     "steal",
     "wait",
-    "hide"
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
   ],
   "challenges": [
     {
@@ -114,5 +124,21 @@
   ],
   "solution": {
     "thief_a": "move locker_a\nhide\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nmove locker_b\nhide\nwait until guard_near\nwait until guard_away\nmove gate\nmove jewel\nsteal jewel\nmove exit\n"
-  }
+  },
+  "solutions": [
+    {
+      "id": "main",
+      "title": "想定解",
+      "scripts": {
+        "thief_a": "move locker_a\nhide\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nmove locker_b\nhide\nwait until guard_near\nwait until guard_away\nmove gate\nmove jewel\nsteal jewel\nmove exit\n"
+      }
+    },
+    {
+      "id": "one_locker",
+      "title": "ロッカーを一つだけ使う",
+      "scripts": {
+        "thief_a": "move locker_a\nhide\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nmove gate\nmove jewel\nsteal jewel\nmove exit\n"
+      }
+    }
+  ]
 }

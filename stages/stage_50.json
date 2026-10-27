@@ -30,6 +30,13 @@
       "x": 2,
       "y": 4,
       "label": "下の部屋の左"
+    },
+    {
+      "id": "behind",
+      "x": 8,
+      "y": 5,
+      "label": "見張りの真後ろ",
+      "description": "ここから knockout が届く"
     }
   ],
   "thieves": [
@@ -80,7 +87,17 @@
     "move",
     "steal",
     "wait",
-    "distract"
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
   ],
   "challenges": [
     {

@@ -175,5 +175,21 @@
     "thief_a": "move vent_e\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove vent_e\nmove vent_w\nwait until guard_near\nwait until guard_away\nmove exit\n"
   },
   "chapter": "第5章 通風口・鍵・物音",
-  "difficulty": 2
+  "difficulty": 2,
+  "solutions": [
+    {
+      "id": "main",
+      "title": "想定解",
+      "scripts": {
+        "thief_a": "move vent_e\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove vent_e\nmove vent_w\nwait until guard_near\nwait until guard_away\nmove exit\n"
+      }
+    },
+    {
+      "id": "spotted",
+      "title": "見つかったら通風口へ（on spotted）",
+      "scripts": {
+        "thief_a": "move vent_e\nmove jewel\nsteal jewel\nmove vent_e\nmove vent_w\nmove exit\n\non spotted\n  move vent_e\n  wait until safe\n  resume\nend\n"
+      }
+    }
+  ]
 }

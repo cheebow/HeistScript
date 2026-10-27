@@ -24,6 +24,13 @@
       "x": 1,
       "y": 5,
       "label": "左の壁ぎわ（下）"
+    },
+    {
+      "id": "behind",
+      "x": 7,
+      "y": 4,
+      "label": "見張りの真後ろ",
+      "description": "ここから knockout が届く"
     }
   ],
   "thieves": [
@@ -74,7 +81,18 @@
   "unlockedCommands": [
     "move",
     "steal",
-    "wait"
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
   ],
   "challenges": [
     {
@@ -101,5 +119,21 @@
   ],
   "solution": {
     "thief_a": "move side\nmove jewel\nsteal jewel\nmove exit\n"
-  }
+  },
+  "solutions": [
+    {
+      "id": "main",
+      "title": "想定解",
+      "scripts": {
+        "thief_a": "move side\nmove jewel\nsteal jewel\nmove exit\n"
+      }
+    },
+    {
+      "id": "knockout",
+      "title": "背後から眠らせる",
+      "scripts": {
+        "thief_a": "move side\nmove behind\nknockout guard_1\nmove jewel\nsteal jewel\nmove exit\n"
+      }
+    }
+  ]
 }

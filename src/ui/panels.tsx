@@ -5,6 +5,7 @@ import type { HslError } from '../core/hsl/errors';
 import { formatHslError } from '../core/hsl/errors';
 import { COMMAND_DOCS, PREDICATE_DOCS } from './monaco/setup';
 import { labelOf, stageEntities } from './stageInfo';
+import { describePeriodic, periodicInfos } from '../core/sim/timing';
 import type { ThiefExplanation } from './explain';
 
 export type LogFilter = 'all' | 'important' | 'thief' | 'guard' | 'error';
@@ -122,6 +123,7 @@ export function InspectorPanel({ world, stage, selectedId, onSelect, explanation
             宝物 {taken.length}/{required.length}、全員が出口へ{world.alarmActive ? '（警戒中）' : ''}
           </dd>
         </dl>
+        <PeriodicList world={world} stage={stage} />
         {thief && <ThiefInfo thief={thief} vm={vm} world={world} label={labelOf(stage, thief.id)} />}
         {thief && explanation && <ExplanationView ex={explanation} />}
         {guard && <GuardInfo guard={guard} world={world} label={labelOf(stage, guard.id)} />}
@@ -130,13 +132,32 @@ export function InspectorPanel({ world, stage, selectedId, onSelect, explanation
             <dt>カメラ</dt>
             <dd>
               {labelOf(stage, camera.id)}（{camera.id}）位置 ({camera.x},{camera.y}) 向き {camera.direction} 範囲 {camera.range}
-              {camera.rotateEveryTicks > 0 ? ` 回転 ${camera.rotateEveryTicks}tick` : ' 固定'}
+              {camera.rotateEveryTicks > 0 ? ` 回転 ${camera.rotateEveryTicks}tick ごと` : ' 固定'}
             </dd>
           </dl>
         )}
         {!thief && !guard && !camera && <p className="muted">マップ上の人物をクリックするか、上のボタンで選択してください。</p>}
       </div>
     </section>
+  );
+}
+
+/** 周期のある設備（カメラ・レーザー・タイマー扉）の「次に変わるまで」。数えなくても分かるようにする */
+function PeriodicList({ world, stage }: { world: WorldState; stage: StageDefinition }) {
+  const infos = periodicInfos(world);
+  if (infos.length === 0) return null;
+  return (
+    <dl className="kv periodic" data-testid="periodic-list">
+      <dt>周期</dt>
+      <dd>
+        {infos.map((i) => (
+          <div key={i.id} className="periodic-row">
+            <span className="periodic-name">{labelOf(stage, i.id)}</span>
+            <span className={`periodic-text ${i.remaining <= 2 ? 'soon' : ''}`}>{describePeriodic(i)}</span>
+          </div>
+        ))}
+      </dd>
+    </dl>
   );
 }
 

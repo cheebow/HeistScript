@@ -81,7 +81,17 @@
     "move",
     "steal",
     "wait",
-    "open"
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
   ],
   "challenges": [
     {

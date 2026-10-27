@@ -55,6 +55,9 @@ export function App() {
   const [zoom, setZoom] = useState<number>(save.settings.zoom);
   const [appliedZoom, setAppliedZoom] = useState<{ zoom: number; maxFit: number }>({ zoom: 1, maxFit: 1 });
   const [banner, setBanner] = useState<{ key: number; text: string; color?: string } | null>(null);
+  const [celebrateKey, setCelebrateKey] = useState(0);
+  /** 今回のクリアで何が新しかったか（結果画面で強調する） */
+  const [clearInfo, setClearInfo] = useState<{ first: boolean; prevBest: number | null; newChallenges: string[] } | null>(null);
   const [bottomHeight, setBottomHeight] = useState(() => Math.max(160, Math.min(300, Math.round(window.innerHeight * 0.26))));
   const [bottomMinimized, setBottomMinimized] = useState(false);
   const [sideTab, setSideTab] = useState<SideTab>('hint');
@@ -168,13 +171,47 @@ export function App() {
 
   // 終了時の結果表示と記録
   const result = ctl.run?.world.result ?? null;
+  const handledRunRef = useRef<unknown>(null);
+  const resultTimerRef = useRef<number | null>(null);
+  const saveRef = useRef(save);
+  saveRef.current = save;
+  // 実行がリセットされたら、出しかけの結果画面のタイマーを止める
+  useEffect(() => {
+    return () => {
+      if (resultTimerRef.current !== null) window.clearTimeout(resultTimerRef.current);
+      resultTimerRef.current = null;
+    };
+  }, [ctl.run]);
   useEffect(() => {
     if (ctl.status === 'finished' && result) {
-      setShowResult(true);
+      if (handledRunRef.current === ctl.run) return; // 同じ実行結果を二度処理しない（保存で save が変わっても再実行しない）
+      handledRunRef.current = ctl.run;
+      let timer: number | null = null;
+      if (result.status === 'SUCCESS') {
+        // 出口に着いた瞬間を見せてから結果を出す（音は使わないので、見せ方で達成感を補う）
+        setBanner((b) => ({ key: (b?.key ?? 0) + 1, text: '作戦成功', color: '#73cf93' }));
+        setCelebrateKey((k) => k + 1);
+        timer = window.setTimeout(() => setShowResult(true), reducedMotion ? 400 : 1600);
+        resultTimerRef.current = timer;
+      } else {
+        setShowResult(true);
+      }
       if (result.status === 'SUCCESS' && ctl.run) {
         const ticks = ctl.run.world.tick;
         const stats = ctl.run.world.stats;
         const usedScripts = { ...scripts };
+        const before = saveRef.current.stages[stage.id];
+        const prevBest = before?.bestTicks ?? null;
+        const newChallenges: string[] = [];
+        for (const c of stage.challenges) {
+          const ok =
+            (c.type === 'maxTicks' && c.value !== undefined && ticks <= c.value) ||
+            (c.type === 'noSpotted' && stats.spottedCount === 0) ||
+            (c.type === 'noKnockout' && stats.knockoutCount === 0) ||
+            (c.type === 'noAlarm' && stats.alarmCount === 0);
+          if (ok && !(before?.challenges ?? []).includes(c.id)) newChallenges.push(c.id);
+        }
+        setClearInfo({ first: !before?.cleared, prevBest, newChallenges });
         persist((d) => {
           const p = d.stages[stage.id] ?? { scripts: {}, cleared: false, bestTicks: null, challenges: [] };
           p.cleared = true;
@@ -198,8 +235,9 @@ export function App() {
           d.stages[stage.id] = p;
         });
       }
+      void timer;
     }
-  }, [ctl.status, result, ctl.run, persist, stage]);
+  }, [ctl.status, result, ctl.run, persist, stage, reducedMotion]);
 
   const toggleBreakpoint = useCallback(
     (thiefId: string, line: number) => {
@@ -556,6 +594,7 @@ export function App() {
             zoom={zoom}
             onZoomApplied={(z, maxFit) => setAppliedZoom((prev) => (prev.zoom === z && prev.maxFit === maxFit ? prev : { zoom: z, maxFit }))}
             banner={banner}
+            celebrate={celebrateKey}
           />
           {ctl.isReplay && <div className="replay-banner">過去のコマを表示中（閲覧専用）。やり直すには「最初に戻す」</div>}
           <div className="legend" aria-label="凡例">
@@ -761,6 +800,15 @@ export function App() {
                 </tr>
               </tbody>
             </table>
+            {result.status === 'SUCCESS' && clearInfo && (clearInfo.first || (clearInfo.prevBest !== null && ctl.run.world.tick < clearInfo.prevBest) || clearInfo.newChallenges.length > 0) && (
+              <div className="clear-badges" data-testid="clear-badges">
+                {clearInfo.first && <span className="clear-badge">初クリア！</span>}
+                {clearInfo.prevBest !== null && ctl.run.world.tick < clearInfo.prevBest && <span className="clear-badge">自己ベスト更新（{clearInfo.prevBest} → {ctl.run.world.tick} tick）</span>}
+                {clearInfo.newChallenges.map((id) => (
+                  <span key={id} className="clear-badge star">★ {stage.challenges.find((c) => c.id === id)?.title ?? id}</span>
+                ))}
+              </div>
+            )}
             {result.status === 'SUCCESS' && stage.challenges.length > 0 && (
               <ul className="challenges">
                 {stage.challenges.map((c) => (

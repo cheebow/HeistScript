@@ -68,6 +68,13 @@
       "y": 10,
       "label": "左下のロッカー",
       "description": "宝石のすぐそば。hide で隠れて見張りが戻るのを待つ"
+    },
+    {
+      "id": "behind",
+      "x": 9,
+      "y": 8,
+      "label": "見張りの真後ろ",
+      "description": "ここから knockout が届く"
     }
   ],
   "thieves": [

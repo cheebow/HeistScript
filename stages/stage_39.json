@@ -86,9 +86,17 @@
     "move",
     "steal",
     "wait",
+    "hide",
+    "if",
+    "while",
     "knockout",
     "carry",
-    "drop"
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
   ],
   "challenges": [
     {
@@ -116,5 +124,21 @@
   ],
   "solution": {
     "thief_a": "move behind\nknockout guard_1\ncarry guard_1\nmove inside\ndrop\nmove jewel\nsteal jewel\nmove exit\n"
-  }
+  },
+  "solutions": [
+    {
+      "id": "main",
+      "title": "想定解",
+      "scripts": {
+        "thief_a": "move behind\nknockout guard_1\ncarry guard_1\nmove inside\ndrop\nmove jewel\nsteal jewel\nmove exit\n"
+      }
+    },
+    {
+      "id": "rush",
+      "title": "運ばずに 30 tick で駆け抜ける",
+      "scripts": {
+        "thief_a": "move behind\nknockout guard_1\nmove jewel\nsteal jewel\nmove exit\n"
+      }
+    }
+  ]
 }

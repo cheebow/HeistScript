@@ -95,10 +95,17 @@
     "move",
     "steal",
     "wait",
-    "open",
     "hide",
     "if",
-    "while"
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
   ],
   "challenges": [
     {

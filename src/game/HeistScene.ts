@@ -392,6 +392,27 @@ export class HeistScene extends Phaser.Scene {
     t.setPosition(x, y).setAlpha(strong ? 1 : 0.75);
   }
 
+  /** 成功演出: 出口で火花と星が続き、怪盗のまわりに星が回る（1.5 秒ほど）。音は使わない */
+  celebrate(): void {
+    if (!this.ready || !this.world || this.options.reducedMotion) return;
+    const w = this.world;
+    const ex = w.exit.x * TILE + TILE / 2;
+    const ey = w.exit.y * TILE + TILE / 2;
+    const colors = [0xf3d35a, 0x73cf93, 0x4fc7dc, 0xf0a39b];
+    for (let i = 0; i < 6; i++) {
+      this.time.delayedCall(i * 220, () => {
+        this.sparkle(ex + (i % 2 ? 10 : -10), ey - (i % 3) * 6, colors[i % colors.length]!, 10);
+        if (i % 2 === 0) this.ring(ex, ey, colors[(i + 1) % colors.length]!);
+      });
+    }
+    for (const t of w.thieves) {
+      const pos = this.thiefRenderPos(w, t);
+      this.orbitStars(pos.px + TILE / 2, pos.py + 8);
+      this.time.delayedCall(300, () => this.popMark(pos.px + TILE / 2, pos.py - 4, 'mark_star', 1.4));
+    }
+    this.flash(0x73cf93, 0.12, 500);
+  }
+
   /** 作戦開始バナー（実行開始時に UI から呼ぶ） */
   showBanner(text: string, color = '#9fc3df'): void {
     if (!this.ready || !this.world) return;

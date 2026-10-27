@@ -77,7 +77,17 @@
     "move",
     "steal",
     "wait",
-    "signal"
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
   ],
   "challenges": [
     {
@@ -101,5 +111,23 @@
   "solution": {
     "thief_a": "move plate\nwait until signal_received(done)\nmove exit\n",
     "thief_b": "move jewel\nsteal jewel\nmove exit\nsignal done\n"
-  }
+  },
+  "solutions": [
+    {
+      "id": "main",
+      "title": "想定解",
+      "scripts": {
+        "thief_a": "move plate\nwait until signal_received(done)\nmove exit\n",
+        "thief_b": "move jewel\nsteal jewel\nmove exit\nsignal done\n"
+      }
+    },
+    {
+      "id": "b_first",
+      "title": "B が先に扉の前で待つ",
+      "scripts": {
+        "thief_a": "wait 10\nmove plate\nwait until signal_received(done)\nmove exit\n",
+        "thief_b": "move jewel\nsteal jewel\nmove exit\nsignal done\n"
+      }
+    }
+  ]
 }

@@ -36,3 +36,20 @@ test('ステージ選択は章ごとに見出しが出て、難しさの★が�
   await expect(page.locator('.chapter-head')).toHaveCount(7);
   await expect(page.getByTestId('stage-card-stage_24').locator('.stage-diff')).toHaveText('★☆☆☆☆');
 });
+
+test('周期のある設備は「N tick 後に」が表示され、成功時は演出のあとに結果が出てバッジが付く', async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.goto('/#stage=stage_29');
+  await waitHook(page);
+  await page.evaluate(() => localStorage.clear());
+  await page.goto('/#stage=stage_29');
+  await waitHook(page);
+  const sol = JSON.parse(readFileSync('stages/stage_29.json', 'utf8')).solution as Record<string, string>;
+  await setScript(page, 'thief_a', sol.thief_a!);
+  await page.getByRole('button', { name: 'x4' }).click();
+  await page.getByTestId('btn-play').click();
+  await expect(page.getByTestId('periodic-list')).toContainText('tick 後に');
+  await expect(page.getByTestId('result-dialog')).toContainText('ミッション成功', { timeout: 60_000 });
+  await expect(page.getByTestId('clear-badges')).toContainText('初クリア');
+  await expect(page.getByTestId('share-box')).toBeVisible();
+});

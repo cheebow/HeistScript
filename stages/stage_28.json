@@ -91,7 +91,18 @@
   "unlockedCommands": [
     "move",
     "steal",
-    "wait"
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
   ],
   "challenges": [
     {
@@ -113,5 +124,21 @@
   ],
   "solution": {
     "thief_a": "move gap\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
-  }
+  },
+  "solutions": [
+    {
+      "id": "main",
+      "title": "想定解",
+      "scripts": {
+        "thief_a": "move gap\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
+      }
+    },
+    {
+      "id": "follow",
+      "title": "通り過ぎた背中を追う",
+      "scripts": {
+        "thief_a": "move gap\nwait until guard_near\nwait until guard_away\nwait 10\nmove jewel\nsteal jewel\nmove exit\n"
+      }
+    }
+  ]
 }

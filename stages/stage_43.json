@@ -96,8 +96,16 @@
     "steal",
     "wait",
     "hide",
-    "on",
-    "resume"
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
   ],
   "challenges": [
     {

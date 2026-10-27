@@ -169,5 +169,21 @@
   ],
   "solution": {
     "thief_a": "move locker\nhide\nwait 7\nmove door_top\nwait 0\nmove gap\nmove jewel\nsteal jewel\nmove exit\n"
-  }
+  },
+  "solutions": [
+    {
+      "id": "main",
+      "title": "想定解",
+      "scripts": {
+        "thief_a": "move locker\nhide\nwait 7\nmove door_top\nwait 0\nmove gap\nmove jewel\nsteal jewel\nmove exit\n"
+      }
+    },
+    {
+      "id": "predicate",
+      "title": "警備員の通過を guard_near で待つ",
+      "scripts": {
+        "thief_a": "move locker\nhide\nwait 7\nmove door_top\nwait until guard_near\nwait until guard_away\nmove gap\nmove jewel\nsteal jewel\nmove exit\n"
+      }
+    }
+  ]
 }
