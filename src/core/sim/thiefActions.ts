@@ -3,7 +3,10 @@ import { findGuard, findObject, log, type SimContext } from './context';
 import { isHidingSpot, isExitTile, occupiedTiles, posKey, samePos } from './grid';
 import { tryStep } from './movement';
 import { findPath } from './astar';
-import { carryPreconditionError, haltVm, knockoutPreconditionError, openPreconditionError } from './vm';
+import { carryPreconditionError, haltVm, knockoutPreconditionError, noisePosition, openPreconditionError } from './vm';
+import { enterInvestigate } from './guardAi';
+import { isGuardActive } from './context';
+import { manhattan } from './grid';
 import { isAdjacentOrSame } from './targets';
 
 /** 運搬中の警備員を怪盗の位置に追従させる */
@@ -104,13 +107,14 @@ function completeTimedAction(world: WorldState, vm: VmState, thief: Thief, actio
   switch (action.command) {
     case 'steal': {
       const obj = findObject(world, action.targetId);
-      if (!obj || obj.type !== 'treasure' || obj.takenBy !== null || !isAdjacentOrSame(thief, obj)) {
-        haltVm(world, vm, 'ACTION_FAILED', `${line}行目: steal ${action.targetId} に失敗しました（宝物から離れたか、すでに取得済み）`, line);
+      if (!obj || (obj.type !== 'treasure' && obj.type !== 'key') || obj.takenBy !== null || !isAdjacentOrSame(thief, obj)) {
+        haltVm(world, vm, 'ACTION_FAILED', `${line}行目: steal ${action.targetId} に失敗しました（対象から離れたか、すでに取得済み）`, line);
         return;
       }
       obj.takenBy = thief.id;
       thief.inventory.push(obj.id);
-      log(world, thief.id, 'STEAL', `${obj.id} を手に入れた！`, line, 'success');
+      if (obj.type === 'key') log(world, thief.id, 'STEAL', `鍵 ${obj.id} を手に入れた（扉 ${obj.unlocks} を開けられる）`, line, 'success');
+      else log(world, thief.id, 'STEAL', `${obj.id} を手に入れた！`, line, 'success');
       return;
     }
     case 'hide': {
@@ -176,13 +180,31 @@ function completeTimedAction(world: WorldState, vm: VmState, thief: Thief, actio
     }
     case 'open': {
       const door = findObject(world, action.targetId);
-      const reason = door && door.type === 'door' ? openPreconditionError(thief, door) : '扉が見つかりません';
+      const reason = door && door.type === 'door' ? openPreconditionError(world, thief, door) : '扉が見つかりません';
       if (!door || reason) {
         haltVm(world, vm, 'ACTION_FAILED', `${line}行目: open ${action.targetId} に失敗しました（${reason}）`, line);
         return;
       }
+      const wasLocked = door.locked;
+      door.locked = false;
       door.open = true;
-      log(world, thief.id, 'OPEN', `${door.id} を開けた`, line, 'success');
+      log(world, thief.id, 'OPEN', wasLocked ? `鍵で ${door.id} を開けた` : `${door.id} を開けた`, line, 'success');
+      return;
+    }
+    case 'distract': {
+      const pos = noisePosition(world, action.targetId);
+      if (!pos) {
+        haltVm(world, vm, 'ACTION_FAILED', `${line}行目: distract ${action.targetId} に失敗しました（地点が見つかりません）`, line);
+        return;
+      }
+      log(world, thief.id, 'NOISE', `${action.targetId} (${pos.x},${pos.y}) で物音がした`, line, 'warn');
+      // 聞こえる範囲の警備員は調べに行く（追跡中・気絶中・仲間を起こしに行く途中は無視）
+      for (const g of world.guards) {
+        if (!isGuardActive(g) || g.state === 'CHASE' || g.reviveTargetId) continue;
+        if (manhattan(g, pos) > ctx.config.hearingRange) continue;
+        if (g.state === 'INVESTIGATE' && g.targetPos && samePos(g.targetPos, pos)) continue;
+        enterInvestigate(world, g, pos, `物音（${action.targetId}）`);
+      }
       return;
     }
     case 'signal': {

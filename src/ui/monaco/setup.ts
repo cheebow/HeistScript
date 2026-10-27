@@ -34,7 +34,8 @@ export const COMMAND_DOCS: CommandDoc[] = [
   { name: 'knockout', signature: 'knockout 警備員ID', summary: '警備員の真後ろの隣接マスにいるときだけ気絶させられる。30 tick 後に目覚める。', ticks: '2 tick', example: 'knockout guard_1' },
   { name: 'carry', signature: 'carry 警備員ID', summary: '隣接する気絶中の警備員を担ぐ。運搬中は移動が遅くなる。', ticks: '3 tick', example: 'carry guard_1' },
   { name: 'drop', signature: 'drop', summary: '担いでいる警備員を現在地に下ろす。', ticks: '1 tick', example: 'drop' },
-  { name: 'open', signature: 'open 扉ID', summary: '隣接する扉を開ける。', ticks: '2 tick', example: 'open service_door' },
+  { name: 'open', signature: 'open 扉ID', summary: '隣接する扉を開ける。施錠された扉は、その扉の鍵を steal で持っているときだけ開く。', ticks: '2 tick', example: 'open service_door' },
+  { name: 'distract', signature: 'distract 地点ID', summary: '距離 6 以内の地点に物音を立てる。そこから距離 6 以内にいる巡回中・捜索中の警備員が調べに行く（追跡中の警備員は無視）。', ticks: '1 tick', example: 'distract corner' },
   { name: 'signal', signature: 'signal 名前', summary: '味方全員が signal_received(名前) で確認できるフラグを立てる。', ticks: '1 tick', example: 'signal ready' },
   { name: 'if', signature: 'if 条件 … else … end', summary: '評価した瞬間の条件で分岐する。', ticks: '0 tick', example: 'if guard_visible\n  hide\nend' },
   { name: 'while', signature: 'while 条件 … end', summary: '条件が真の間くり返す。中に wait を入れないと命令数上限で停止する。', ticks: '0 tick（本体次第）', example: 'while not at_exit\n  wait 1\nend' },
@@ -164,7 +165,7 @@ export function setStageCompletions(stage: StageDefinition | null): void {
   });
   const items = stageEntities(stage).map((e) => ({ id: e.id, detail: `${e.label}（${e.kind} ${e.pos}）`, doc: e.description, kinds: e.commands }));
 
-  const TARGET_COMMANDS = ['move', 'steal', 'open', 'knockout', 'carry'];
+  const TARGET_COMMANDS = ['move', 'steal', 'open', 'knockout', 'carry', 'distract'];
   const CONDITION_HEADS = ['if', 'while', 'until', 'and', 'or', 'not', '('];
 
   completionDisposable = monaco.languages.registerCompletionItemProvider(HSL_LANGUAGE, {

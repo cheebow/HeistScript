@@ -183,6 +183,8 @@ button.link { background: transparent; border: none; color: var(--accent-text); 
 .learn-cmd { margin-right: 6px; color: var(--accent-text); }
 .sw-laser { background: #d8434e; }
 .sw-switch { background: #f3d35a; }
+.sw-key { background: #f3d35a; border: 1px solid #0d0d14; }
+.sw-vent { background: #3a3f4d; border: 1px solid #7c8494; }
 
 .challenge-list { display: inline-flex; gap: 2px; font-size: 12px; }
 .chal { color: var(--muted); }

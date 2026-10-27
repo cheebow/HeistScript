@@ -57,6 +57,8 @@ export interface StageGuard extends Labeled {
   y: number;
   direction: Direction;
   patrolRoute: { x: number; y: number; waitTicks: number }[];
+  /** 視界の射程（省略時は設定値 5）。ベテラン＝広い、新人＝狭い */
+  visionRange?: number;
 }
 
 export interface StageCamera extends Labeled {
@@ -70,7 +72,7 @@ export interface StageCamera extends Labeled {
 
 export interface StageObject extends Labeled {
   id: string;
-  type: 'treasure' | 'door' | 'locker' | 'laser' | 'switch';
+  type: 'treasure' | 'door' | 'locker' | 'laser' | 'switch' | 'key';
   x: number;
   y: number;
   required?: boolean;
@@ -84,6 +86,8 @@ export interface StageObject extends Labeled {
   offset?: number;
   /** switch: 開ける扉の ID */
   targetDoorId?: string;
+  /** key: 開けられる施錠扉の ID */
+  unlocks?: string;
 }
 
 export interface StageChallenge {
@@ -101,6 +105,7 @@ export const ALL_COMMANDS = [
   'carry',
   'drop',
   'open',
+  'distract',
   'wait',
   'signal',
   'resume',

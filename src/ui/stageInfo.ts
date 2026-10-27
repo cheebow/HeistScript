@@ -29,24 +29,26 @@ export function stageEntities(stage: StageDefinition): EntityInfo[] {
   });
   for (const w of stage.waypoints) {
     if (w.id === 'exit') continue;
-    rows.push({ id: w.id, label: w.label ?? w.id, kind: '地点', description: w.description ?? '', pos: `(${w.x},${w.y})`, usage: `move ${w.id}`, commands: ['move'] });
+    rows.push({ id: w.id, label: w.label ?? w.id, kind: '地点', description: w.description ?? '', pos: `(${w.x},${w.y})`, usage: `move ${w.id}`, commands: ['move', 'distract'] });
   }
   for (const o of stage.objects) {
     const pos = `(${o.x},${o.y})`;
     if (o.type === 'treasure') {
-      rows.push({ id: o.id, label: o.label ?? '宝物', kind: '宝物', description: o.description ?? '', pos, usage: `move ${o.id} → steal ${o.id}`, commands: ['move', 'steal'] });
+      rows.push({ id: o.id, label: o.label ?? '宝物', kind: '宝物', description: o.description ?? '', pos, usage: `move ${o.id} → steal ${o.id}`, commands: ['move', 'steal', 'distract'] });
+    } else if (o.type === 'key') {
+      rows.push({ id: o.id, label: o.label ?? '鍵', kind: '鍵', description: o.description ?? `扉 ${o.unlocks} を開けられるカードキー`, pos, usage: `move ${o.id} → steal ${o.id}`, commands: ['move', 'steal', 'distract'] });
     } else if (o.type === 'door') {
-      rows.push({ id: o.id, label: o.label ?? '扉', kind: '扉', description: o.description ?? '', pos, usage: `open ${o.id}（隣接して）`, commands: ['move', 'open'] });
+      rows.push({ id: o.id, label: o.label ?? '扉', kind: '扉', description: o.description ?? (o.locked ? '施錠されている。鍵を持って open' : ''), pos, usage: o.locked ? `鍵を steal → open ${o.id}（隣接して）` : `open ${o.id}（隣接して）`, commands: ['move', 'open', 'distract'] });
     } else if (o.type === 'locker') {
-      rows.push({ id: o.id, label: o.label ?? 'ロッカー', kind: 'ロッカー', description: o.description ?? '', pos, usage: `move ${o.id} → hide`, commands: ['move'] });
+      rows.push({ id: o.id, label: o.label ?? 'ロッカー', kind: 'ロッカー', description: o.description ?? '', pos, usage: `move ${o.id} → hide`, commands: ['move', 'distract'] });
     } else if (o.type === 'laser') {
       rows.push({ id: o.id, label: o.label ?? 'レーザー', kind: 'レーザー', description: o.description ?? `${o.onTicks ?? 1} tick 作動・${o.offTicks ?? 0} tick 停止の周期。作動中に触れると警報`, pos, usage: '（止まっている間に通る）', commands: [] });
     } else {
-      rows.push({ id: o.id, label: o.label ?? 'スイッチ', kind: 'スイッチ', description: o.description ?? `乗っている間だけ扉 ${o.targetDoorId} が開く`, pos, usage: `move ${o.id}（乗る）`, commands: ['move'] });
+      rows.push({ id: o.id, label: o.label ?? 'スイッチ', kind: 'スイッチ', description: o.description ?? `乗っている間だけ扉 ${o.targetDoorId} が開く`, pos, usage: `move ${o.id}（乗る）`, commands: ['move', 'distract'] });
     }
   }
   for (const g of stage.guards) {
-    rows.push({ id: g.id, label: g.label ?? '警備員', kind: '警備員', description: g.description ?? '', pos: `(${g.x},${g.y}) から`, usage: `knockout ${g.id} / carry ${g.id}`, commands: ['move', 'knockout', 'carry'] });
+    rows.push({ id: g.id, label: g.label ?? '警備員', kind: '警備員', description: `${g.description ?? ''}${g.visionRange !== undefined ? `（視界 ${g.visionRange} マス）` : ''}`, pos: `(${g.x},${g.y}) から`, usage: `knockout ${g.id} / carry ${g.id}`, commands: ['move', 'knockout', 'carry'] });
   }
   for (const c of stage.cameras) {
     rows.push({ id: c.id, label: c.label ?? '監視カメラ', kind: 'カメラ', description: c.description ?? '', pos: `(${c.x},${c.y})`, usage: '（命令の対象にはならない）', commands: [] });

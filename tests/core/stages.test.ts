@@ -131,6 +131,33 @@ describe('組み込みステージ', () => {
     expect(simulate(s, s.solutions![0]!.scripts).world.tick).toBeLessThanOrEqual(200);
   });
 
+  it('stage_19〜23: 無策スクリプトは成功しないか、成功しても発見される', () => {
+    const naive: Record<string, Record<string, string>> = {
+      stage_19: { thief_a: 'move jewel\nsteal jewel\nmove exit\n' },
+      stage_20: { thief_a: 'move office_in\nopen office_door\nmove keycard\nsteal keycard\nmove vault_in\nopen vault_door\nmove jewel\nsteal jewel\nmove exit\n' },
+      stage_21: { thief_a: 'move ledge\ndistract crate_e\nwait 4\nmove jewel\nsteal jewel\nmove exit\n' },
+      stage_22: { thief_a: 'move jewel\nsteal jewel\nmove exit\n' },
+      stage_23: { thief_a: 'move keycard\nsteal keycard\nmove vault_in\nopen vault_door\nmove jewel\nsteal jewel\nmove exit\n', thief_b: 'wait 5\nmove exit\n' },
+    };
+    for (const [id, scripts] of Object.entries(naive)) {
+      const s = stages.find((x) => x.id === id)!;
+      const { world } = simulate(s, scripts);
+      expect(world.result?.status !== 'SUCCESS' || world.stats.spottedCount > 0, id).toBe(true);
+    }
+  });
+
+  it('stage_19〜23: サンプル解答は見つからずにクリアし、鍵なしでは金庫が開かない', () => {
+    for (const id of ['stage_19', 'stage_20', 'stage_21', 'stage_22', 'stage_23']) {
+      const s = stages.find((x) => x.id === id)!;
+      const { world } = simulate(s, s.solution!);
+      expect(world.result?.status, id).toBe('SUCCESS');
+      expect(world.stats.spottedCount, id).toBe(0);
+    }
+    const s20 = stages.find((x) => x.id === 'stage_20')!;
+    const noKey = simulate(s20, { thief_a: 'move vault_in\nopen vault_door\nmove jewel\nsteal jewel\nmove exit\n' }).world;
+    expect(noKey.result?.status).toBe('STOPPED');
+  });
+
   it('stage_02: 何も考えず進むと捕まる', () => {
     const s = stages.find((x) => x.id === 'stage_02')!;
     const { world } = simulate(s, { thief_a: 'move jewel\nsteal jewel\nmove exit\n' });

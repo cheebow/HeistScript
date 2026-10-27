@@ -49,7 +49,7 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
       if (row.length !== width) err(`tiles[${y}]`, `幅 ${row.length} が width ${width} と一致しません`);
       for (let x = 0; x < row.length; x++) {
         const c = row[x]!;
-        if (!'#.HDE'.includes(c)) err(`tiles[${y}][${x}]`, `不明なタイル文字 '${c}'`);
+        if (!'#.HDEV'.includes(c)) err(`tiles[${y}][${x}]`, `不明なタイル文字 '${c}'`);
       }
     });
   }
@@ -57,6 +57,8 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
   const tileAt = (x: number, y: number): string | undefined => tiles[y]?.[x];
   const inBounds = (x: number, y: number) => x >= 0 && y >= 0 && x < width && y < height;
   const walkable = (x: number, y: number) => inBounds(x, y) && tileAt(x, y) !== '#';
+  // 警備員は通風口（V）を通れない
+  const guardWalkable = (x: number, y: number) => walkable(x, y) && tileAt(x, y) !== 'V';
 
   const ids = new Map<string, string>();
   const checkId = (id: unknown, path: string): string | null => {
@@ -126,6 +128,7 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
       checkPos(g, `guards[${i}]`);
       checkLabel(g, `guards[${i}]`);
       checkDir(g.direction, `guards[${i}].direction`);
+      if (g.visionRange !== undefined && (!isInt(g.visionRange) || (g.visionRange as number) < 1 || (g.visionRange as number) > 12)) err(`guards[${i}].visionRange`, '1〜12 の整数');
       if (!Array.isArray(g.patrolRoute)) err(`guards[${i}].patrolRoute`, '配列が必要です');
       else
         g.patrolRoute.forEach((p, j) => {
@@ -156,7 +159,11 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
       if (!isObj(o)) return err(`objects[${i}]`, 'オブジェクトが必要です');
       checkId(o.id, `objects[${i}].id`);
       checkLabel(o, `objects[${i}]`);
-      if (!['treasure', 'door', 'locker', 'laser', 'switch'].includes(o.type as string)) err(`objects[${i}].type`, 'treasure/door/locker/laser/switch のいずれか');
+      if (!['treasure', 'door', 'locker', 'laser', 'switch', 'key'].includes(o.type as string)) err(`objects[${i}].type`, 'treasure/door/locker/laser/switch/key のいずれか');
+      if (o.type === 'key') {
+        if (typeof o.unlocks !== 'string') err(`objects[${i}].unlocks`, '開けられる扉の ID が必要です');
+        else if (!(s.objects as unknown[]).some((d) => isObj(d) && d.type === 'door' && d.id === o.unlocks && d.locked === true)) err(`objects[${i}].unlocks`, `施錠された扉 '${String(o.unlocks)}' が存在しません`);
+      }
       if (o.type === 'laser') {
         if (!isInt(o.onTicks) || (o.onTicks as number) <= 0) err(`objects[${i}].onTicks`, '正の整数');
         if (!isInt(o.offTicks) || (o.offTicks as number) < 0) err(`objects[${i}].offTicks`, '0以上の整数');
@@ -175,7 +182,7 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
         if (o.type === 'door') {
           doorTiles.add(`${o.x},${o.y}`);
           if (tileAt(o.x as number, o.y as number) !== 'D') err(`objects[${i}]`, '扉は D タイルに置く必要があります');
-          if (o.locked === true) err(`objects[${i}].locked`, 'MVPでは施錠扉は使用できません');
+          if (o.locked === true && !(s.objects as unknown[]).some((k) => isObj(k) && k.type === 'key' && k.unlocks === o.id)) err(`objects[${i}].locked`, '施錠扉にはそれを開ける鍵（type: key, unlocks）が必要です');
         }
       }
     });
@@ -199,7 +206,7 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
   // 巡回点到達性: 床タイルのみで BFS（扉は通行可とみなす）
   if (errors.length === 0) {
     const stage = s as unknown as StageDefinition;
-    const reach = (from: { x: number; y: number }, to: { x: number; y: number }): boolean => {
+    const reach = (from: { x: number; y: number }, to: { x: number; y: number }, ok: (x: number, y: number) => boolean = walkable): boolean => {
       const seen = new Set<string>();
       const q = [from];
       seen.add(`${from.x},${from.y}`);
@@ -214,7 +221,7 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
         ] as const) {
           const n = { x: c.x + dx, y: c.y + dy };
           const k = `${n.x},${n.y}`;
-          if (seen.has(k) || !walkable(n.x, n.y)) continue;
+          if (seen.has(k) || !ok(n.x, n.y)) continue;
           seen.add(k);
           q.push(n);
         }
@@ -224,7 +231,7 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
     stage.guards.forEach((g, i) => {
       let prev = { x: g.x, y: g.y };
       g.patrolRoute.forEach((p, j) => {
-        if (!reach(prev, p)) err(`guards[${i}].patrolRoute[${j}]`, `巡回点 (${p.x},${p.y}) へ到達できません`);
+        if (!reach(prev, p, guardWalkable)) err(`guards[${i}].patrolRoute[${j}]`, `巡回点 (${p.x},${p.y}) へ到達できません（通風口は通れません）`);
         prev = p;
       });
     });

@@ -2,7 +2,7 @@ import { MAIN_BLOCK, type Program, type Statement } from '../hsl/ast';
 import type { Action, EventType, Frame, GameEvent, Thief, VmState, WorldState } from '../model/types';
 import { findPath } from './astar';
 import { findGuard, findObject, log, type SimContext } from './context';
-import { isHidingSpot, occupiedTiles, oppositeDirection, stepInDirection, samePos } from './grid';
+import { isHidingSpot, manhattan, occupiedTiles, oppositeDirection, stepInDirection, samePos } from './grid';
 import { evaluateExpr } from './predicates';
 import { isAdjacent, isAdjacentOrSame, isGuardActive, resolveMoveTarget } from './targets';
 
@@ -132,8 +132,8 @@ function startAction(world: WorldState, vm: VmState, thief: Thief, stmt: Stateme
     }
     case 'steal': {
       const obj = findObject(world, target);
-      if (!obj || obj.type !== 'treasure') {
-        fail(world, vm, stmt, `'${target}' は宝物ではありません`);
+      if (!obj || (obj.type !== 'treasure' && obj.type !== 'key')) {
+        fail(world, vm, stmt, `'${target}' は宝物でも鍵でもありません`);
         return null;
       }
       if (obj.takenBy !== null) {
@@ -202,7 +202,7 @@ function startAction(world: WorldState, vm: VmState, thief: Thief, stmt: Stateme
         fail(world, vm, stmt, `'${target}' は扉ではありません`);
         return null;
       }
-      const reason = openPreconditionError(thief, door);
+      const reason = openPreconditionError(world, thief, door);
       if (reason) {
         fail(world, vm, stmt, `open ${target}: ${reason}`);
         return null;
@@ -210,7 +210,30 @@ function startAction(world: WorldState, vm: VmState, thief: Thief, stmt: Stateme
       log(world, thief.id, 'OPEN_START', `${target} を開け始めた（${t.open} tick）`, stmt.line);
       return { kind: 'timed', command: 'open', targetId: target, remaining: t.open, total: t.open, line: stmt.line };
     }
+    case 'distract': {
+      const pos = noisePosition(world, target);
+      if (!pos) {
+        fail(world, vm, stmt, `'${target}' は物音を立てられる地点ではありません`);
+        return null;
+      }
+      const dist = manhattan(thief, pos);
+      if (dist > ctx.config.distractRange) {
+        fail(world, vm, stmt, `'${target}' は遠すぎます（距離 ${dist}、届くのは ${ctx.config.distractRange} まで）。対処: もっと近くの地点へ move してから distract する`);
+        return null;
+      }
+      log(world, thief.id, 'DISTRACT_START', `${target} (${pos.x},${pos.y}) へ向けて物音を立てる（${t.distract} tick）`, stmt.line);
+      return { kind: 'timed', command: 'distract', targetId: target, remaining: t.distract, total: t.distract, line: stmt.line };
+    }
   }
+}
+
+/** distract の対象（地点またはオブジェクト）の座標 */
+export function noisePosition(world: WorldState, id: string): { x: number; y: number } | null {
+  const wp = world.waypoints[id];
+  if (wp) return { x: wp.x, y: wp.y };
+  const obj = world.objects.find((o) => o.id === id);
+  if (obj) return { x: obj.x, y: obj.y };
+  return null;
 }
 
 export function knockoutPreconditionError(world: WorldState, thief: Thief, g: WorldState['guards'][number]): string | null {
@@ -233,11 +256,19 @@ export function carryPreconditionError(world: WorldState, thief: Thief, g: World
   return null;
 }
 
-export function openPreconditionError(thief: Thief, door: WorldState['objects'][number]): string | null {
+export function openPreconditionError(world: WorldState, thief: Thief, door: WorldState['objects'][number]): string | null {
   if (door.open) return 'すでに開いています';
-  if (door.locked) return '施錠されています';
+  if (door.locked && !hasKeyFor(world, thief, door.id)) {
+    const key = world.objects.find((o) => o.type === 'key' && o.unlocks === door.id);
+    return key ? `施錠されています。対処: 先に鍵 ${key.id} を move ${key.id} → steal ${key.id} で手に入れる` : '施錠されています';
+  }
   if (!isAdjacent(thief, door)) return '扉に隣接していません';
   return null;
+}
+
+/** 怪盗がその扉を開けられる鍵を持っているか */
+export function hasKeyFor(world: WorldState, thief: Thief, doorId: string): boolean {
+  return thief.inventory.some((id) => world.objects.some((o) => o.id === id && o.type === 'key' && o.unlocks === doorId));
 }
 
 /**

@@ -6,7 +6,7 @@ import { tryStep } from './movement';
 
 function setPathTo(world: WorldState, g: Guard, goal: Position, allowOccupiedGoal: boolean): void {
   if (g.path.length > 0 && samePos(g.path[g.path.length - 1]!, goal)) return;
-  const path = findPath(world, g, goal, { blocked: undefined, allowBlockedGoal: allowOccupiedGoal });
+  const path = findPath(world, g, goal, { blocked: undefined, allowBlockedGoal: allowOccupiedGoal, mover: 'guard' });
   g.path = path ?? [];
 }
 
@@ -74,6 +74,8 @@ export function decideGuard(world: WorldState, g: Guard, ctx: SimContext): boole
       if (samePos(g, point)) {
         g.patrolIndex = (g.patrolIndex + 1) % g.patrolRoute.length;
         g.path = [];
+        // 持ち場が 1 点の見張りは、持ち場では開始時の向きを向く (D-29)
+        if (g.patrolRoute.length === 1) g.direction = g.homeDirection;
         if (point.waitTicks > 0) {
           g.patrolWaitRemaining = point.waitTicks - 1;
           return false;
@@ -154,7 +156,7 @@ export function decideGuard(world: WorldState, g: Guard, ctx: SimContext): boole
         return false;
       }
       // 追跡対象のタイルは占有されているが、隣接まで進む
-      g.path = findPath(world, g, target, { allowBlockedGoal: true }) ?? [];
+      g.path = findPath(world, g, target, { allowBlockedGoal: true, mover: 'guard' }) ?? [];
       if (g.path.length === 0) {
         log(world, g.id, 'GUARD_LOST', `${g.chaseTargetId} を見失った（最終目撃 (${target.x},${target.y}) へ到達できない）`, null, 'warn');
         enterSearch(world, g, g, ctx);
@@ -175,7 +177,7 @@ export function decideGuard(world: WorldState, g: Guard, ctx: SimContext): boole
 }
 
 function canReach(world: WorldState, from: Position, to: Position): boolean {
-  return findPath(world, from, to) !== null;
+  return findPath(world, from, to, { mover: 'guard' }) !== null;
 }
 
 /** フェーズ4: 警備員の移動。 */
@@ -184,10 +186,12 @@ export function moveGuard(world: WorldState, g: Guard, ctx: SimContext): void {
   const ticksPerTile = g.state === 'CHASE' ? ctx.config.guardChaseTicksPerTile : ctx.config.guardPatrolTicksPerTile;
   g.moveProgress++;
   if (g.moveProgress < ticksPerTile) return;
-  const result = tryStep(world, g, g.path);
+  const result = tryStep(world, g, g.path, 'guard');
   if (result === 'moved') {
     g.moveProgress = 0;
     faceChaseTarget(world, g);
+    // 持ち場（1 点の巡回路）に着いた瞬間に見張りの向きへ戻す。到着 tick の視認判定から有効 (D-29)
+    if (g.state === 'PATROL' && g.patrolRoute.length === 1 && g.path.length === 0 && samePos(g, g.patrolRoute[0]!)) g.direction = g.homeDirection;
     return;
   }
   if (result === 'impassable') {
@@ -197,7 +201,7 @@ export function moveGuard(world: WorldState, g: Guard, ctx: SimContext): void {
   // ブロック: 動的占有を避けて再探索（追跡時は対象の隣で止まる）
   const goal = g.path[g.path.length - 1]!;
   const blocked = occupiedTiles(world, g.id);
-  const replanned = findPath(world, g, goal, { blocked, allowBlockedGoal: g.state === 'CHASE' });
+  const replanned = findPath(world, g, goal, { blocked, allowBlockedGoal: g.state === 'CHASE', mover: 'guard' });
   if (replanned && replanned.length > 0) g.path = replanned;
 }
 

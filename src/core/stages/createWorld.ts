@@ -11,6 +11,8 @@ function charToTile(c: string): TileKind {
       return 'door';
     case 'E':
       return 'exit';
+    case 'V':
+      return 'vent';
     default:
       return 'floor';
   }
@@ -49,6 +51,8 @@ export function createWorld(stage: StageDefinition): WorldState {
       y: g.y,
       direction: g.direction,
       patrolRoute: g.patrolRoute.map((p) => ({ x: p.x, y: p.y, waitTicks: p.waitTicks })),
+      visionRange: g.visionRange ?? null,
+      homeDirection: g.direction,
       state: 'PATROL',
       patrolIndex: 0,
       patrolWaitRemaining: 0,
@@ -100,6 +104,7 @@ export function createWorld(stage: StageDefinition): WorldState {
       hitThiefIds: [],
       targetDoorId: o.type === 'switch' ? (o.targetDoorId ?? null) : null,
       pressed: false,
+      unlocks: o.type === 'key' ? (o.unlocks ?? null) : null,
     }));
 
   for (const o of objects) {

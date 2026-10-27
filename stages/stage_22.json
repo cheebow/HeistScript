@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_22",
+  "title": "ベテランの目",
+  "width": 24,
+  "height": 12,
+  "description": "広間を巡回するベテランは視界が広く（8 マス）、金庫番の新人は狭い（3 マス）。視界の表示を見比べて、通風口から出るタイミングを計ろう。",
+  "tiles": [
+    "########################",
+    "#......................#",
+    "#......................#",
+    "#VVVVVVVVVVVVVVVV......#",
+    "#......................#",
+    "#......................#",
+    "########.#######.#######",
+    "#..........#...........#",
+    "#..........#...........#",
+    "#..........#...........#",
+    "#..........#...........#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 17,
+      "y": 9,
+      "label": "出口",
+      "description": "右下の部屋"
+    },
+    {
+      "id": "vent_a",
+      "x": 8,
+      "y": 3,
+      "label": "通風口（西の出口の上）",
+      "description": "ここから出ると左下の部屋へのすき間に近い。ベテランが真上を通ると guard_near"
+    },
+    {
+      "id": "vent_b",
+      "x": 16,
+      "y": 3,
+      "label": "通風口（東の出口の上）",
+      "description": "ここから出ると右下の部屋へのすき間に近い"
+    },
+    {
+      "id": "gap_w",
+      "x": 8,
+      "y": 6,
+      "label": "西のすき間",
+      "description": "左下の部屋への入口。新人が真下を通ると guard_near。ベテランからは見えない"
+    },
+    {
+      "id": "gap_e",
+      "x": 16,
+      "y": 6,
+      "label": "東のすき間",
+      "description": "右下の部屋への入口"
+    },
+    {
+      "id": "vent_w",
+      "x": 1,
+      "y": 3,
+      "label": "通風口の入口",
+      "description": "左上の部屋から通風口に入る"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 1,
+      "direction": "down",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# 警備員をクリックすると視界の広さが分かる（ベテラン 8 マス／新人 3 マス）\nmove vent_a\nwait 40\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "veteran",
+      "x": 21,
+      "y": 5,
+      "direction": "left",
+      "label": "ベテラン",
+      "description": "広間の下の列を往復する。視界 8 マス。通風口の中は見えない",
+      "visionRange": 8,
+      "patrolRoute": [
+        {
+          "x": 2,
+          "y": 5,
+          "waitTicks": 2
+        },
+        {
+          "x": 21,
+          "y": 5,
+          "waitTicks": 2
+        }
+      ]
+    },
+    {
+      "id": "rookie",
+      "x": 9,
+      "y": 10,
+      "direction": "left",
+      "label": "新人",
+      "description": "左下の部屋の下の列を往復する。視界 3 マスしかない",
+      "visionRange": 3,
+      "patrolRoute": [
+        {
+          "x": 2,
+          "y": 10,
+          "waitTicks": 3
+        },
+        {
+          "x": 9,
+          "y": 10,
+          "waitTicks": 3
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 5,
+      "y": 7,
+      "required": true,
+      "label": "宝石",
+      "description": "左下の部屋"
+    }
+  ],
+  "exit": {
+    "x": 17,
+    "y": 9
+  },
+  "maxTicks": 600,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 170,
+      "title": "170tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "警備員ごとの視界の広さ"
+  ],
+  "goal": "通風口を伝って左下の宝石を盗み、右下の出口へ。",
+  "firstStep": "vent_a で待ち、ベテランが通り過ぎてから出る。すき間で新人の動きを観察しよう。",
+  "hints": [
+    "警備員をクリックすると「視界 N マス」が出る。ベテラン（赤みがかった色）は 8 マス先まで見えるが、通風口の中は見えない。新人（青みがかった色）は 3 マスしか見えないので、離れていれば気にしなくてよい。",
+    "vent_w から通風口に入り vent_a で guard_near → guard_away を待って gap_w へ。新人は 3 マスしか見えないので、そのまま宝石を取って gap_w に戻る。gap_w でもう一度ベテランを待ってから通風口を東へ。vent_b で待って出口へ。",
+    "--- thief_a ---\nmove vent_w\nmove vent_a\nwait until guard_near\nwait until guard_away\nmove gap_w\nmove jewel\nsteal jewel\nmove gap_w\nwait until guard_near\nwait until guard_away\nmove vent_b\nwait until guard_near\nwait until guard_away\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move vent_w\nmove vent_a\nwait until guard_near\nwait until guard_away\nmove gap_w\nmove jewel\nsteal jewel\nmove gap_w\nwait until guard_near\nwait until guard_away\nmove vent_b\nwait until guard_near\nwait until guard_away\nmove exit\n"
+  }
+}

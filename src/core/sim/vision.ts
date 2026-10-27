@@ -1,5 +1,5 @@
 import { DIRECTION_VECTORS, type Direction, type Position, type WorldState } from '../model/types';
-import { blocksSight, euclid, samePos } from './grid';
+import { blocksSight, euclid, samePos, tileAt } from './grid';
 
 /**
  * supercover 格子レイ: from から to までに通過するタイル（from, to を含む）を返す。
@@ -70,6 +70,7 @@ export interface Viewer {
 /** 視認判定: 円錐内・射程内・視線が通る。同一タイル（気絶から目覚めた警備員の上に怪盗がいる等）は常に見える。 */
 export function canSee(world: WorldState, viewer: Viewer, target: Position): boolean {
   if (viewer.x === target.x && viewer.y === target.y) return true;
+  if (tileAt(world, target) === 'vent') return false; // 通風口の中は外から見えない
   if (!inCone(viewer, viewer.direction, target)) return false;
   if (euclid(viewer, target) > viewer.range + 1e-9) return false;
   return hasLineOfSight(world, viewer, target);

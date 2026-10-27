@@ -1,7 +1,7 @@
 import type { Expr } from '../hsl/ast';
 import type { SimConfig } from '../model/config';
 import type { Thief, WorldState } from '../model/types';
-import { isGuardActive } from './context';
+import { guardRange, isGuardActive } from './context';
 import { manhattan, samePos } from './grid';
 import { canSee } from './vision';
 
@@ -10,7 +10,7 @@ export function evaluatePredicate(world: WorldState, thief: Thief, name: string,
   switch (name) {
     case 'guard_visible':
       return world.guards.some(
-        (g) => isGuardActive(g) && canSee(world, { x: g.x, y: g.y, direction: g.direction, range: config.guardVisionRange }, thief),
+        (g) => isGuardActive(g) && canSee(world, { x: g.x, y: g.y, direction: g.direction, range: guardRange(g, config) }, thief),
       );
     case 'guard_near':
       return world.guards.some((g) => isGuardActive(g) && manhattan(g, thief) <= config.guardNearDistance);
@@ -22,7 +22,7 @@ export function evaluatePredicate(world: WorldState, thief: Thief, name: string,
       // 「今この場で姿を現しても見られない」: 隠れ状態に関係なく視線が通っていないこと、
       // かつ距離2以内に警戒中（CHASE/SEARCH/INVESTIGATE）の警備員がいないこと (D-07)
       const seen = world.guards.some(
-        (g) => isGuardActive(g) && canSee(world, { x: g.x, y: g.y, direction: g.direction, range: config.guardVisionRange }, thief),
+        (g) => isGuardActive(g) && canSee(world, { x: g.x, y: g.y, direction: g.direction, range: guardRange(g, config) }, thief),
       );
       if (seen) return false;
       return !world.guards.some(

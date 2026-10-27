@@ -18,8 +18,13 @@ import stage15 from '../../../stages/stage_15.json';
 import stage16 from '../../../stages/stage_16.json';
 import stage17 from '../../../stages/stage_17.json';
 import stage18 from '../../../stages/stage_18.json';
+import stage19 from '../../../stages/stage_19.json';
+import stage20 from '../../../stages/stage_20.json';
+import stage21 from '../../../stages/stage_21.json';
+import stage22 from '../../../stages/stage_22.json';
+import stage23 from '../../../stages/stage_23.json';
 
-const RAW_STAGES: unknown[] = [stage01, stage02, stage03, stage04, stage05, stage06, stage07, stage08, stage09, stage10, stage11, stage12, stage13, stage14, stage15, stage16, stage17, stage18];
+const RAW_STAGES: unknown[] = [stage01, stage02, stage03, stage04, stage05, stage06, stage07, stage08, stage09, stage10, stage11, stage12, stage13, stage14, stage15, stage16, stage17, stage18, stage19, stage20, stage21, stage22, stage23];
 
 let cache: StageDefinition[] | null = null;
 

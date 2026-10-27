@@ -43,16 +43,18 @@ export function describeTile(stage: StageDefinition, world: WorldState, x: numbe
   }
   for (const o of world.objects) {
     if (o.x !== x || o.y !== y) continue;
-    if (o.type === 'treasure' && o.takenBy !== null) continue;
+    if ((o.type === 'treasure' || o.type === 'key') && o.takenBy !== null) continue;
     const e = info(o.id);
-    const kind = o.type === 'treasure' ? '宝物' : o.type === 'door' ? '扉' : o.type === 'locker' ? 'ロッカー' : o.type === 'laser' ? 'レーザー' : 'スイッチ';
+    const kind = o.type === 'treasure' ? '宝物' : o.type === 'key' ? '鍵' : o.type === 'door' ? '扉' : o.type === 'locker' ? 'ロッカー' : o.type === 'laser' ? 'レーザー' : 'スイッチ';
     title = title || `${e?.label ?? kind}（${o.id}）`;
     if (e?.description) lines.push(e.description);
     if (o.type === 'treasure') lines.push(`move ${o.id} で隣まで行き、steal ${o.id} で盗む${o.required ? '（必須）' : ''}`);
+    if (o.type === 'key') lines.push(`move ${o.id} で隣まで行き、steal ${o.id} で手に入れる。扉 ${o.unlocks} を open できるようになる`);
     if (o.type === 'door') {
       const sw = world.objects.find((x) => x.type === 'switch' && x.targetDoorId === o.id);
       if (sw) lines.push(`${o.open ? '開いている' : '閉まっている'}。スイッチ ${sw.id} が押されている間だけ開く`);
       else if (o.cycle) lines.push(`${o.open ? '開いている' : '閉まっている'}。${o.cycle.openTicks} tick 開いて ${o.cycle.closedTicks} tick 閉じる周期。閉じているときは開くまで待つ`);
+      else if (o.locked) lines.push(`施錠されている。鍵 ${world.objects.find((k) => k.type === 'key' && k.unlocks === o.id)?.id ?? '?'} を持って隣接し、open ${o.id} で開ける`);
       else lines.push(o.open ? '開いている' : `閉まっている。隣接して open ${o.id} で開ける`);
     }
     if (o.type === 'locker') lines.push(`move ${o.id} で乗り、hide で隠れる`);
@@ -76,6 +78,9 @@ export function describeTile(stage: StageDefinition, world: WorldState, x: numbe
   } else if (kind === 'hiding_spot' && !lines.some((l) => l.includes('hide'))) {
     if (!title) title = '隠れ場所';
     lines.push('このマスの上で hide を実行すると姿を隠せる（警備員・カメラから見えなくなる）');
+  } else if (kind === 'vent') {
+    if (!title) title = '通風口';
+    lines.push('怪盗だけが通れる。警備員は入れず、中は外から見えない（経路は move が自動で使う）');
   } else if (kind === 'wall') {
     if (!title) title = '壁';
     lines.push('通れない。視線も遮る');

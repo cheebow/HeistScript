@@ -37,32 +37,36 @@ export function doorAt(world: WorldState, p: Position) {
   return world.objects.find((o) => o.type === 'door' && o.x === p.x && o.y === p.y);
 }
 
-/** 静的に通行可能か（壁・閉扉のみ考慮。動的エンティティは考慮しない） */
-export function isStaticPassable(world: WorldState, p: Position): boolean {
+export type MoverKind = 'thief' | 'guard';
+
+/** 静的に通行可能か（壁・閉扉のみ考慮。動的エンティティは考慮しない）。通風口は怪盗だけが通れる */
+export function isStaticPassable(world: WorldState, p: Position, mover: MoverKind = 'thief'): boolean {
   if (!inBounds(world, p)) return false;
   const t = tileAt(world, p);
   if (t === undefined || t === 'wall') return false;
+  if (t === 'vent' && mover === 'guard') return false;
   const door = doorAt(world, p);
   if (door && !door.open) return false;
   return true;
 }
 
 /** 経路計画用: 周期／スイッチで開閉する扉は「いずれ開く」ものとして通行可とみなす */
-export function isPlannable(world: WorldState, p: Position): boolean {
-  if (isStaticPassable(world, p)) return true;
+export function isPlannable(world: WorldState, p: Position, mover: MoverKind = 'thief'): boolean {
+  if (isStaticPassable(world, p, mover)) return true;
   if (!inBounds(world, p)) return false;
   const t = tileAt(world, p);
   if (t === undefined || t === 'wall') return false;
+  if (t === 'vent' && mover === 'guard') return false;
   const door = doorAt(world, p);
   if (door && !door.open && (door.cycle || world.objects.some((o) => o.type === 'switch' && o.targetDoorId === door.id))) return true;
   return false;
 }
 
-/** 視線を遮るか（壁・閉扉） */
+/** 視線を遮るか（壁・閉扉・通風口） */
 export function blocksSight(world: WorldState, p: Position): boolean {
   if (!inBounds(world, p)) return true;
   const t = tileAt(world, p);
-  if (t === undefined || t === 'wall') return true;
+  if (t === undefined || t === 'wall' || t === 'vent') return true;
   const door = doorAt(world, p);
   if (door && !door.open) return true;
   return false;

@@ -561,6 +561,8 @@ export function App() {
             <span><i className="sw sw-exit" />出口</span>
             {stage.objects.some((o) => o.type === 'laser') && <span><i className="sw sw-laser" />レーザー（赤いとき作動）</span>}
             {stage.objects.some((o) => o.type === 'switch') && <span><i className="sw sw-switch" />スイッチ</span>}
+            {stage.objects.some((o) => o.type === 'key') && <span><i className="sw sw-key" />鍵</span>}
+            {stage.tiles.some((row) => row.includes('V')) && <span><i className="sw sw-vent" />通風口（怪盗だけ通れる）</span>}
             <span><i className="sw sw-path" />移動予定の経路</span>
             <span className="muted">人物をクリックすると状態を表示</span>
           </div>

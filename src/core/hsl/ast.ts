@@ -26,7 +26,7 @@ export type Expr =
   | { kind: 'and'; left: Expr; right: Expr; line: number; col: number }
   | { kind: 'or'; left: Expr; right: Expr; line: number; col: number };
 
-export type ActionCommand = 'move' | 'steal' | 'hide' | 'knockout' | 'carry' | 'drop' | 'open';
+export type ActionCommand = 'move' | 'steal' | 'hide' | 'knockout' | 'carry' | 'drop' | 'open' | 'distract';
 
 export type Statement =
   | { kind: 'action'; command: ActionCommand; target: string | null; line: number; col: number }

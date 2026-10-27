@@ -1,5 +1,5 @@
 import type { Guard, Thief, WorldState } from '../model/types';
-import { isGuardActive, log, type SimContext } from './context';
+import { guardRange, isGuardActive, log, type SimContext } from './context';
 import { enterChase, enterInvestigate } from './guardAi';
 import { euclid, manhattan, rotateClockwise, samePos } from './grid';
 import { canSee } from './vision';
@@ -61,7 +61,7 @@ export function processGuardVision(world: WorldState, ctx: SimContext): void {
       g.visibleThiefIds = [];
       continue;
     }
-    const viewer = { x: g.x, y: g.y, direction: g.direction, range: cfg.guardVisionRange };
+    const viewer = { x: g.x, y: g.y, direction: g.direction, range: guardRange(g, cfg) };
     const visible: Thief[] = [];
     for (const t of world.thieves) {
       if (t.captured || t.hidden) continue;

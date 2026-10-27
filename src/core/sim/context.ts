@@ -1,6 +1,6 @@
 import type { Program } from '../hsl/ast';
 import type { SimConfig } from '../model/config';
-import type { LogEntry, LogLevel, WorldState } from '../model/types';
+import type { Guard, LogEntry, LogLevel, WorldState } from '../model/types';
 
 export interface SimContext {
   programs: Record<string, Program>;
@@ -38,4 +38,9 @@ export function findVm(world: WorldState, thiefId: string) {
 
 export function isGuardActive(g: { state: string; carriedBy: string | null }): boolean {
   return g.state !== 'UNCONSCIOUS' && g.carriedBy === null;
+}
+
+/** 警備員の視界射程（ステージごとの上書きがなければ設定値） */
+export function guardRange(g: Guard, config: SimConfig): number {
+  return g.visionRange ?? config.guardVisionRange;
 }

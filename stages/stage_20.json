@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_20",
+  "title": "カードキー",
+  "width": 20,
+  "height": 12,
+  "description": "金庫の扉は施錠されている。事務室にあるカードキーを盗めば開けられる。開いた扉に気づいた警備員は調べに来るので、手早く。",
+  "tiles": [
+    "####################",
+    "#.........#........#",
+    "#.........#........#",
+    "#.........#........#",
+    "#.........D........#",
+    "#.......#.#........#",
+    "#.......#.##########",
+    "#.......#.#........#",
+    "#.........D........#",
+    "#.......#.#........#",
+    "#.........#........#",
+    "####################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 9,
+      "y": 10,
+      "label": "出口",
+      "description": "廊下の右下の隅。警備員の通り道から見えない"
+    },
+    {
+      "id": "office_in",
+      "x": 9,
+      "y": 4,
+      "label": "事務室の扉の前",
+      "description": "閉じた扉の外。扉が閉じている間は中から見えない"
+    },
+    {
+      "id": "vault_in",
+      "x": 9,
+      "y": 8,
+      "label": "金庫の扉の前",
+      "description": "施錠された扉のすぐ外"
+    },
+    {
+      "id": "pillar",
+      "x": 9,
+      "y": 6,
+      "label": "廊下のくぼみ",
+      "description": "壁のかげで廊下の警備員から見えない。警備員が右端（真下の近く）に来ると guard_near"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 1,
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# 金庫の扉 vault_door は施錠されている。鍵 keycard を steal してから open する\nmove office_in\nwait 30\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 18,
+      "y": 5,
+      "direction": "left",
+      "label": "事務員",
+      "description": "事務室の下の列を左右に往復する。開いている扉に気づくと調べに来る",
+      "patrolRoute": [
+        {
+          "x": 11,
+          "y": 5,
+          "waitTicks": 2
+        },
+        {
+          "x": 18,
+          "y": 5,
+          "waitTicks": 6
+        }
+      ]
+    },
+    {
+      "id": "guard_2",
+      "x": 2,
+      "y": 8,
+      "direction": "right",
+      "label": "警備員",
+      "description": "廊下の下の列を左右に往復する。開いている扉に気づくと調べに来る",
+      "patrolRoute": [
+        {
+          "x": 8,
+          "y": 8,
+          "waitTicks": 3
+        },
+        {
+          "x": 2,
+          "y": 8,
+          "waitTicks": 10
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 12,
+      "y": 8,
+      "required": true,
+      "label": "宝石",
+      "description": "金庫の扉のすぐ内側"
+    },
+    {
+      "id": "keycard",
+      "type": "key",
+      "x": 12,
+      "y": 1,
+      "unlocks": "vault_door",
+      "label": "カードキー",
+      "description": "事務室の入口近くの机の上。金庫の扉を開けられる"
+    },
+    {
+      "id": "office_door",
+      "type": "door",
+      "x": 10,
+      "y": 4,
+      "open": false,
+      "label": "事務室の扉",
+      "description": "閉まっている。open で開けられる（鍵は不要）。開けたままだと事務員が気づく"
+    },
+    {
+      "id": "vault_door",
+      "type": "door",
+      "x": 10,
+      "y": 8,
+      "open": false,
+      "locked": true,
+      "label": "金庫の扉",
+      "description": "施錠されている。カードキーを持って隣接し open で開ける"
+    }
+  ],
+  "exit": {
+    "x": 9,
+    "y": 10
+  },
+  "maxTicks": 600,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 120,
+      "title": "120tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "鍵（steal → open）"
+  ],
+  "goal": "カードキーを手に入れ、金庫の扉を開けて宝石を盗み、出口へ。",
+  "firstStep": "office_in で事務員が通り過ぎるのを待ち、open office_door で入って keycard を取りに行こう。",
+  "hints": [
+    "金庫の扉は施錠されていて、鍵を持っていないと open できない。鍵は宝物と同じく move → steal で手に入る。開けた扉はそのままなので、それに気づいた警備員が調べに来る。",
+    "office_in で事務員の guard_near → guard_away を待ち、open office_door → keycard を steal → すぐ戻る。廊下は pillar（くぼみ）で警備員をやり過ごし、通り過ぎたら vault_in へ行って open vault_door、宝石を取って右下の出口へ。",
+    "--- thief_a ---\nmove office_in\nwait until guard_near\nwait until guard_away\nopen office_door\nmove keycard\nsteal keycard\nmove office_in\nmove pillar\nwait until guard_near\nwait until guard_away\nmove vault_in\nopen vault_door\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move office_in\nwait until guard_near\nwait until guard_away\nopen office_door\nmove keycard\nsteal keycard\nmove office_in\nmove pillar\nwait until guard_near\nwait until guard_away\nmove vault_in\nopen vault_door\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

@@ -440,6 +440,30 @@ export function switchTile(pressed: boolean): PixelMap {
   return p.toMap();
 }
 
+/** 通風口: 暗い床に金属の格子。怪盗だけが通れ、中は外から見えない */
+export function ventTile(): PixelMap {
+  const p = new Pix(TILE, TILE, 'z');
+  p.rect(2, 2, 28, 28, 'd');
+  p.frame(2, 2, 28, 28, 'G');
+  p.frame(3, 3, 26, 26, 'D');
+  for (let y = 6; y < 28; y += 5) p.rect(5, y, 22, 2, 'K').hline(5, y + 2, 22, 'G');
+  p.px(2, 2, 'g').px(29, 2, 'g').px(2, 29, 'g').px(29, 29, 'g'); // ねじ
+  return p.toMap();
+}
+
+/** カードキー */
+export function keySprite(): PixelMap {
+  const p = new Pix();
+  p.rect(7, 11, 18, 11, 'y'); // カードの影
+  p.rect(6, 10, 18, 11, 'Y');
+  p.hline(7, 11, 16, 'W'); // ハイライト
+  p.rect(8, 13, 5, 4, 'K'); // IC チップ
+  p.rect(9, 14, 3, 2, 'c');
+  p.hline(15, 14, 7, 'y').hline(15, 17, 5, 'y'); // 印字
+  p.px(26, 8, 'W').px(5, 23, 'W'); // きらめき
+  return p.toMap();
+}
+
 /** すべてのテクスチャ定義（key → PixelMap） */
 export function buildAllSprites(): Record<string, PixelMap> {
   const out: Record<string, PixelMap> = {
@@ -456,6 +480,8 @@ export function buildAllSprites(): Record<string, PixelMap> {
     laser_off: laserTile(false),
     switch_up: switchTile(false),
     switch_down: switchTile(true),
+    vent: ventTile(),
+    key: keySprite(),
     camera_right: cameraSprite('right'),
     camera_left: flipH(cameraSprite('right')),
     camera_up: cameraSprite('up'),

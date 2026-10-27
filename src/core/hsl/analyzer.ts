@@ -35,7 +35,8 @@ export function analyze(program: Program, stage: StageDefinition): HslError[] {
   const unlocked = new Set(stage.unlockedCommands);
   const waypointIds = new Set(stage.waypoints.map((w) => w.id));
   waypointIds.add('exit');
-  const treasures = new Set(stage.objects.filter((o) => o.type === 'treasure').map((o) => o.id));
+  const treasures = new Set(stage.objects.filter((o) => o.type === 'treasure' || o.type === 'key').map((o) => o.id));
+  const noiseTargets = new Set([...waypointIds, ...stage.objects.map((o) => o.id)]);
   const doors = new Set(stage.objects.filter((o) => o.type === 'door').map((o) => o.id));
   const lockers = new Set(stage.objects.filter((o) => o.type === 'locker').map((o) => o.id));
   const switches = new Set(stage.objects.filter((o) => o.type === 'switch').map((o) => o.id));
@@ -94,6 +95,11 @@ export function analyze(program: Program, stage: StageDefinition): HslError[] {
           case 'open':
             if (target && !doors.has(target)) {
               push(stmt.line, stmt.col, `'${target}' は扉ではありません${maybe(target, doors)}（扉: ${[...doors].join(', ') || 'なし'}）`);
+            }
+            break;
+          case 'distract':
+            if (target && !noiseTargets.has(target)) {
+              push(stmt.line, stmt.col, `'${target}' は物音を立てられる地点ではありません${maybe(target, noiseTargets)}（地点やオブジェクトの ID を指定: ${[...noiseTargets].join(', ')}）`);
             }
             break;
           case 'knockout':

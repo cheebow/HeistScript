@@ -1,7 +1,7 @@
 import type { StageDefinition } from '../../src/core/model/stage';
 import { assertStage } from '../../src/core/stages/validate';
 
-export const ALL_UNLOCKED = ['move', 'steal', 'wait', 'hide', 'knockout', 'carry', 'drop', 'open', 'signal', 'resume', 'if', 'while', 'on'];
+export const ALL_UNLOCKED = ['move', 'steal', 'wait', 'hide', 'knockout', 'carry', 'drop', 'open', 'distract', 'signal', 'resume', 'if', 'while', 'on'];
 
 export function makeStage(tiles: string[], extra: Partial<StageDefinition> = {}): StageDefinition {
   const height = tiles.length;

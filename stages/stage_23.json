@@ -1,0 +1,219 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_23",
+  "title": "最後の仕事",
+  "width": 24,
+  "height": 14,
+  "description": "事務室のカードキー、通風口、施錠された金庫、新人とベテラン。二人で物音と合図を使い分けて、すべてを組み合わせよう。",
+  "tiles": [
+    "########################",
+    "#E.........#...........#",
+    "#..........#...........#",
+    "#..........V...........#",
+    "#..........#...........#",
+    "######VV################",
+    "######VV################",
+    "######VV################",
+    "######VV################",
+    "######VV################",
+    "#..............#.......#",
+    "#..............D.......#",
+    "#..............#.......#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上"
+    },
+    {
+      "id": "desk",
+      "x": 10,
+      "y": 2,
+      "label": "事務室の壁ぎわ",
+      "description": "ここから事務室の棚 shelf へ物音を届けられる（距離 6）"
+    },
+    {
+      "id": "vent_o",
+      "x": 11,
+      "y": 3,
+      "label": "事務室への通風口",
+      "description": "事務室の壁の中。ここにいれば見えない"
+    },
+    {
+      "id": "shelf",
+      "x": 16,
+      "y": 2,
+      "label": "事務室の棚",
+      "description": "物音を立てる場所。見張りが調べに来る"
+    },
+    {
+      "id": "vent_top",
+      "x": 6,
+      "y": 5,
+      "label": "縦の通風口の上",
+      "description": "下の部屋へ続く通風口の入口"
+    },
+    {
+      "id": "vault_in",
+      "x": 14,
+      "y": 11,
+      "label": "金庫の扉の前",
+      "description": "施錠された扉のすぐ外。新人が右端に来ると見える"
+    },
+    {
+      "id": "vent_side",
+      "x": 7,
+      "y": 9,
+      "label": "縦の通風口の下（右側）",
+      "description": "B の見張り場所。新人が真下を通ると guard_near。通る向きは交互に変わる"
+    },
+    {
+      "id": "vent_bottom",
+      "x": 6,
+      "y": 9,
+      "label": "縦の通風口の下（左側）",
+      "description": "A の出口。下の部屋へ出る"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "鍵を取って金庫を開ける係",
+      "starterScript": "# 怪盗A: vent_o で待ち、見張りが離れたら keycard を取る\nmove vent_o\nwait 60\n"
+    },
+    {
+      "id": "thief_b",
+      "x": 2,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗B",
+      "description": "物音で見張りを動かす係",
+      "starterScript": "# 怪盗B: desk から distract shelf で見張りを動かす\nmove desk\nwait 60\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "sentry",
+      "x": 21,
+      "y": 2,
+      "direction": "left",
+      "label": "事務室の見張り",
+      "description": "事務室の東端から西を見張る。視界 8 マス。物音がすれば調べに行く",
+      "visionRange": 8,
+      "patrolRoute": [
+        {
+          "x": 21,
+          "y": 2,
+          "waitTicks": 0
+        }
+      ]
+    },
+    {
+      "id": "rookie",
+      "x": 2,
+      "y": 11,
+      "direction": "right",
+      "label": "新人",
+      "description": "下の部屋を左右に往復する。視界 3 マスしかない。右端で 3 tick、左端で 20 tick 止まる。開いている扉に気づくと調べに来る",
+      "visionRange": 3,
+      "patrolRoute": [
+        {
+          "x": 12,
+          "y": 11,
+          "waitTicks": 3
+        },
+        {
+          "x": 2,
+          "y": 11,
+          "waitTicks": 20
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 19,
+      "y": 11,
+      "required": true,
+      "label": "宝石",
+      "description": "金庫の中"
+    },
+    {
+      "id": "keycard",
+      "type": "key",
+      "x": 14,
+      "y": 4,
+      "unlocks": "vault_door",
+      "label": "カードキー",
+      "description": "事務室の左下の机。見張りの視界の中"
+    },
+    {
+      "id": "vault_door",
+      "type": "door",
+      "x": 15,
+      "y": 11,
+      "open": false,
+      "locked": true,
+      "label": "金庫の扉",
+      "description": "施錠されている。カードキーを持って open"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 900,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "pacifist",
+      "type": "noKnockout",
+      "title": "誰も眠らせずにクリア"
+    }
+  ],
+  "learn": [
+    "総合（鍵・通風口・物音・視界）"
+  ],
+  "goal": "カードキーで金庫を開けて宝石を盗み、二人とも出口へ。",
+  "firstStep": "A を vent_o、B を desk に置き、B の distract shelf で見張りがどう動くか観察しよう。",
+  "hints": [
+    "鍵は事務室、金庫は下の部屋。事務室の見張りは 8 マス先まで見えるので、B が desk から distract shelf で動かし、A は通風口 vent_o から鍵を取りに行く（見張りが戻るまで 18 tick ほど）。下の部屋の新人は 3 マスしか見えないが、金庫の扉の前は折り返し点から見える。",
+    "B は vent_side で見張り役。新人が真下を通るたびに guard_near → guard_away が成立し、通る向きは交互に変わる。新人が左へ向かった直後に signal go、A は vent_bottom から出て金庫へ。A は盗んだら宝石の場所で待ち、新人が扉を調べて左へ戻った直後の signal go2 で通風口へ。",
+    "--- thief_a ---\nmove vent_o\nwait until signal_received(noise)\nwait 18\nmove keycard\nsteal keycard\nmove vent_o\nmove vent_top\nmove vent_bottom\nwait until signal_received(go)\nmove vault_in\nopen vault_door\nmove jewel\nsteal jewel\nwait until signal_received(go2)\nmove vent_bottom\nmove exit\n\n--- thief_b ---\nmove desk\ndistract shelf\nsignal noise\nmove vent_top\nmove vent_side\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nsignal go\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nsignal go2\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move vent_o\nwait until signal_received(noise)\nwait 18\nmove keycard\nsteal keycard\nmove vent_o\nmove vent_top\nmove vent_bottom\nwait until signal_received(go)\nmove vault_in\nopen vault_door\nmove jewel\nsteal jewel\nwait until signal_received(go2)\nmove vent_bottom\nmove exit\n",
+    "thief_b": "move desk\ndistract shelf\nsignal noise\nmove vent_top\nmove vent_side\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nsignal go\nwait until guard_near\nwait until guard_away\nwait until guard_near\nwait until guard_away\nsignal go2\nmove exit\n"
+  }
+}

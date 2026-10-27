@@ -1,11 +1,13 @@
 import type { Position, WorldState } from '../model/types';
-import { isPlannable, neighbors, posKey, samePos } from './grid';
+import { isPlannable, neighbors, posKey, samePos, type MoverKind } from './grid';
 
 export interface PathOptions {
   /** 追加で通行不可とみなすタイル（動的占有） */
   blocked?: Set<string>;
   /** 目標タイルが blocked に含まれていても許可する */
   allowBlockedGoal?: boolean;
+  /** 移動者の種類（警備員は通風口を通れない） */
+  mover?: MoverKind;
 }
 
 interface Node {
@@ -28,7 +30,8 @@ export function findPath(
   options: PathOptions = {},
 ): Position[] | null {
   if (samePos(start, goal)) return [];
-  if (!isPlannable(world, goal)) return null;
+  const mover = options.mover ?? 'thief';
+  if (!isPlannable(world, goal, mover)) return null;
   const blocked = options.blocked;
   if (blocked && blocked.has(posKey(goal)) && !options.allowBlockedGoal) return null;
 
@@ -72,7 +75,7 @@ export function findPath(
     for (const nb of neighbors(current)) {
       const key = posKey(nb);
       if (closed.has(key)) continue;
-      if (!isPlannable(world, nb)) continue;
+      if (!isPlannable(world, nb, mover)) continue;
       const isGoal = nb.x === goal.x && nb.y === goal.y;
       if (blocked && blocked.has(key) && !(isGoal && options.allowBlockedGoal)) continue;
       const g = current.g + 1;

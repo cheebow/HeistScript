@@ -133,6 +133,7 @@ export class HeistScene extends Phaser.Scene {
         let key = `floor_${(x * 7 + y * 13) % 5 === 0 ? 1 : (x * 3 + y * 5) % 7 === 0 ? 2 : 0}`;
         if (kind === 'wall') key = 'wall';
         else if (kind === 'hiding_spot') key = 'hiding_spot';
+        else if (kind === 'vent') key = 'vent';
         else if (kind === 'exit') key = 'exit';
         else if (kind === 'door') {
           const door = world.objects.find((o) => o.type === 'door' && o.x === x && o.y === y);
@@ -150,15 +151,15 @@ export class HeistScene extends Phaser.Scene {
   private renderObjects(world: WorldState): void {
     const seen = new Set<string>();
     for (const o of world.objects) {
-      if (o.type !== 'treasure' && o.type !== 'laser' && o.type !== 'switch') continue;
+      if (o.type !== 'treasure' && o.type !== 'laser' && o.type !== 'switch' && o.type !== 'key') continue;
       seen.add(o.id);
-      const key = o.type === 'treasure' ? 'treasure' : o.type === 'laser' ? (o.active ? 'laser_on' : 'laser_off') : o.pressed ? 'switch_down' : 'switch_up';
+      const key = o.type === 'treasure' ? 'treasure' : o.type === 'key' ? 'key' : o.type === 'laser' ? (o.active ? 'laser_on' : 'laser_off') : o.pressed ? 'switch_down' : 'switch_up';
       let img = this.objectSprites.get(o.id);
       if (!img) {
         img = this.add.image(o.x * TILE, o.y * TILE, key).setOrigin(0, 0).setDepth(o.type === 'treasure' ? DEPTH.objects : DEPTH.tiles + 0.5);
         this.objectSprites.set(o.id, img);
       } else if (img.texture.key !== key) img.setTexture(key);
-      img.setVisible(o.type !== 'treasure' || o.takenBy === null);
+      img.setVisible((o.type !== 'treasure' && o.type !== 'key') || o.takenBy === null);
     }
     for (const [id, img] of this.objectSprites) {
       if (!seen.has(id)) {
@@ -175,7 +176,7 @@ export class HeistScene extends Phaser.Scene {
       if (!isGuardActive(guard)) continue;
       const color = guard.state === 'CHASE' ? 0xd8434e : guard.state === 'PATROL' ? 0xf3d35a : 0xf08a3c;
       g.fillStyle(color, 0.2);
-      for (const t of visibleTiles(world, { x: guard.x, y: guard.y, direction: guard.direction, range: DEFAULT_CONFIG.guardVisionRange })) {
+      for (const t of visibleTiles(world, { x: guard.x, y: guard.y, direction: guard.direction, range: guard.visionRange ?? DEFAULT_CONFIG.guardVisionRange })) {
         g.fillRect(t.x * TILE, t.y * TILE, TILE, TILE);
       }
     }
@@ -301,6 +302,10 @@ export class HeistScene extends Phaser.Scene {
       const moving = guard.path.length > 0;
       const img = this.getActor(guard.id, this.actorTexture('guard', guard.direction, moving), DEPTH.actors);
       img.setPosition(pos.px, pos.py).setVisible(true).setAlpha(1);
+      // 視界の広さが標準と違う警備員は色味で区別（広い＝赤み、狭い＝青み）
+      if (guard.visionRange !== null && guard.visionRange > DEFAULT_CONFIG.guardVisionRange) img.setTint(0xffc4b8);
+      else if (guard.visionRange !== null && guard.visionRange < DEFAULT_CONFIG.guardVisionRange) img.setTint(0xc4d8ff);
+      else img.clearTint();
       if (guard.state === 'CHASE') {
         this.placeMark(this.getMark(`${guard.id}:state`, 'mark_exclaim'), pos.px, pos.py);
         seenMarks.add(`${guard.id}:state`);

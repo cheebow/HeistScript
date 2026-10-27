@@ -176,6 +176,7 @@ function GuardInfo({ guard, world, label }: { guard: Guard; world: WorldState; l
       <dt>位置/向き</dt>
       <dd>
         ({guard.x},{guard.y}) {guard.direction}
+        {guard.visionRange !== null ? `／視界 ${guard.visionRange} マス` : ''}
       </dd>
       <dt>巡回</dt>
       <dd>

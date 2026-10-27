@@ -20,7 +20,7 @@ export interface Position {
   y: number;
 }
 
-export type TileKind = 'wall' | 'floor' | 'hiding_spot' | 'door' | 'exit';
+export type TileKind = 'wall' | 'floor' | 'hiding_spot' | 'door' | 'exit' | 'vent';
 
 export interface PatrolPoint extends Position {
   waitTicks: number;
@@ -42,6 +42,10 @@ export interface Guard {
   direction: Direction;
   /** 初期巡回ルート（ステージ定義のコピー） */
   patrolRoute: PatrolPoint[];
+  /** 視界の射程（null なら設定値 guardVisionRange） */
+  visionRange: number | null;
+  /** 開始時の向き。持ち場が 1 点の見張りは、持ち場に戻るとこの向きに戻る */
+  homeDirection: Direction;
   state: GuardState;
   /** 次に向かう巡回ポイントのインデックス */
   patrolIndex: number;
@@ -91,7 +95,7 @@ export interface Camera {
   visibleThiefIds: string[];
 }
 
-export type GameObjectType = 'treasure' | 'door' | 'locker' | 'laser' | 'switch';
+export type GameObjectType = 'treasure' | 'door' | 'locker' | 'laser' | 'switch' | 'key';
 
 export interface GameObject {
   id: string;
@@ -122,6 +126,8 @@ export interface GameObject {
   targetDoorId: string | null;
   /** switch: 押されているか */
   pressed: boolean;
+  /** key: 開けられる施錠扉の ID */
+  unlocks: string | null;
 }
 
 export interface Thief {
@@ -208,7 +214,7 @@ export type Action =
   | { kind: 'waitUntil'; blockId: number; index: number; line: number; satisfied: boolean }
   | {
       kind: 'timed';
-      command: 'steal' | 'hide' | 'knockout' | 'carry' | 'drop' | 'open' | 'signal';
+      command: 'steal' | 'hide' | 'knockout' | 'carry' | 'drop' | 'open' | 'signal' | 'distract';
       targetId: string;
       remaining: number;
       total: number;

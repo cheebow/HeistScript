@@ -4,7 +4,7 @@ import { HslSyntaxError } from './errors';
 import { tokenize, type Token } from './lexer';
 
 const KEYWORDS = new Set([
-  'move', 'steal', 'hide', 'knockout', 'carry', 'drop', 'open',
+  'move', 'steal', 'hide', 'knockout', 'carry', 'drop', 'open', 'distract',
   'wait', 'until', 'signal', 'resume', 'if', 'else', 'end', 'while', 'on',
   'and', 'or', 'not', 'true', 'false', 'spotted', 'alarm', ...PREDICATE_NAMES,
 ]);
@@ -131,7 +131,8 @@ class Parser {
       case 'steal':
       case 'knockout':
       case 'carry':
-      case 'open': {
+      case 'open':
+      case 'distract': {
         this.next();
         const target = this.expectIdentifier(t.value);
         this.expectNewline(`${t.value} ${target}`);

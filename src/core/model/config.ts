@@ -29,7 +29,12 @@ export interface SimConfig {
     drop: number;
     open: number;
     signal: number;
+    distract: number;
   };
+  /** distract で物音を立てられる距離（マンハッタン） */
+  distractRange: number;
+  /** 物音が聞こえる距離（マンハッタン） */
+  hearingRange: number;
 }
 
 export const DEFAULT_CONFIG: SimConfig = {
@@ -56,5 +61,8 @@ export const DEFAULT_CONFIG: SimConfig = {
     drop: 1,
     open: 2,
     signal: 1,
+    distract: 1,
   },
+  distractRange: 6,
+  hearingRange: 6,
 };

@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_21",
+  "title": "コインの音",
+  "width": 20,
+  "height": 12,
+  "description": "見張りは通路のすき間の下から動かず、上の部屋を見ている。distract で離れた場所に物音を立てれば、見張りは調べに行って、終われば戻ってくる。",
+  "tiles": [
+    "####################",
+    "#E.................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#########.##########",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#.H................#",
+    "####################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上"
+    },
+    {
+      "id": "gap",
+      "x": 9,
+      "y": 6,
+      "label": "通路のすき間",
+      "description": "上下の部屋をつなぐ唯一の通り道"
+    },
+    {
+      "id": "ledge",
+      "x": 13,
+      "y": 4,
+      "label": "右の壁ぎわ",
+      "description": "見張りの視界のすぐ外。ここから下の部屋の右の木箱へ物音を届けられる"
+    },
+    {
+      "id": "crate_e",
+      "x": 14,
+      "y": 8,
+      "label": "右の木箱",
+      "description": "下の部屋の右。物音を立てる場所"
+    },
+    {
+      "id": "crate_w",
+      "x": 4,
+      "y": 8,
+      "label": "左の木箱",
+      "description": "下の部屋の左。物音を立てる場所"
+    },
+    {
+      "id": "mid",
+      "x": 8,
+      "y": 10,
+      "label": "下の部屋の中央下",
+      "description": "見張りの背中側。ここから左の木箱へ物音を届けられる"
+    },
+    {
+      "id": "locker_sw",
+      "x": 2,
+      "y": 10,
+      "label": "左下のロッカー",
+      "description": "宝石のすぐそば。hide で隠れて見張りが戻るのを待つ"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 1,
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# distract 地点ID で距離 6 以内の地点に物音を立てる\nmove ledge\ndistract crate_e\nwait 30\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 9,
+      "y": 7,
+      "direction": "up",
+      "label": "見張り",
+      "description": "すき間の下に立ち、上の部屋を見張る。物音がすれば調べに行き、終われば戻る。背中側（下の部屋）は見ていない",
+      "patrolRoute": [
+        {
+          "x": 9,
+          "y": 7,
+          "waitTicks": 0
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 3,
+      "y": 9,
+      "required": true,
+      "label": "宝石",
+      "description": "下の部屋の左下"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 600,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "pacifist",
+      "type": "noKnockout",
+      "title": "誰も眠らせずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 140,
+      "title": "140tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "distract"
+  ],
+  "goal": "物音で見張りを動かし、下の部屋の宝石を盗んで出口へ。",
+  "firstStep": "ledge まで行って distract crate_e を実行し、見張りがどこまで行って何 tick で戻るか観察しよう。",
+  "hints": [
+    "distract 地点ID で、距離 6 以内の地点に物音を立てられる。物音から距離 6 以内の警備員は調べに行き、3 tick 見てから持ち場に戻る。見張りは上の部屋しか見ていないので、下の部屋は背中側。",
+    "ledge から distract crate_e → 見張りが右へ行った隙にすき間を抜けて宝石へ。盗んだら locker_sw で hide して wait until safe（見張りが持ち場に戻って上を向くまで）。mid から distract crate_w で左へ行かせ、その間にすき間を抜けて出口へ。",
+    "--- thief_a ---\nmove ledge\ndistract crate_e\nwait 4\nmove jewel\nsteal jewel\nmove locker_sw\nhide\nwait until safe\nmove mid\ndistract crate_w\nwait 4\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move ledge\ndistract crate_e\nwait 4\nmove jewel\nsteal jewel\nmove locker_sw\nhide\nwait until safe\nmove mid\ndistract crate_w\nwait 4\nmove exit\n"
+  }
+}
