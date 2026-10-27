@@ -86,3 +86,9 @@ SPEC.md に曖昧さ・矛盾があった箇所の「論点 / 採用した解釈
 - TypeScript は 5.9 系を採用（最新 7.x は tsgo ベースで周辺ツールとの互換性リスクがあるため）。
 - Monaco Editor 0.57 は `monaco-editor/editor` + `monaco-editor/features/register.all` + `monaco-editor/editor/editor.worker.js?worker` でローカルバンドル（CDN 不使用）。
 - Phaser は SPEC 通り 3.x（3.90）。Vite 8 / Vitest 5 / Playwright 1.64。
+
+## D-16 タイル解像度を 32×32 に変更
+
+- 論点: SPEC 4 節は 1タイル=16×16 論理ピクセル。
+- 採用: 描画上の 1 タイルを 32×32 ピクセルにし、ロジック（座標・距離）は変更しない。整数倍率・nearest-neighbor は維持。
+- 理由: プレイテストで「ドット絵をもう少し描き込みたい。8ビット風が難しければ解像度を上げてよい」との判断（2026-10-27）。

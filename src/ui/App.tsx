@@ -214,24 +214,32 @@ export function App() {
             onClick={() => (ctl.status === 'running' ? ctl.pause() : ctl.run && ctl.status !== 'finished' ? ctl.play() : startRun(true))}
             disabled={hasErrors || (ctl.status === 'finished' && !ctl.isReplay)}
             data-testid="btn-play"
-            title={hasErrors ? 'エラーを修正してください' : '実行 / 一時停止 (Space)'}
+            title={hasErrors ? 'エラーを修正してください' : 'スクリプトを最初から実行する / 実行中は一時停止'}
           >
-            {ctl.status === 'running' ? '一時停止' : ctl.run && ctl.status !== 'finished' ? '再開' : ctl.status === 'finished' && ctl.isReplay ? 'リプレイ' : '実行'}
+            {ctl.status === 'running' ? '一時停止' : ctl.run && ctl.status !== 'finished' ? '再開' : ctl.status === 'finished' && ctl.isReplay ? 'リプレイ再生' : '実行'}
           </button>
-          <button onClick={() => { if (!ctl.run) startRun(false); ctl.stepOnce(); }} disabled={hasErrors || (ctl.status === 'finished' && !ctl.isReplay)} data-testid="btn-step" title="1tick 進める">
-            1tick
+          <button
+            onClick={() => {
+              if (!ctl.run) startRun(false);
+              ctl.stepOnce();
+            }}
+            disabled={hasErrors || (ctl.status === 'finished' && !ctl.isReplay)}
+            data-testid="btn-step"
+            title="時間を 1 コマ（1 tick = 0.1 秒）だけ進めて止める。動きを細かく確かめたいときに"
+          >
+            1コマ進める
           </button>
-          <button onClick={() => startRun(false)} disabled={hasErrors} data-testid="btn-restart" title="初期状態から実行（コードは消えません）">
-            初期状態へ
+          <button onClick={() => startRun(false)} disabled={hasErrors} data-testid="btn-restart" title="最初の状態に戻して止める（コードは消えない）">
+            最初に戻す
           </button>
-          <div className="seg" role="radiogroup" aria-label="再生速度">
+          <div className="seg" role="radiogroup" aria-label="再生速度" title="再生速度（x1 = 1 秒に 10 tick）">
             {([1, 2, 4] as Speed[]).map((s) => (
               <button key={s} className={ctl.speed === s ? 'active' : ''} onClick={() => ctl.setSpeed(s)} aria-pressed={ctl.speed === s}>
                 x{s}
               </button>
             ))}
           </div>
-          <label className="timeline">
+          <label className="timeline" title="経過時間。1 tick = 0.1 秒。スライダーで過去のコマに戻して見返せる（閲覧専用）">
             <span data-testid="tick-label">
               tick {ctl.viewTick}/{ctl.liveTick}
             </span>
@@ -294,7 +302,17 @@ export function App() {
             {progress?.cleared && <span className="badge">クリア済み（最良 {progress.bestTicks} tick）</span>}
           </div>
           <GameView world={previewWorld ?? initialWorld} options={renderOptions} version={ctl.version} onSelect={(id) => setSelectedId(id)} />
-          {ctl.isReplay && <div className="replay-banner">リプレイ閲覧中（閲覧専用）。再実行は「初期状態へ」</div>}
+          {ctl.isReplay && <div className="replay-banner">過去のコマを表示中（閲覧専用）。やり直すには「最初に戻す」</div>}
+          <div className="legend" aria-label="凡例">
+            <span><i className="sw sw-thief" />怪盗</span>
+            <span><i className="sw sw-guard" />警備員</span>
+            <span><i className="sw sw-vision" />警備員の視界</span>
+            <span><i className="sw sw-camera" />カメラの視界</span>
+            <span><i className="sw sw-locker" />隠れ場所</span>
+            <span><i className="sw sw-exit" />出口</span>
+            <span><i className="sw sw-path" />移動予定の経路</span>
+            <span className="muted">人物をクリックすると状態を表示</span>
+          </div>
         </section>
       </main>
 
