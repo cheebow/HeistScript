@@ -3,6 +3,7 @@ import 'monaco-editor/features/register.all';
 import editorWorker from 'monaco-editor/editor/editor.worker.js?worker';
 import { PREDICATE_NAMES } from '../../core/hsl/ast';
 import type { StageDefinition } from '../../core/model/stage';
+import { stageEntities } from '../stageInfo';
 
 declare global {
   interface Window {
@@ -113,20 +114,7 @@ export function setStageCompletions(stage: StageDefinition | null): void {
   completionDisposable?.dispose();
   completionDisposable = null;
   if (!stage) return;
-  type Item = { id: string; detail: string; kinds: string[] };
-  const items: Item[] = [];
-  const add = (id: string, detail: string, kinds: string[]) => {
-    if (!items.some((i) => i.id === id)) items.push({ id, detail, kinds });
-  };
-  add('exit', `出口 (${stage.exit.x},${stage.exit.y})`, ['move']);
-  for (const w of stage.waypoints) add(w.id, `地点 (${w.x},${w.y})`, ['move']);
-  for (const o of stage.objects) {
-    if (o.type === 'treasure') add(o.id, `宝物 (${o.x},${o.y})`, ['move', 'steal']);
-    else if (o.type === 'door') add(o.id, `扉 (${o.x},${o.y})`, ['move', 'open']);
-    else add(o.id, `ロッカー (${o.x},${o.y})`, ['move']);
-  }
-  for (const g of stage.guards) add(g.id, '警備員', ['move', 'knockout', 'carry']);
-  for (const t of stage.thieves) add(t.id, '怪盗', ['move']);
+  const items = stageEntities(stage).map((e) => ({ id: e.id, detail: `${e.label}（${e.kind} ${e.pos}）`, doc: e.description, kinds: e.commands }));
 
   const TARGET_COMMANDS = ['move', 'steal', 'open', 'knockout', 'carry'];
   const CONDITION_HEADS = ['if', 'while', 'until', 'and', 'or', 'not', '('];
@@ -146,7 +134,7 @@ export function setStageCompletions(stage: StageDefinition | null): void {
       if (TARGET_COMMANDS.includes(last) && tokens.length === 1) {
         for (const it of items) {
           if (!it.kinds.includes(last)) continue;
-          suggestions.push({ label: it.id, kind: kind.Variable, insertText: it.id, detail: it.detail, range, sortText: '0' + it.id });
+          suggestions.push({ label: it.id, kind: kind.Variable, insertText: it.id, detail: it.detail, documentation: it.doc, range, sortText: '0' + it.id });
         }
         return { suggestions };
       }
@@ -173,8 +161,7 @@ export function setStageCompletions(stage: StageDefinition | null): void {
             kind: kind.Function,
             insertText: p.name.startsWith('signal_received') ? 'signal_received(${1:ready})' : p.name,
             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-            detail: '条件',
-            documentation: p.summary,
+            detail: p.summary,
             range,
             sortText: '0' + p.name,
           });

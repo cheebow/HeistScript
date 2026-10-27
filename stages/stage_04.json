@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "stage_04",
   "title": "眠ってもらおう",
-  "description": "警備員が宝物庫の入口を見張っている。背後 behind に回り込み knockout で眠らせよう。30tick 後に目を覚ますので急ぐこと。carry / drop で運ぶこともできる。",
+  "description": "警備員 guard_1 が宝物庫の入口を見張っている。警備員の真後ろの地点 behind（ビハインド）に回り込み、knockout で眠らせよう。30tick 後に目を覚ますので急ぐこと。carry / drop で運ぶこともできる。",
   "width": 20,
   "height": 12,
   "tiles": [
@@ -21,19 +21,32 @@
   ],
   "waypoints": [
     {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上の脱出口"
+    },
+    {
       "id": "behind",
       "x": 11,
-      "y": 8
+      "y": 8,
+      "label": "警備員の真後ろ",
+      "description": "宝物庫の入口を見張る警備員のすぐ後ろ（南側）のマス。ここから knockout できる"
     },
     {
       "id": "vault",
       "x": 11,
-      "y": 5
+      "y": 5,
+      "label": "宝物庫の中",
+      "description": "宝石がある小部屋の入口付近。眠らせた警備員を運び込むのに使える"
     },
     {
       "id": "corner",
       "x": 18,
-      "y": 10
+      "y": 10,
+      "label": "広間の右下の隅",
+      "description": "警備員から遠い隅"
     }
   ],
   "thieves": [
@@ -42,7 +55,9 @@
       "x": 1,
       "y": 2,
       "direction": "right",
-      "starterScript": "# 警備員の真後ろのマスから knockout <警備員> で気絶させられる。\n# 眠っている警備員のマスは通り抜けられる。\nmove behind\nknockout guard_1\n"
+      "starterScript": "# 警備員の真後ろのマス behind から knockout guard_1 で気絶させられる。\n# 眠っている警備員のマスは通り抜けられる。\nmove behind\nknockout guard_1\n",
+      "label": "怪盗A",
+      "description": "あなたが操作する怪盗"
     }
   ],
   "guards": [
@@ -62,7 +77,9 @@
           "y": 9,
           "waitTicks": 6
         }
-      ]
+      ],
+      "label": "警備員1",
+      "description": "宝物庫の入口の前に立ち、ときどき後ろへ下がって戻る"
     }
   ],
   "cameras": [],
@@ -72,7 +89,9 @@
       "type": "treasure",
       "x": 9,
       "y": 5,
-      "required": true
+      "required": true,
+      "label": "宝石",
+      "description": "宝物庫の中にある必須の宝物"
     }
   ],
   "exit": {
@@ -109,8 +128,8 @@
     }
   ],
   "hints": [
-    "警備員 guard_1 は宝物庫の入口 (11,6) の前に立ち、ときどき後ろへ下がって戻る。knockout は相手の真後ろ（向きの反対側の隣）からしか成功しない。",
-    "move behind で警備員の後ろへ回り、wait until guard_near などで警備員が戻るのを待ってから knockout guard_1。眠っている警備員のマスは通り抜けられる。30tick 以内に離れるか、carry で宝物庫の中へ運んで drop しておくと目覚めても見つかりにくい。",
+    "警備員 guard_1（ガード1）は宝物庫の入口 (11,6) の前に立ち、ときどき後ろへ下がって戻る。knockout（ノックアウト＝気絶させる）は相手の真後ろ（向きの反対側の隣）からしか成功しない。",
+    "move behind（ビハインド＝警備員の真後ろの地点）で後ろへ回り、knockout guard_1。眠っている警備員のマスは通り抜けられる。30tick 以内に離れるか、carry（担ぐ）で宝物庫の中 vault（ボールト）へ運んで drop（下ろす）しておくと目覚めても見つかりにくい。",
     "move behind\nknockout guard_1\ncarry guard_1\nmove vault\ndrop\nmove jewel\nsteal jewel\nmove exit"
   ],
   "solution": {

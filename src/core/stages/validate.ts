@@ -82,6 +82,10 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
     }
     return true;
   };
+  const checkLabel = (o: Record<string, unknown>, path: string) => {
+    if (o.label !== undefined && typeof o.label !== 'string') err(`${path}.label`, '文字列が必要です');
+    if (o.description !== undefined && typeof o.description !== 'string') err(`${path}.description`, '文字列が必要です');
+  };
   const checkDir = (d: unknown, path: string) => {
     if (!DIRECTIONS.includes(d as Direction)) err(path, `direction '${String(d)}' は up/right/down/left のいずれか`);
   };
@@ -97,6 +101,7 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
       if (!isObj(w)) return err(`waypoints[${i}]`, 'オブジェクトが必要です');
       checkId(w.id, `waypoints[${i}].id`);
       checkPos(w, `waypoints[${i}]`);
+      checkLabel(w, `waypoints[${i}]`);
     });
 
   // thieves
@@ -107,6 +112,7 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
       if (!isObj(t)) return err(`thieves[${i}]`, 'オブジェクトが必要です');
       checkId(t.id, `thieves[${i}].id`);
       checkPos(t, `thieves[${i}]`);
+      checkLabel(t, `thieves[${i}]`);
       checkDir(t.direction, `thieves[${i}].direction`);
       if (typeof t.starterScript !== 'string') err(`thieves[${i}].starterScript`, '文字列が必要です');
     });
@@ -118,6 +124,7 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
       if (!isObj(g)) return err(`guards[${i}]`, 'オブジェクトが必要です');
       checkId(g.id, `guards[${i}].id`);
       checkPos(g, `guards[${i}]`);
+      checkLabel(g, `guards[${i}]`);
       checkDir(g.direction, `guards[${i}].direction`);
       if (!Array.isArray(g.patrolRoute)) err(`guards[${i}].patrolRoute`, '配列が必要です');
       else
@@ -135,6 +142,7 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
       if (!isObj(c)) return err(`cameras[${i}]`, 'オブジェクトが必要です');
       checkId(c.id, `cameras[${i}].id`);
       checkPos(c, `cameras[${i}]`, false);
+      checkLabel(c, `cameras[${i}]`);
       checkDir(c.direction, `cameras[${i}].direction`);
       if (!isInt(c.range) || (c.range as number) <= 0) err(`cameras[${i}].range`, '正の整数');
       if (!isInt(c.rotateEveryTicks) || (c.rotateEveryTicks as number) < 0) err(`cameras[${i}].rotateEveryTicks`, '0以上の整数');
@@ -147,6 +155,7 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
     s.objects.forEach((o, i) => {
       if (!isObj(o)) return err(`objects[${i}]`, 'オブジェクトが必要です');
       checkId(o.id, `objects[${i}].id`);
+      checkLabel(o, `objects[${i}]`);
       if (!['treasure', 'door', 'locker'].includes(o.type as string)) err(`objects[${i}].type`, 'treasure/door/locker のいずれか');
       if (checkPos(o, `objects[${i}]`)) {
         if (o.type === 'door') {

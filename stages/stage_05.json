@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "stage_05",
   "title": "二人の怪盗",
-  "description": "thief_a は console から service_door を開けて signal ready、thief_b はそれを待って宝石を盗む。見つかったら on spotted で safe_room に隠れよう。",
+  "description": "怪盗A thief_a は操作盤 console（コンソール）の位置から通用口の扉 service_door を開けて signal ready で合図。怪盗B thief_b はそれを待って宝石を盗む。見つかったら on spotted で隠れ場所 safe_room（セーフルーム）へ。",
   "width": 24,
   "height": 14,
   "tiles": [
@@ -23,19 +23,32 @@
   ],
   "waypoints": [
     {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上の脱出口"
+    },
+    {
       "id": "console",
       "x": 8,
-      "y": 7
+      "y": 7,
+      "label": "操作盤",
+      "description": "通用口の扉のすぐ左。ここから open service_door で扉を開けられる。通路なので開けたら離れる"
     },
     {
       "id": "safe_room",
       "x": 13,
-      "y": 10
+      "y": 10,
+      "label": "安全な隠れ場所",
+      "description": "右の部屋の下側にあるロッカー。hide で隠れられる"
     },
     {
       "id": "lobby",
       "x": 4,
-      "y": 4
+      "y": 4,
+      "label": "左の部屋の中央",
+      "description": "スタート地点近くの待機場所"
     }
   ],
   "thieves": [
@@ -44,14 +57,18 @@
       "x": 2,
       "y": 2,
       "direction": "right",
-      "starterScript": "# 怪盗A: 扉を開けて合図を送る（console のマスは通路なので開けたら離れる）\nmove console\nopen service_door\nsignal ready\nmove exit\n"
+      "starterScript": "# 怪盗A: 操作盤 console の位置から扉 service_door を開けて、合図 ready を送る\n# （console のマスは通路なので開けたら離れる）\nmove console\nopen service_door\nsignal ready\nmove exit\n",
+      "label": "怪盗A",
+      "description": "扉を開ける係"
     },
     {
       "id": "thief_b",
       "x": 2,
       "y": 4,
       "direction": "right",
-      "starterScript": "# 怪盗B: 合図を待って宝石を盗む\nwait until signal_received(ready)\nmove jewel\nsteal jewel\nmove exit\n"
+      "starterScript": "# 怪盗B: 合図 ready を待って宝石 jewel を盗む\nwait until signal_received(ready)\nmove jewel\nsteal jewel\nmove exit\n",
+      "label": "怪盗B",
+      "description": "宝石を盗む係"
     }
   ],
   "guards": [
@@ -81,7 +98,9 @@
           "y": 2,
           "waitTicks": 8
         }
-      ]
+      ],
+      "label": "警備員1",
+      "description": "右の部屋の外周を巡回する"
     }
   ],
   "cameras": [
@@ -91,7 +110,9 @@
       "y": 1,
       "direction": "left",
       "range": 5,
-      "rotateEveryTicks": 0
+      "rotateEveryTicks": 0,
+      "label": "監視カメラ",
+      "description": "右上の角から左向きに固定。映ると警報が鳴る"
     }
   ],
   "objects": [
@@ -100,14 +121,18 @@
       "type": "door",
       "x": 9,
       "y": 7,
-      "open": false
+      "open": false,
+      "label": "通用口の扉",
+      "description": "左の部屋と右の部屋をつなぐ扉。最初は閉まっている"
     },
     {
       "id": "jewel",
       "type": "treasure",
       "x": 16,
       "y": 6,
-      "required": true
+      "required": true,
+      "label": "宝石",
+      "description": "右の部屋の小部屋の中にある必須の宝物"
     }
   ],
   "exit": {
@@ -143,8 +168,8 @@
     }
   ],
   "hints": [
-    "service_door は閉まっていて thief_b は通れない。thief_a が console の隣で open service_door できる。右の部屋の警備員は外周を巡回し、右上にはカメラがある。",
-    "signal <名前> と wait until signal_received(<名前>) で二人の手順を同期できる。on spotted ... resume をスクリプトの先頭に書くと、見つかったときだけ safe_room に逃げて hide し、wait until safe で落ち着いてから resume で元の手順に戻れる。",
+    "通用口の扉 service_door（サービスドア）は閉まっていて怪盗B thief_b は通れない。怪盗A thief_a が操作盤 console（コンソール）の隣で open service_door できる。右の部屋の警備員 guard_1 は外周を巡回し、右上には監視カメラ cam_1 がある。",
+    "signal 名前（合図を送る）と wait until signal_received(名前)（合図を待つ）で二人の手順を同期できる。on spotted（見つかったとき）... resume（元に戻る）をスクリプトの先頭に書くと、見つかったときだけ safe_room（隠れ場所）に逃げて hide し、wait until safe（安全になるまで待つ）のあと resume で元の手順に戻れる。",
     "--- thief_a ---\nmove console\nopen service_door\nsignal ready\nmove exit\n--- thief_b ---\non spotted\n  move safe_room\n  hide\n  wait until safe\n  resume\nend\n\nwait until signal_received(ready)\nmove jewel\nsteal jewel\nmove exit\n"
   ],
   "solution": {

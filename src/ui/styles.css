@@ -122,3 +122,6 @@ h2 { font-size: 12px; letter-spacing: 0.02em; color: var(--muted); }
 .stats td { padding: 2px 12px 2px 0; }
 .challenges { padding-left: 18px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+
+.id-table td:nth-child(2) { line-height: 1.4; }
+.id-table strong { font-weight: 600; }

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "stage_01",
   "title": "はじめての盗み",
-  "description": "警備員はいない。宝石 jewel まで歩いて盗み、出口 exit から脱出しよう。",
+  "description": "警備員はいない。宝石 jewel（ジュエル）まで歩いて盗み、出口 exit（エグジット）から脱出しよう。",
   "width": 16,
   "height": 12,
   "tiles": [
@@ -20,26 +20,66 @@
     "################"
   ],
   "waypoints": [
-    { "id": "exit", "x": 1, "y": 1 },
-    { "id": "hall", "x": 8, "y": 7 }
+    {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上の脱出口。全員がここに着くとクリア"
+    },
+    {
+      "id": "hall",
+      "x": 8,
+      "y": 7,
+      "label": "広間の中央",
+      "description": "部屋の真ん中あたりの地点"
+    }
   ],
   "thieves": [
-    { "id": "thief_a", "x": 2, "y": 1, "direction": "right", "starterScript": "# 宝石まで移動して盗み、出口へ\nmove jewel\nsteal jewel\n" }
+    {
+      "id": "thief_a",
+      "x": 2,
+      "y": 1,
+      "direction": "right",
+      "starterScript": "# 宝石まで移動して盗み、出口へ\nmove jewel\nsteal jewel\n",
+      "label": "怪盗A",
+      "description": "あなたが操作する怪盗"
+    }
   ],
   "guards": [],
   "cameras": [],
   "objects": [
-    { "id": "jewel", "type": "treasure", "x": 12, "y": 5, "required": true }
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 12,
+      "y": 5,
+      "required": true,
+      "label": "宝石",
+      "description": "右の部屋にある必須の宝物"
+    }
   ],
-  "exit": { "x": 1, "y": 1 },
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
   "maxTicks": 400,
-  "unlockedCommands": ["move", "steal", "wait"],
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait"
+  ],
   "challenges": [
-    { "id": "fast", "type": "maxTicks", "value": 70, "title": "70tick以内にクリア" }
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 70,
+      "title": "70tick以内にクリア"
+    }
   ],
   "hints": [
-    "マップを観察しよう。宝石 jewel は右の部屋にあり、出口 exit は左上にある。警備員はいない。",
-    "move <目的地> で自動的に移動し、steal <宝物> で隣にある宝物を盗める。最後は move exit で出口へ。",
+    "マップを観察しよう。宝石 jewel（ジュエル）は右の部屋にあり、出口 exit（エグジット）は左上にある。警備員はいない。",
+    "move 目的地ID で自動的に移動し、steal 宝物ID で隣にある宝物を盗める。最後は move exit で出口へ。使える ID は「命令ヘルプ」タブの一覧を見よう。",
     "move jewel\nsteal jewel\nmove exit"
   ],
   "solution": {

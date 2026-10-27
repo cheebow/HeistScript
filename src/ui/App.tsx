@@ -251,8 +251,8 @@ export function App() {
           <div className="tabs" role="tablist">
             {stage.thieves.map((t) => (
               <button key={t.id} role="tab" aria-selected={activeThief === t.id} className={activeThief === t.id ? 'active' : ''} onClick={() => { setActiveThief(t.id); setSelectedId(t.id); }}>
-                {t.id}
-                {(compileErrors[t.id]?.length ?? 0) > 0 ? ' ⚠' : ''}
+                {t.label ?? t.id} <span className="muted">{t.id}</span>
+                {(compileErrors[t.id]?.length ?? 0) > 0 ? ' !' : ''}
               </button>
             ))}
             <span className="spacer" />
@@ -300,7 +300,7 @@ export function App() {
 
       <footer className="bottom">
         <LogPanel logs={ctl.logs} thiefIds={stage.thieves.map((t) => t.id)} guardIds={stage.guards.map((g) => g.id)} onJumpLine={(thiefId) => setActiveThief(thiefId)} />
-        <InspectorPanel world={world} selectedId={selectedId} onSelect={setSelectedId} />
+        <InspectorPanel world={world} stage={stage} selectedId={selectedId} onSelect={setSelectedId} />
         <aside className="side-panel">
           <div className="tabs" role="tablist">
             <button role="tab" aria-selected={sideTab === 'hint'} className={sideTab === 'hint' ? 'active' : ''} onClick={() => setSideTab('hint')}>

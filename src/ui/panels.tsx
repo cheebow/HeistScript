@@ -4,6 +4,7 @@ import type { Guard, LogEntry, Thief, VmState, WorldState } from '../core/model/
 import type { HslError } from '../core/hsl/errors';
 import { formatHslError } from '../core/hsl/errors';
 import { COMMAND_DOCS, PREDICATE_DOCS } from './monaco/setup';
+import { labelOf, stageEntities } from './stageInfo';
 
 export type LogFilter = 'all' | 'thief' | 'guard' | 'error';
 
@@ -76,7 +77,7 @@ const GUARD_STATE_JA: Record<Guard['state'], string> = {
   UNCONSCIOUS: '気絶',
 };
 
-export function InspectorPanel({ world, selectedId, onSelect }: { world: WorldState | null; selectedId: string | null; onSelect: (id: string) => void }) {
+export function InspectorPanel({ world, stage, selectedId, onSelect }: { world: WorldState | null; stage: StageDefinition; selectedId: string | null; onSelect: (id: string) => void }) {
   if (!world) {
     return (
       <section className="panel inspector" aria-label="インスペクタ">
@@ -99,8 +100,8 @@ export function InspectorPanel({ world, selectedId, onSelect }: { world: WorldSt
         <h2>状態</h2>
         <div className="chips">
           {[...world.thieves.map((t) => t.id), ...world.guards.map((g) => g.id), ...world.cameras.map((c) => c.id)].map((id) => (
-            <button key={id} className={`chip ${id === selectedId ? 'active' : ''}`} onClick={() => onSelect(id)}>
-              {id}
+            <button key={id} className={`chip ${id === selectedId ? 'active' : ''}`} onClick={() => onSelect(id)} title={id}>
+              {labelOf(stage, id)}
             </button>
           ))}
         </div>
@@ -112,13 +113,13 @@ export function InspectorPanel({ world, selectedId, onSelect }: { world: WorldSt
             宝物 {taken.length}/{required.length}、全員が出口へ{world.alarmActive ? '（警戒中）' : ''}
           </dd>
         </dl>
-        {thief && <ThiefInfo thief={thief} vm={vm} world={world} />}
-        {guard && <GuardInfo guard={guard} world={world} />}
+        {thief && <ThiefInfo thief={thief} vm={vm} world={world} label={labelOf(stage, thief.id)} />}
+        {guard && <GuardInfo guard={guard} world={world} label={labelOf(stage, guard.id)} />}
         {camera && (
           <dl className="kv">
             <dt>カメラ</dt>
             <dd>
-              {camera.id} 位置 ({camera.x},{camera.y}) 向き {camera.direction} 範囲 {camera.range}
+              {labelOf(stage, camera.id)}（{camera.id}）位置 ({camera.x},{camera.y}) 向き {camera.direction} 範囲 {camera.range}
               {camera.rotateEveryTicks > 0 ? ` 回転 ${camera.rotateEveryTicks}tick` : ' 固定'}
             </dd>
           </dl>
@@ -129,12 +130,12 @@ export function InspectorPanel({ world, selectedId, onSelect }: { world: WorldSt
   );
 }
 
-function ThiefInfo({ thief, vm, world }: { thief: Thief; vm: VmState | undefined; world: WorldState }) {
+function ThiefInfo({ thief, vm, world, label }: { thief: Thief; vm: VmState | undefined; world: WorldState; label: string }) {
   return (
     <dl className="kv" data-testid="thief-info">
       <dt>怪盗</dt>
       <dd>
-        {thief.id} {thief.captured ? '（逮捕）' : thief.hidden ? '（隠れ中）' : ''}
+        {label}（{thief.id}）{thief.captured ? ' 逮捕' : thief.hidden ? ' 隠れ中' : ''}
       </dd>
       <dt>位置/向き</dt>
       <dd>
@@ -154,12 +155,12 @@ function ThiefInfo({ thief, vm, world }: { thief: Thief; vm: VmState | undefined
   );
 }
 
-function GuardInfo({ guard, world }: { guard: Guard; world: WorldState }) {
+function GuardInfo({ guard, world, label }: { guard: Guard; world: WorldState; label: string }) {
   return (
     <dl className="kv" data-testid="guard-info">
       <dt>警備員</dt>
       <dd>
-        {guard.id} ― {GUARD_STATE_JA[guard.state]}
+        {label}（{guard.id}）― {GUARD_STATE_JA[guard.state]}
         {guard.carriedBy ? `（${guard.carriedBy} が運搬中）` : ''}
       </dd>
       <dt>位置/向き</dt>
@@ -233,26 +234,8 @@ export function HintPanel({ stage, onInsertSample }: { stage: StageDefinition; o
   );
 }
 
-/** ステージ内で命令の対象にできる ID 一覧 */
-function stageIds(stage: StageDefinition) {
-  const rows: { id: string; kind: string; pos: string; usage: string }[] = [];
-  rows.push({ id: 'exit', kind: '出口', pos: `(${stage.exit.x},${stage.exit.y})`, usage: 'move exit' });
-  for (const w of stage.waypoints) {
-    if (w.id === 'exit') continue;
-    rows.push({ id: w.id, kind: '地点', pos: `(${w.x},${w.y})`, usage: `move ${w.id}` });
-  }
-  for (const o of stage.objects) {
-    if (o.type === 'treasure') rows.push({ id: o.id, kind: '宝物', pos: `(${o.x},${o.y})`, usage: `move ${o.id} → steal ${o.id}` });
-    else if (o.type === 'door') rows.push({ id: o.id, kind: '扉', pos: `(${o.x},${o.y})`, usage: `open ${o.id}（隣接して）` });
-    else rows.push({ id: o.id, kind: 'ロッカー', pos: `(${o.x},${o.y})`, usage: `move ${o.id} → hide` });
-  }
-  for (const g of stage.guards) rows.push({ id: g.id, kind: '警備員', pos: `(${g.x},${g.y}) 開始`, usage: `knockout ${g.id} / carry ${g.id}` });
-  for (const t of stage.thieves) rows.push({ id: t.id, kind: '怪盗', pos: `(${t.x},${t.y}) 開始`, usage: `move ${t.id}（隣まで）` });
-  return rows;
-}
-
 export function HelpPanel({ stage }: { stage: StageDefinition }) {
-  const ids = stageIds(stage);
+  const ids = stageEntities(stage);
   const firstWaypoint = stage.waypoints.find((w) => w.id !== 'exit')?.id ?? 'exit';
   const treasure = stage.objects.find((o) => o.type === 'treasure')?.id ?? 'jewel';
   const guard = stage.guards[0]?.id ?? 'guard_1';
@@ -278,13 +261,14 @@ export function HelpPanel({ stage }: { stage: StageDefinition }) {
       <header className="panel-header">
         <h2>このステージで使える ID</h2>
       </header>
-      <p className="muted small">命令の後ろには下の ID をそのまま書く。例: <code>{example('move')}</code></p>
-      <table className="help-table" data-testid="id-table">
+      <p className="muted small">
+        命令の後ろには下の ID（英語の名前）をそのまま書く。例: <code>{example('move')}</code>
+      </p>
+      <table className="help-table id-table" data-testid="id-table">
         <thead>
           <tr>
             <th>ID</th>
-            <th>種類</th>
-            <th>位置</th>
+            <th>意味</th>
             <th>使い方</th>
           </tr>
         </thead>
@@ -294,8 +278,11 @@ export function HelpPanel({ stage }: { stage: StageDefinition }) {
               <td>
                 <code>{r.id}</code>
               </td>
-              <td>{r.kind}</td>
-              <td>{r.pos}</td>
+              <td>
+                <strong>{r.label}</strong>
+                <span className="muted"> {r.kind !== r.label ? `${r.kind} ` : ''}{r.pos}</span>
+                {r.description && <div className="muted">{r.description}</div>}
+              </td>
               <td>
                 <code>{r.usage}</code>
               </td>

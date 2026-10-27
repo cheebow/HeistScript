@@ -23,13 +23,19 @@ export interface StageDefinition {
   solution?: Record<string, string>;
 }
 
-export interface StageWaypoint {
+/** ID に付ける日本語名と説明（ヘルプ・補完・インスペクタで表示） */
+export interface Labeled {
+  label?: string;
+  description?: string;
+}
+
+export interface StageWaypoint extends Labeled {
   id: string;
   x: number;
   y: number;
 }
 
-export interface StageThief {
+export interface StageThief extends Labeled {
   id: string;
   x: number;
   y: number;
@@ -37,7 +43,7 @@ export interface StageThief {
   starterScript: string;
 }
 
-export interface StageGuard {
+export interface StageGuard extends Labeled {
   id: string;
   x: number;
   y: number;
@@ -45,7 +51,7 @@ export interface StageGuard {
   patrolRoute: { x: number; y: number; waitTicks: number }[];
 }
 
-export interface StageCamera {
+export interface StageCamera extends Labeled {
   id: string;
   x: number;
   y: number;
@@ -54,7 +60,7 @@ export interface StageCamera {
   rotateEveryTicks: number;
 }
 
-export interface StageObject {
+export interface StageObject extends Labeled {
   id: string;
   type: 'treasure' | 'door' | 'locker';
   x: number;
