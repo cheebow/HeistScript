@@ -105,8 +105,8 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
     });
 
   // thieves
-  if (!Array.isArray(s.thieves) || s.thieves.length < 1 || s.thieves.length > 2) {
-    err('thieves', '怪盗は1〜2人');
+  if (!Array.isArray(s.thieves) || s.thieves.length < 1 || s.thieves.length > 3) {
+    err('thieves', '怪盗は1〜3人');
   } else
     s.thieves.forEach((t, i) => {
       if (!isObj(t)) return err(`thieves[${i}]`, 'オブジェクトが必要です');

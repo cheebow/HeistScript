@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_18",
+  "title": "三人の役割",
+  "width": 24,
+  "height": 15,
+  "description": "怪盗は三人。見張りは金庫の扉の前から動かず、扉はスイッチが押されている間だけ開く。おとり役・スイッチ役・盗む役に分かれて連携しよう。",
+  "tiles": [
+    "########################",
+    "#E.....................#",
+    "#......................#",
+    "#...H..................#",
+    "#......................#",
+    "#..........#####.......#",
+    "#..........#...#.......#",
+    "#..........#...#.......#",
+    "#..........##D##.......#",
+    "#......................#",
+    "#......................#",
+    "#......................#",
+    "#......................#",
+    "#....................H.#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上の脱出口"
+    },
+    {
+      "id": "bait",
+      "x": 16,
+      "y": 13,
+      "label": "おとりの立ち位置",
+      "description": "見張りの視界の端。ここに立つと見つかる"
+    },
+    {
+      "id": "locker",
+      "x": 21,
+      "y": 13,
+      "label": "右下のロッカー",
+      "description": "おとりが逃げ込む隠れ場所"
+    },
+    {
+      "id": "corner",
+      "x": 22,
+      "y": 13,
+      "label": "右下の隅",
+      "description": "見張りの視界の外を通って bait へ向かう経由地"
+    },
+    {
+      "id": "shadow",
+      "x": 10,
+      "y": 11,
+      "label": "物陰",
+      "description": "見張りの視界の外。盗む役がここで合図を待つ"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "スイッチ役",
+      "starterScript": "# 怪盗A: スイッチ役。plate に乗ると金庫の扉が開く\nmove plate\nwait 100\n"
+    },
+    {
+      "id": "thief_b",
+      "x": 2,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗B",
+      "description": "盗む役",
+      "starterScript": "# 怪盗B: 盗む役。物陰で合図を待ってから金庫へ\nmove shadow\nwait 100\n"
+    },
+    {
+      "id": "thief_c",
+      "x": 3,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗C",
+      "description": "おとり役",
+      "starterScript": "# 怪盗C: おとり役。わざと見つかって見張りを引き離す\nmove corner\nwait 100\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 13,
+      "y": 9,
+      "direction": "down",
+      "label": "見張り",
+      "description": "金庫の扉の前に立って広間を見張る。怪盗を見れば追い、見失えば捜索してから持ち場に戻る",
+      "patrolRoute": [
+        {
+          "x": 13,
+          "y": 9,
+          "waitTicks": 0
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 13,
+      "y": 6,
+      "required": true,
+      "label": "宝石",
+      "description": "金庫の中にある必須の宝物"
+    },
+    {
+      "id": "vault_door",
+      "type": "door",
+      "x": 13,
+      "y": 8,
+      "open": false,
+      "label": "金庫の扉",
+      "description": "スイッチ plate が押されている間だけ開く。見張りはこの扉の前に立っている"
+    },
+    {
+      "id": "plate",
+      "type": "switch",
+      "x": 2,
+      "y": 12,
+      "targetDoorId": "vault_door",
+      "label": "床のスイッチ",
+      "description": "左下の隅。見張りの持ち場からは見えない"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 800,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "pacifist",
+      "type": "noKnockout",
+      "title": "誰も眠らせずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 200,
+      "title": "200tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "三人の役割分担",
+    "wait until safe"
+  ],
+  "goal": "三人で役割を分け、宝石を盗んで全員が出口へ。",
+  "firstStep": "A を plate に乗せ、C を bait に立たせて、見張りがどう動くか観察しよう。",
+  "hints": [
+    "見張りは金庫の扉の前から動かない。扉はスイッチを押している間だけ開くので、スイッチ役（A）、おとり役（C）、盗む役（B）に分かれる。C が bait に立って見つかれば見張りは追いかけ、B はその隙に金庫へ。",
+    "A: plate に乗って signal ready、done を待って出口へ。C: corner 経由で bait に立ち guard_visible で signal lured、locker へ逃げて hide。B: shadow で ready と lured を待ち、金庫へ。盗んだら金庫の外（shadow）まで戻ってから signal done（中にいるうちに A が降りると扉が閉じて閉じ込められる）。C は done のあと wait until safe で見張りが去るのを待って出口へ。",
+    "--- thief_a ---\nmove plate\nsignal ready\nwait until signal_received(done)\nmove exit\n--- thief_b ---\nmove shadow\nwait until signal_received(ready)\nwait until signal_received(lured)\nmove jewel\nsteal jewel\nmove shadow\nsignal done\nmove exit\n--- thief_c ---\nmove corner\nmove bait\nwait until guard_visible\nsignal lured\nmove locker\nhide\nwait until signal_received(done)\nwait until safe\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move plate\nsignal ready\nwait until signal_received(done)\nmove exit\n",
+    "thief_b": "move shadow\nwait until signal_received(ready)\nwait until signal_received(lured)\nmove jewel\nsteal jewel\nmove shadow\nsignal done\nmove exit\n",
+    "thief_c": "move corner\nmove bait\nwait until guard_visible\nsignal lured\nmove locker\nhide\nwait until signal_received(done)\nwait until safe\nmove exit\n"
+  },
+  "solutions": [
+    {
+      "id": "fast",
+      "title": "物陰まで戻ってから合図（177 tick）",
+      "scripts": {
+        "thief_a": "move plate\nsignal ready\nwait until signal_received(done)\nmove exit\n",
+        "thief_b": "move shadow\nwait until signal_received(ready)\nwait until signal_received(lured)\nmove jewel\nsteal jewel\nmove shadow\nsignal done\nmove exit\n",
+        "thief_c": "move corner\nmove bait\nwait until guard_visible\nsignal lured\nmove locker\nhide\nwait until signal_received(done)\nwait until safe\nmove exit\n"
+      }
+    },
+    {
+      "id": "safe",
+      "title": "出口に着いてから合図（206 tick）",
+      "scripts": {
+        "thief_a": "move plate\nsignal ready\nwait until signal_received(done)\nmove exit\n",
+        "thief_b": "move shadow\nwait until signal_received(ready)\nwait until signal_received(lured)\nmove jewel\nsteal jewel\nmove exit\nsignal done\n",
+        "thief_c": "move corner\nmove bait\nwait until guard_visible\nsignal lured\nmove locker\nhide\nwait until signal_received(done)\nmove exit\n"
+      }
+    }
+  ]
+}

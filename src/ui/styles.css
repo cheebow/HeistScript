@@ -60,7 +60,10 @@ h2 { font-size: 12px; letter-spacing: 0.02em; color: var(--muted); }
 .main { display: grid; grid-template-columns: var(--editor-width) 6px 1fr; min-height: 0; }
 .editor-panel { display: flex; flex-direction: column; min-height: 0; background: #15171c; border-right: 1px solid var(--border); }
 .editor { flex: 1; min-height: 0; }
-.tabs { display: flex; align-items: center; gap: 4px; padding: 5px 8px; background: var(--panel); border-bottom: 1px solid var(--border); }
+.tabs { display: flex; align-items: center; gap: 4px; padding: 5px 8px; background: var(--panel); border-bottom: 1px solid var(--border); overflow-x: auto; }
+.tabs button { white-space: nowrap; flex: none; }
+/* 怪盗が 3 人のときは ID を省いてタブを詰める（ID はツールチップで確認できる） */
+.tabs.crowded .tab-id { display: none; }
 .tabs button[role='tab'] { background: transparent; border-color: transparent; color: var(--muted); }
 .tabs button[role='tab'].active { color: var(--text); border-bottom: 2px solid var(--accent); border-radius: 0; }
 .tabs .spacer { flex: 1; }

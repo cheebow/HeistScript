@@ -106,6 +106,31 @@ describe('組み込みステージ', () => {
     expect(byId['weight']!.stats.knockoutCount).toBe(1);
   });
 
+  it('stage_17: 合図を待たずに動くと逮捕されるか、扉の前で止まる', () => {
+    const s = stages.find((x) => x.id === 'stage_17')!;
+    const naive = [
+      { thief_a: 'move plate_a\nwait 300\n', thief_b: 'move jewel\nsteal jewel\nmove plate_b\nwait 100\n' },
+      { thief_a: 'move plate_a\nwait until signal_received(got)\nmove exit\n', thief_b: 'wait 5\nmove jewel\nsteal jewel\nsignal got\nmove plate_b\nwait 100\n' },
+    ];
+    for (const scripts of naive) expect(simulate(s, scripts).world.result?.status).not.toBe('SUCCESS');
+    const sol = simulate(s, s.solution!).world;
+    expect(sol.result?.status).toBe('SUCCESS');
+    expect(sol.stats.spottedCount).toBe(0);
+  });
+
+  it('stage_18: 怪盗 3 人。おとりなしでは盗む役が止まり、両方の解法が成立する', () => {
+    const s = stages.find((x) => x.id === 'stage_18')!;
+    expect(s.thieves).toHaveLength(3);
+    const naive = { thief_a: 'move plate\nwait 300\n', thief_b: 'wait 5\nmove jewel\nsteal jewel\nmove exit\n', thief_c: 'move exit\n' };
+    expect(simulate(s, naive).world.result?.status).not.toBe('SUCCESS');
+    for (const sol of s.solutions!) {
+      const w = simulate(s, sol.scripts).world;
+      expect(w.result?.status).toBe('SUCCESS');
+      expect(w.stats.knockoutCount).toBe(0);
+    }
+    expect(simulate(s, s.solutions![0]!.scripts).world.tick).toBeLessThanOrEqual(200);
+  });
+
   it('stage_02: 何も考えず進むと捕まる', () => {
     const s = stages.find((x) => x.id === 'stage_02')!;
     const { world } = simulate(s, { thief_a: 'move jewel\nsteal jewel\nmove exit\n' });

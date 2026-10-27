@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_17",
+  "title": "となりの部屋",
+  "width": 24,
+  "height": 12,
+  "description": "二人は別々の部屋にいる。A の部屋の扉は B のスイッチで、金庫の扉は A のスイッチで開く。お互いの部屋の警備員をかわしながら、合図で順番を合わせよう。",
+  "tiles": [
+    "########################",
+    "#.......#.E...#........#",
+    "#.......#.....#........#",
+    "#.......#.....#........#",
+    "#.......#.....D........#",
+    "#.......#.....#........#",
+    "#.......#.....#..#######",
+    "#.......#.....#..#.....#",
+    "#.......#.....#..D.....#",
+    "#.##....D.....##.#.....#",
+    "#.......#.....#.H#.....#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 10,
+      "y": 1,
+      "label": "出口",
+      "description": "中央の通路の上端"
+    },
+    {
+      "id": "door_w_in",
+      "x": 7,
+      "y": 9,
+      "label": "西の扉の内側",
+      "description": "A の部屋の出口の扉のすぐ内側"
+    },
+    {
+      "id": "locker_b",
+      "x": 16,
+      "y": 10,
+      "label": "B のロッカー",
+      "description": "東の部屋の左下。hide すれば見つからない"
+    },
+    {
+      "id": "vault_in",
+      "x": 16,
+      "y": 8,
+      "label": "金庫の扉の前",
+      "description": "金庫の扉のすぐ外。警備員が柱を下りてくると見える"
+    },
+    {
+      "id": "door_e_in",
+      "x": 15,
+      "y": 4,
+      "label": "東の扉の内側",
+      "description": "B の部屋の出口の扉のすぐ内側"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 2,
+      "y": 10,
+      "direction": "left",
+      "label": "怪盗A",
+      "description": "西の部屋。スイッチを押して金庫を開ける係",
+      "starterScript": "# 怪盗A: 西の部屋。plate_a に乗ると金庫の扉が開く。\n# 自分の部屋の扉 door_w は B が plate_b に乗っている間だけ開く\nmove plate_a\nwait 60\n"
+    },
+    {
+      "id": "thief_b",
+      "x": 16,
+      "y": 10,
+      "direction": "up",
+      "label": "怪盗B",
+      "description": "東の部屋。宝石を盗んでから A の扉を開ける係",
+      "starterScript": "# 怪盗B: 東の部屋。金庫の扉 vault_door は A が plate_a に乗っている間だけ開く\nhide\nwait 60\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_w",
+      "x": 6,
+      "y": 2,
+      "direction": "down",
+      "label": "西の警備員",
+      "description": "A の部屋を四角く巡回する。左下の隅は壁のでっぱりで見えない",
+      "patrolRoute": [
+        {
+          "x": 6,
+          "y": 7,
+          "waitTicks": 2
+        },
+        {
+          "x": 1,
+          "y": 7,
+          "waitTicks": 2
+        },
+        {
+          "x": 1,
+          "y": 2,
+          "waitTicks": 2
+        },
+        {
+          "x": 6,
+          "y": 2,
+          "waitTicks": 2
+        }
+      ]
+    },
+    {
+      "id": "guard_e",
+      "x": 16,
+      "y": 2,
+      "direction": "right",
+      "label": "東の警備員",
+      "description": "B の部屋の上の列を往復し、ときどき左の柱を下りて金庫の扉の前まで見に来る",
+      "patrolRoute": [
+        {
+          "x": 22,
+          "y": 2,
+          "waitTicks": 4
+        },
+        {
+          "x": 16,
+          "y": 2,
+          "waitTicks": 4
+        },
+        {
+          "x": 16,
+          "y": 8,
+          "waitTicks": 4
+        },
+        {
+          "x": 16,
+          "y": 2,
+          "waitTicks": 4
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 20,
+      "y": 9,
+      "required": true,
+      "label": "宝石",
+      "description": "金庫の中の必須の宝物"
+    },
+    {
+      "id": "vault_door",
+      "type": "door",
+      "x": 17,
+      "y": 8,
+      "open": false,
+      "label": "金庫の扉",
+      "description": "A のスイッチ plate_a が押されている間だけ開く"
+    },
+    {
+      "id": "door_w",
+      "type": "door",
+      "x": 8,
+      "y": 9,
+      "open": false,
+      "label": "西の扉",
+      "description": "A の部屋の出口。B のスイッチ plate_b が押されている間だけ開く"
+    },
+    {
+      "id": "door_e",
+      "type": "door",
+      "x": 14,
+      "y": 4,
+      "open": true,
+      "label": "東の扉",
+      "description": "B の部屋の出口。開いている"
+    },
+    {
+      "id": "plate_a",
+      "type": "switch",
+      "x": 1,
+      "y": 10,
+      "targetDoorId": "vault_door",
+      "label": "A のスイッチ",
+      "description": "西の部屋の左下の隅。壁のでっぱりで見えない。乗っている間、金庫の扉が開く"
+    },
+    {
+      "id": "plate_b",
+      "type": "switch",
+      "x": 15,
+      "y": 10,
+      "targetDoorId": "door_w",
+      "label": "B のスイッチ",
+      "description": "東の部屋の左下、ロッカーの隣。壁のかげで見えない。乗っている間、西の扉が開く"
+    }
+  ],
+  "exit": {
+    "x": 10,
+    "y": 1
+  },
+  "maxTicks": 800,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "pacifist",
+      "type": "noKnockout",
+      "title": "誰も眠らせずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 300,
+      "title": "300tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "合図の往復",
+    "別々の部屋での役割分担"
+  ],
+  "goal": "別々の部屋から合図で順番を合わせ、宝石を盗んで二人とも出口へ。",
+  "firstStep": "A を plate_a に乗せたまま、B を hide させて東の警備員の動きを観察しよう。柱を下りてくる瞬間が guard_near。",
+  "hints": [
+    "二つのスイッチは「乗っている間だけ」相手の部屋の扉を開ける。A は plate_a に乗ったまま、B が宝石を取って plate_b に乗るのを待つ。B が plate_b に乗っている間に A が西の扉を抜け、抜けたら合図で B を解放する。",
+    "A: plate_a に乗って signal、got を待ち、guard_near → guard_away のあと door_w_in を通って出口へ、着いたら signal out。B: ロッカーで hide して guard_near → guard_away を待ち、金庫へ。盗んだら plate_b に乗って signal got。out を待ち、また guard_near → guard_away で door_e_in から出口へ。",
+    "--- thief_a ---\nmove plate_a\nsignal vault\nwait until signal_received(got)\nwait until guard_near\nwait until guard_away\nmove door_w_in\nmove exit\nsignal out\n--- thief_b ---\nhide\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove plate_b\nsignal got\nwait until signal_received(out)\nwait until guard_near\nwait until guard_away\nmove door_e_in\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move plate_a\nsignal vault\nwait until signal_received(got)\nwait until guard_near\nwait until guard_away\nmove door_w_in\nmove exit\nsignal out\n",
+    "thief_b": "hide\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove plate_b\nsignal got\nwait until signal_received(out)\nwait until guard_near\nwait until guard_away\nmove door_e_in\nmove exit\n"
+  }
+}

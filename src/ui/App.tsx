@@ -456,10 +456,10 @@ export function App() {
 
       <main className="main">
         <section className="editor-panel" aria-label="コードエディタ">
-          <div className="tabs" role="tablist">
+          <div className={`tabs${stage.thieves.length >= 3 ? ' crowded' : ''}`} role="tablist">
             {stage.thieves.map((t) => (
-              <button key={t.id} role="tab" aria-selected={activeThief === t.id} className={activeThief === t.id ? 'active' : ''} onClick={() => { setActiveThief(t.id); setSelectedId(t.id); }}>
-                {t.label ?? t.id} <span className="muted">{t.id}</span>
+              <button key={t.id} role="tab" aria-selected={activeThief === t.id} className={activeThief === t.id ? 'active' : ''} onClick={() => { setActiveThief(t.id); setSelectedId(t.id); }} title={t.id}>
+                {t.label ?? t.id} <span className="muted tab-id">{t.id}</span>
                 {(compileErrors[t.id]?.length ?? 0) > 0 ? ' !' : ''}
               </button>
             ))}
