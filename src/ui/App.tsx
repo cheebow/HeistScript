@@ -6,6 +6,9 @@ import { getStages } from '../core/stages';
 import { createRepository, type SaveData } from '../storage/repository';
 import { Editor } from './Editor';
 import { describeTile } from './describeTile';
+import { formatHsl } from './format';
+import { explainThief } from './explain';
+import { DEFAULT_CONFIG } from '../core/model/config';
 import { GameView } from './GameView';
 import { ErrorList, HelpPanel, HintPanel, InspectorPanel, LogPanel } from './panels';
 import { setStageCompletions } from './monaco/setup';
@@ -207,6 +210,15 @@ export function App() {
     return [...ctl.run.logs].reverse().find((l) => l.tick === causeTick && (l.level === 'error' || l.level === 'warn')) ?? null;
   }, [ctl.run, causeTick]);
 
+  const explanation = useMemo(() => {
+    const w = world ?? initialWorld;
+    const thief = w.thieves.find((t) => t.id === selectedId);
+    if (!thief) return null;
+    if (!ctl.run) return { doing: '実行待ち', why: ['実行を押すと、ここに「いま何をしていて、なぜ進まないか」が出る'], waiting: null, predicates: [] };
+    const vm = w.vms.find((v) => v.thiefId === thief.id);
+    return explainThief(w, thief, vm, ctl.run.programs[thief.id], DEFAULT_CONFIG, ctl.logs);
+  }, [world, initialWorld, selectedId, ctl.run, ctl.logs]);
+
   const progress = save.stages[stage.id];
   const statusLabel = ctl.isReplay
     ? ctl.status === 'running'
@@ -361,6 +373,9 @@ export function App() {
               </button>
             ))}
             <span className="spacer" />
+            <button className="subtle" onClick={() => onScriptChange(activeThief, formatHsl(scripts[activeThief] ?? ''))} title="インデントを整える" data-testid="btn-format">
+              整形
+            </button>
             <button
               className="subtle"
               onClick={() => {
@@ -445,7 +460,7 @@ export function App() {
           currentTick={ctl.viewTick}
           onMinimize={() => setBottomMinimized(true)}
         />
-        <InspectorPanel world={world ?? initialWorld} stage={stage} selectedId={selectedId} onSelect={setSelectedId} />
+        <InspectorPanel world={world ?? initialWorld} stage={stage} selectedId={selectedId} onSelect={setSelectedId} explanation={explanation} />
         <aside className="side-panel">
           <div className="tabs" role="tablist">
             <button role="tab" aria-selected={sideTab === 'hint'} className={sideTab === 'hint' ? 'active' : ''} onClick={() => setSideTab('hint')}>

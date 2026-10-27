@@ -19,6 +19,12 @@ export interface StageDefinition {
   unlockedCommands: string[];
   challenges: StageChallenge[];
   hints?: string[];
+  /** このステージで学ぶ命令（表示用） */
+  learn?: string[];
+  /** ゴールの説明 */
+  goal?: string;
+  /** 最初の一歩（何から試すか） */
+  firstStep?: string;
   /** 検証で成功が担保されているサンプルスクリプト (thiefId → script) */
   solution?: Record<string, string>;
   /** 複数解法（それぞれテストで成功を担保） */

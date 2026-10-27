@@ -58,7 +58,7 @@ export function processThiefAction(world: WorldState, vm: VmState, thief: Thief,
           world,
           vm,
           'PATH_BLOCKED',
-          `${action.line}行目: '${action.targetId}' への移動が ${cfg.maxConsecutiveBlocks} 回連続でふさがれました（他の人物が進路上にいます）`,
+          `${action.line}行目: '${action.targetId}' への移動が ${cfg.maxConsecutiveBlocks} 回連続でふさがれました（他の人物が進路上にいます）。対処: wait until guard_away などで相手が離れるのを待ってから move する`,
           action.line,
         );
         return;

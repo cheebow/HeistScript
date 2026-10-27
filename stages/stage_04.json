@@ -134,5 +134,12 @@
   ],
   "solution": {
     "thief_a": "move behind\nknockout guard_1\ncarry guard_1\nmove vault\ndrop\nmove jewel\nsteal jewel\nmove exit\n"
-  }
+  },
+  "learn": [
+    "knockout",
+    "carry",
+    "drop"
+  ],
+  "goal": "見張りを背後から眠らせて宝石を盗む。30tick 以内に離れるか、警備員を運んで隠す。",
+  "firstStep": "初期コードで knockout まで動く。そのあと move jewel → steal jewel → move exit を足して、目覚める前に逃げ切れるか試そう。"
 }

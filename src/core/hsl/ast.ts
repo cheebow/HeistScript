@@ -52,3 +52,43 @@ export interface Program {
 }
 
 export const MAIN_BLOCK = 0;
+
+/** 式を HSL の表記に戻す（状態パネルの表示用） */
+export function exprToString(e: Expr): string {
+  switch (e.kind) {
+    case 'bool':
+      return e.value ? 'true' : 'false';
+    case 'pred':
+      return e.arg !== null ? `${e.name}(${e.arg})` : e.name;
+    case 'not':
+      return `not ${wrap(e.expr)}`;
+    case 'and':
+      return `${wrap(e.left)} and ${wrap(e.right)}`;
+    case 'or':
+      return `${wrap(e.left)} or ${wrap(e.right)}`;
+  }
+}
+
+function wrap(e: Expr): string {
+  return e.kind === 'and' || e.kind === 'or' ? `(${exprToString(e)})` : exprToString(e);
+}
+
+/** 式に含まれる述語を列挙（重複なし、出現順） */
+export function collectPredicates(e: Expr, out: { name: PredicateName; arg: string | null }[] = []): { name: PredicateName; arg: string | null }[] {
+  switch (e.kind) {
+    case 'pred':
+      if (!out.some((p) => p.name === e.name && p.arg === e.arg)) out.push({ name: e.name, arg: e.arg });
+      break;
+    case 'not':
+      collectPredicates(e.expr, out);
+      break;
+    case 'and':
+    case 'or':
+      collectPredicates(e.left, out);
+      collectPredicates(e.right, out);
+      break;
+    default:
+      break;
+  }
+  return out;
+}

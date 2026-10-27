@@ -175,5 +175,13 @@
   "solution": {
     "thief_a": "move console\nopen service_door\nsignal ready\nmove exit\n",
     "thief_b": "on spotted\n  move safe_room\n  hide\n  wait until safe\n  resume\nend\n\nwait until signal_received(ready)\nmove jewel\nsteal jewel\nmove exit\n"
-  }
+  },
+  "learn": [
+    "signal",
+    "signal_received",
+    "on spotted",
+    "resume"
+  ],
+  "goal": "怪盗Aが扉を開けて合図し、怪盗Bが宝石を盗んで二人とも出口へ。",
+  "firstStep": "初期コードで二人を動かし、怪盗Bがどこで見つかるかを見る。見つかったときの逃げ方を on spotted ... end に書こう。"
 }

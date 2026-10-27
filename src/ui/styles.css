@@ -158,3 +158,16 @@ h2 { font-size: 12px; letter-spacing: 0.02em; color: var(--muted); }
 .result-cause { font-size: 12px; color: var(--muted); }
 button.link { background: transparent; border: none; color: var(--accent-text); text-decoration: underline; padding: 0 0 0 8px; }
 .log-future { opacity: 0.45; }
+
+.explain { border-top: 1px solid var(--border); padding-top: 6px; margin-top: 4px; font-size: 12px; }
+.explain-doing { font-size: 13px; margin-bottom: 3px; }
+.explain-why { color: var(--yellow); margin: 2px 0; }
+.explain-wait { margin: 4px 0; }
+.explain .ok { color: var(--green); }
+.explain .ng { color: var(--red); }
+.pred-grid { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; }
+.pred { white-space: nowrap; }
+.pred.ok code { color: var(--green); }
+.pred.ng code { color: var(--muted); }
+.learn { background: rgba(90, 143, 181, 0.08); border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; margin-bottom: 8px; }
+.learn-cmd { margin-right: 6px; color: var(--accent-text); }

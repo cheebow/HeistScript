@@ -129,5 +129,11 @@
   ],
   "solution": {
     "thief_a": "move locker_a\nhide\nwait until guard_away\nmove jewel\nsteal jewel\nmove locker_b\nhide\nwait until guard_away\nmove exit\n"
-  }
+  },
+  "learn": [
+    "hide",
+    "if"
+  ],
+  "goal": "ロッカーで隠れながら宝石を盗み、出口へ戻る。",
+  "firstStep": "1コマ進めるで警備員の巡回を観察し、どのタイミングなら locker_a から出られるか考えよう。"
 }

@@ -203,5 +203,10 @@
         "thief_a": "move bait\nwait until guard_visible\nmove attic\nhide\nwait until safe\nmove vault_in\nsteal jewel\nwait until guard_near\nwait until guard_away\nmove exit\n"
       }
     }
-  ]
+  ],
+  "learn": [
+    "組み合わせ"
+  ],
+  "goal": "やり方を選んでクリア: 隙を突く／背後から眠らせる／おびき出す。",
+  "firstStep": "物陰 nook で wait 60 しながら警備員の周期を観察しよう。チャレンジ（未発見・不殺・最短）で別の道も試せる。"
 }

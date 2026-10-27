@@ -5,6 +5,7 @@ import type { HslError } from '../core/hsl/errors';
 import { formatHslError } from '../core/hsl/errors';
 import { COMMAND_DOCS, PREDICATE_DOCS } from './monaco/setup';
 import { labelOf, stageEntities } from './stageInfo';
+import type { ThiefExplanation } from './explain';
 
 export type LogFilter = 'all' | 'important' | 'thief' | 'guard' | 'error';
 
@@ -85,7 +86,7 @@ const GUARD_STATE_JA: Record<Guard['state'], string> = {
   UNCONSCIOUS: '気絶',
 };
 
-export function InspectorPanel({ world, stage, selectedId, onSelect }: { world: WorldState | null; stage: StageDefinition; selectedId: string | null; onSelect: (id: string) => void }) {
+export function InspectorPanel({ world, stage, selectedId, onSelect, explanation }: { world: WorldState | null; stage: StageDefinition; selectedId: string | null; onSelect: (id: string) => void; explanation: ThiefExplanation | null }) {
   if (!world) {
     return (
       <section className="panel inspector" aria-label="インスペクタ">
@@ -122,6 +123,7 @@ export function InspectorPanel({ world, stage, selectedId, onSelect }: { world: 
           </dd>
         </dl>
         {thief && <ThiefInfo thief={thief} vm={vm} world={world} label={labelOf(stage, thief.id)} />}
+        {thief && explanation && <ExplanationView ex={explanation} />}
         {guard && <GuardInfo guard={guard} world={world} label={labelOf(stage, guard.id)} />}
         {camera && (
           <dl className="kv">
@@ -210,6 +212,40 @@ function GuardInfo({ guard, world, label }: { guard: Guard; world: WorldState; l
   );
 }
 
+function ExplanationView({ ex }: { ex: ThiefExplanation }) {
+  return (
+    <div className="explain" data-testid="thief-explain">
+      <div className="explain-doing">
+        <span className="muted">いま: </span>
+        {ex.doing}
+      </div>
+      {ex.why.map((w, i) => (
+        <div key={i} className="explain-why">
+          {w}
+        </div>
+      ))}
+      {ex.waiting && (
+        <div className="explain-wait">
+          <code>{ex.waiting.expr}</code> → <strong className={ex.waiting.value ? 'ok' : 'ng'}>{ex.waiting.value ? '真' : '偽'}</strong>
+          {ex.waiting.parts.length > 1 && (
+            <span className="muted">
+              {' '}
+              （{ex.waiting.parts.map((p) => `${p.name}=${p.value ? '真' : '偽'}`).join(', ')}）
+            </span>
+          )}
+        </div>
+      )}
+      <div className="pred-grid" title="選択中の怪盗から見た各条件の現在値">
+        {ex.predicates.map((p) => (
+          <span key={p.name} className={`pred ${p.value ? 'ok' : 'ng'}`}>
+            <code>{p.name}</code> {p.value ? '真' : '偽'}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function ErrorList({ errors, onJump }: { errors: HslError[]; onJump: (line: number) => void }) {
   if (errors.length === 0) return null;
   return (
@@ -228,6 +264,34 @@ export function HintPanel({ stage, onInsertSample }: { stage: StageDefinition; o
   const hints = stage.hints ?? [];
   return (
     <section className="panel hint-panel" aria-label="ヒント">
+      {(stage.learn || stage.goal || stage.firstStep) && (
+        <dl className="kv learn" data-testid="learn-panel">
+          {stage.learn && (
+            <>
+              <dt>学ぶ命令</dt>
+              <dd>
+                {stage.learn.map((l) => (
+                  <code key={l} className="learn-cmd">
+                    {l}
+                  </code>
+                ))}
+              </dd>
+            </>
+          )}
+          {stage.goal && (
+            <>
+              <dt>ゴール</dt>
+              <dd>{stage.goal}</dd>
+            </>
+          )}
+          {stage.firstStep && (
+            <>
+              <dt>最初の一歩</dt>
+              <dd>{stage.firstStep}</dd>
+            </>
+          )}
+        </dl>
+      )}
       <header className="panel-header">
         <h2>ヒント</h2>
         <button onClick={() => setLevel((l) => Math.min(hints.length, l + 1))} disabled={level >= hints.length} data-testid="hint-next">

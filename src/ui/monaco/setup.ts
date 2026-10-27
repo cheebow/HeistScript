@@ -108,12 +108,60 @@ export function registerHslLanguage(): void {
 }
 
 let completionDisposable: monaco.IDisposable | null = null;
+let hoverDisposable: monaco.IDisposable | null = null;
 
 /** ステージ依存の補完を登録し直す。行の文脈（命令の直後か、条件の中か）に応じて候補を絞る。 */
 export function setStageCompletions(stage: StageDefinition | null): void {
   completionDisposable?.dispose();
   completionDisposable = null;
+  hoverDisposable?.dispose();
+  hoverDisposable = null;
   if (!stage) return;
+  const entities = stageEntities(stage);
+  hoverDisposable = monaco.languages.registerHoverProvider(HSL_LANGUAGE, {
+    provideHover(model, position) {
+      const word = model.getWordAtPosition(position);
+      if (!word) return null;
+      const range = new monaco.Range(position.lineNumber, word.startColumn, position.lineNumber, word.endColumn);
+      const w = word.word;
+      const cmd = COMMAND_DOCS.find((c) => c.name === w);
+      if (cmd) {
+        const locked = !stage.unlockedCommands.includes(cmd.name);
+        return {
+          range,
+          contents: [
+            { value: `**${cmd.signature}**${locked ? '　（このステージでは未解禁）' : ''}` },
+            { value: `${cmd.summary}\n\n所要: ${cmd.ticks}` },
+            { value: '例:\n```hsl\n' + cmd.example + '\n```' },
+          ],
+        };
+      }
+      const pred = PREDICATE_DOCS.find((p) => p.name === w || p.name.startsWith(w + '('));
+      if (pred) return { range, contents: [{ value: `**${pred.name}**（条件）` }, { value: pred.summary }] };
+      const ent = entities.find((e) => e.id === w);
+      if (ent) {
+        return {
+          range,
+          contents: [{ value: `**${ent.label}**（${ent.kind} ${ent.pos}） \`${ent.id}\`` }, { value: ent.description || '' }, { value: `使い方: \`${ent.usage}\`` }],
+        };
+      }
+      const kw: Record<string, string> = {
+        until: 'wait until 条件: 条件が成立するまで毎 tick 判定しながら待つ',
+        end: 'if / while / on のブロックを閉じる',
+        else: 'if の条件が偽のときに実行する部分',
+        and: '両方が真のとき真',
+        or: 'どちらかが真のとき真',
+        not: '真偽を反転',
+        resume: 'ハンドラから中断した元の命令へ戻る',
+        spotted: 'on spotted: 警備員に見つかったとき（次の tick に起動）',
+        alarm: 'on alarm: 警報が鳴ったとき（次の tick に起動）',
+        true: '常に真',
+        false: '常に偽',
+      };
+      if (kw[w]) return { range, contents: [{ value: `**${w}**` }, { value: kw[w]! }] };
+      return null;
+    },
+  });
   const items = stageEntities(stage).map((e) => ({ id: e.id, detail: `${e.label}（${e.kind} ${e.pos}）`, doc: e.description, kinds: e.commands }));
 
   const TARGET_COMMANDS = ['move', 'steal', 'open', 'knockout', 'carry'];

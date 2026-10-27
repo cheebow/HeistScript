@@ -117,5 +117,11 @@
   ],
   "solution": {
     "thief_a": "move pillar\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
-  }
+  },
+  "learn": [
+    "wait",
+    "wait until"
+  ],
+  "goal": "警備員に見つからずに宝石を盗み、右の部屋の出口へ。",
+  "firstStep": "初期コードをそのまま実行して、どこで見つかるかを確かめよう。そのあと柱の陰 pillar で待つ行を足す。"
 }

@@ -122,7 +122,7 @@ function startAction(world: WorldState, vm: VmState, thief: Thief, stmt: Stateme
       }
       const path = findPath(world, thief, r.goal);
       if (path === null) {
-        haltVm(world, vm, 'PATH_NOT_FOUND', `${stmt.line}行目: '${target}' への経路が見つかりません（壁や閉じた扉で遮られています）`, stmt.line);
+        haltVm(world, vm, 'PATH_NOT_FOUND', `${stmt.line}行目: '${target}' への経路が見つかりません（壁や閉じた扉で遮られています）。対処: 閉じた扉なら隣まで move してから open 扉ID で開ける。別の怪盗が開けるのを wait until signal_received(...) で待つ`, stmt.line);
         return null;
       }
       thief.hidden = false;
@@ -141,7 +141,7 @@ function startAction(world: WorldState, vm: VmState, thief: Thief, stmt: Stateme
         return null;
       }
       if (!isAdjacentOrSame(thief, obj)) {
-        fail(world, vm, stmt, `'${target}' に隣接していません（先に move ${target} で近づいてください）`);
+        fail(world, vm, stmt, `'${target}' に隣接していません。対処: 先に move ${target} で隣まで移動してから steal する`);
         return null;
       }
       log(world, thief.id, 'STEAL_START', `${target} を盗み始めた（${t.steal} tick）`, stmt.line);
@@ -149,7 +149,7 @@ function startAction(world: WorldState, vm: VmState, thief: Thief, stmt: Stateme
     }
     case 'hide': {
       if (!isHidingSpot(world, thief)) {
-        fail(world, vm, stmt, 'ここは隠れ場所ではありません（H タイルかロッカーの上で hide を使います）');
+        fail(world, vm, stmt, 'ここは隠れ場所ではありません。対処: 緑のロッカーのマスまで move してから hide する（ID は命令ヘルプの一覧）');
         return null;
       }
       log(world, thief.id, 'HIDE_START', '隠れようとしている', stmt.line);
@@ -217,8 +217,8 @@ export function knockoutPreconditionError(world: WorldState, thief: Thief, g: Wo
   if (!isGuardActive(g)) return `${g.id} はすでに気絶しています`;
   const behind = stepInDirection(g, oppositeDirection(g.direction));
   if (!samePos(behind, thief)) {
-    if (isAdjacent(thief, g)) return `${g.id} の背後にいません（警備員は ${g.direction} を向いています）`;
-    return `${g.id} の背後の隣接タイル (${behind.x},${behind.y}) にいません`;
+    if (isAdjacent(thief, g)) return `${g.id} の背後にいません（警備員は ${g.direction} を向いています）。対処: 警備員の向きの反対側の隣のマスへ回り込む`;
+    return `${g.id} の背後の隣接タイル (${behind.x},${behind.y}) にいません。対処: その位置の地点 ID へ move してから knockout する`;
   }
   void world;
   return null;
@@ -367,7 +367,7 @@ function executeStatements(world: WorldState, vm: VmState, thief: Thief, program
     world,
     vm,
     'SCRIPT_BUDGET_EXCEEDED',
-    `${vm.currentLine}行目付近: 1tick あたりの命令数上限（${ctx.config.instructionBudgetPerTick}）を超えました。無限ループになっていませんか？ ループ内に wait を入れてください`,
+    `${vm.currentLine}行目付近: 1tick あたりの命令数上限（${ctx.config.instructionBudgetPerTick}）を超えました。無限ループになっていませんか？ 対処: while の中に wait 1 を入れて、毎 tick 1 回だけ判定するようにする`,
     vm.currentLine,
   );
 }

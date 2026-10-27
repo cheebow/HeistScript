@@ -42,7 +42,7 @@ class Parser {
       if (t.type === 'newline') this.next();
       return;
     }
-    throw new HslSyntaxError(t.line, t.col, `${context} の後に余分な記述があります: '${t.value}'`);
+    throw new HslSyntaxError(t.line, t.col, `${context} の後に余分な記述があります: '${t.value}'。1行に書けるのは1つの命令だけです`);
   }
   private expectIdentifier(context: string): string {
     const t = this.peek();
@@ -109,7 +109,7 @@ class Parser {
       this.skipNewlines();
       const t = this.peek();
       if (t.type === 'eof') {
-        throw new HslSyntaxError(openTok.line, openTok.col, `${opener} に対応する end がありません`);
+        throw new HslSyntaxError(openTok.line, openTok.col, `${opener} に対応する end がありません。ブロックの最後の行に end を書いてください`);
       }
       if (t.type === 'word' && terminators.includes(t.value)) return t.value;
       if (t.type === 'word' && t.value === 'on') {
@@ -212,7 +212,7 @@ class Parser {
         if (PREDICATE_NAMES.includes(t.value as PredicateName) || ['and', 'or', 'not', 'true', 'false'].includes(t.value)) {
           throw new HslSyntaxError(line, col, `'${t.value}' は条件式なので単独では使えません（if や wait until と組み合わせます）`);
         }
-        throw new HslSyntaxError(line, col, `不明な命令です: '${t.value}'`);
+        throw new HslSyntaxError(line, col, `不明な命令です: '${t.value}'。使える命令は move / steal / wait / hide / knockout / carry / drop / open / signal / if / while / on です（小文字で書きます）`);
     }
   }
 
