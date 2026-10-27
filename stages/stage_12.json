@@ -4,7 +4,7 @@
   "title": "鏡の廊下",
   "width": 22,
   "height": 10,
-  "description": "長い廊下を二台の回転カメラが交互に見張っている。ロッカーを渡り歩きながら、カメラが向こうを向くたびに少しずつ進もう。",
+  "description": "長い廊下を二台の回転カメラが見張っている。ロッカーを渡り歩きながら、カメラが向こうを向くたびに少しずつ進み、右端の宝石を取って脱出しよう。",
   "tiles": [
     "######################",
     "#....................#",
@@ -20,10 +20,10 @@
   "waypoints": [
     {
       "id": "exit",
-      "x": 1,
+      "x": 20,
       "y": 8,
       "label": "出口",
-      "description": "左下の脱出口"
+      "description": "廊下の右端、宝石のすぐ下にある脱出口"
     },
     {
       "id": "locker_a",
@@ -55,7 +55,7 @@
       "direction": "right",
       "label": "怪盗A",
       "description": "あなたが操作する怪盗",
-      "starterScript": "# 二台のカメラは向きがずれて回る。ロッカーで隠れて周期を観察しよう\nmove locker_a\nhide\nwait 40\n"
+      "starterScript": "# 二台のカメラは向きがずれて回る。ロッカーで隠れて周期を観察しよう\nmove locker_a\nhide\nwait 60\n"
     }
   ],
   "guards": [
@@ -85,7 +85,7 @@
       "id": "cam_w",
       "x": 6,
       "y": 6,
-      "direction": "left",
+      "direction": "right",
       "range": 6,
       "rotateEveryTicks": 20,
       "label": "西のカメラ",
@@ -95,7 +95,7 @@
       "id": "cam_e",
       "x": 15,
       "y": 6,
-      "direction": "right",
+      "direction": "up",
       "range": 6,
       "rotateEveryTicks": 20,
       "label": "東のカメラ",
@@ -114,7 +114,7 @@
     }
   ],
   "exit": {
-    "x": 1,
+    "x": 20,
     "y": 8
   },
   "maxTicks": 700,
@@ -142,8 +142,8 @@
     {
       "id": "fast",
       "type": "maxTicks",
-      "value": 150,
-      "title": "150tick以内にクリア"
+      "value": 100,
+      "title": "100tick以内にクリア"
     }
   ],
   "learn": [
@@ -153,11 +153,11 @@
   "goal": "二台のカメラに映らず宝石を盗み、出口へ。",
   "firstStep": "locker_a に隠れて、二台のカメラの向きが変わる tick をそれぞれ数えよう。",
   "hints": [
-    "二台のカメラはどちらも 12 tick ごとに時計回りに回るが、向きがずれている。ロッカー(H)の上で hide すれば映らない。警備員は中央の通路を上下に巡回し、警報が鳴ると現場へ来る。",
-    "locker_a → locker_b → 宝石 → locker_b → 出口の順に、カメラが向こうを向いている間だけ移動する。wait の長さを 12 の倍数を目安に調整しよう。",
-    "move locker_a\nhide\nwait 14\nmove locker_b\nhide\nwait 14\nmove jewel\nsteal jewel\nmove locker_b\nhide\nwait 14\nmove exit"
+    "二台のカメラはどちらも 20 tick ごとに時計回りに回るが、向きがずれている。ロッカー(H)の上で hide すれば映らない。映ると警報が鳴り、上の通路の警備員が中央の階段から降りてくる。",
+    "locker_a → locker_b → locker_c → 宝石 → 出口の順に、そのカメラが廊下の反対側を向いている間だけ移動する。hide のあとの wait の長さを調整しよう。",
+    "move locker_a\nhide\nwait 12\nmove locker_b\nhide\nwait 16\nmove locker_c\nhide\nmove jewel\nsteal jewel\nmove exit"
   ],
   "solution": {
-    "thief_a": "move locker_a\nhide\nwait 14\nmove locker_b\nhide\nwait 14\nmove jewel\nsteal jewel\nmove locker_b\nhide\nwait 14\nmove exit\n"
+    "thief_a": "move locker_a\nhide\nwait 12\nmove locker_b\nhide\nwait 16\nmove locker_c\nhide\nmove jewel\nsteal jewel\nmove exit\n"
   }
 }
