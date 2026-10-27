@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_02",
+  "title": "巡回警備員",
+  "description": "中央の廊下を警備員が往復している。柱の陰 pillar で待ち、警備員が離れてから廊下を抜けて宝石を盗もう。出口は右の部屋。",
+  "width": 20,
+  "height": 12,
+  "tiles": [
+    "####################",
+    "#.......#.#.......E#",
+    "#.........#........#",
+    "#......##.#........#",
+    "#...##..#.#........#",
+    "#...##..#.#........#",
+    "#.......#.#........#",
+    "#.......#.#........#",
+    "#.......#..........#",
+    "#.......#.#........#",
+    "#.......#.#........#",
+    "####################"
+  ],
+  "waypoints": [
+    {
+      "id": "pillar",
+      "x": 8,
+      "y": 2
+    },
+    {
+      "id": "corner",
+      "x": 11,
+      "y": 10
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 1,
+      "direction": "right",
+      "starterScript": "# 警備員が廊下を往復している。\n# wait until <条件> で安全になるまで待てる。\nmove jewel\nsteal jewel\nmove exit\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 9,
+      "y": 9,
+      "direction": "up",
+      "patrolRoute": [
+        {
+          "x": 9,
+          "y": 1,
+          "waitTicks": 6
+        },
+        {
+          "x": 9,
+          "y": 10,
+          "waitTicks": 16
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 15,
+      "y": 8,
+      "required": true
+    }
+  ],
+  "exit": {
+    "x": 18,
+    "y": 1
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 120,
+      "title": "120tick以内にクリア"
+    }
+  ],
+  "hints": [
+    "警備員 guard_1 は縦の廊下を上下に往復し、端で少し立ち止まる。廊下に入るとき警備員がこちらを向いていると見つかる。",
+    "wait until guard_away は、警備員が3マスより遠ざかるまで待つ。柱 pillar の前で待ってから動こう。",
+    "move pillar\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit"
+  ],
+  "solution": {
+    "thief_a": "move pillar\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

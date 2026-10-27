@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_05",
+  "title": "二人の怪盗",
+  "description": "thief_a は console から service_door を開けて signal ready、thief_b はそれを待って宝石を盗む。見つかったら on spotted で safe_room に隠れよう。",
+  "width": 24,
+  "height": 14,
+  "tiles": [
+    "########################",
+    "#E.......#.............#",
+    "#........#.............#",
+    "#........#.............#",
+    "#........#....####.....#",
+    "#........#....#..#.....#",
+    "#........#....#..#.....#",
+    "#........D....##.#.....#",
+    "#........#.............#",
+    "#........#.............#",
+    "#........#...H.........#",
+    "#........#.............#",
+    "#........#.............#",
+    "########################"
+  ],
+  "waypoints": [
+    {
+      "id": "console",
+      "x": 8,
+      "y": 7
+    },
+    {
+      "id": "safe_room",
+      "x": 13,
+      "y": 10
+    },
+    {
+      "id": "lobby",
+      "x": 4,
+      "y": 4
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 2,
+      "y": 2,
+      "direction": "right",
+      "starterScript": "# 怪盗A: 扉を開けて合図を送る（console のマスは通路なので開けたら離れる）\nmove console\nopen service_door\nsignal ready\nmove exit\n"
+    },
+    {
+      "id": "thief_b",
+      "x": 2,
+      "y": 4,
+      "direction": "right",
+      "starterScript": "# 怪盗B: 合図を待って宝石を盗む\nwait until signal_received(ready)\nmove jewel\nsteal jewel\nmove exit\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 20,
+      "y": 8,
+      "direction": "down",
+      "patrolRoute": [
+        {
+          "x": 20,
+          "y": 11,
+          "waitTicks": 8
+        },
+        {
+          "x": 11,
+          "y": 11,
+          "waitTicks": 8
+        },
+        {
+          "x": 11,
+          "y": 2,
+          "waitTicks": 8
+        },
+        {
+          "x": 20,
+          "y": 2,
+          "waitTicks": 8
+        }
+      ]
+    }
+  ],
+  "cameras": [
+    {
+      "id": "cam_1",
+      "x": 22,
+      "y": 1,
+      "direction": "left",
+      "range": 5,
+      "rotateEveryTicks": 0
+    }
+  ],
+  "objects": [
+    {
+      "id": "service_door",
+      "type": "door",
+      "x": 9,
+      "y": 7,
+      "open": false
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 16,
+      "y": 6,
+      "required": true
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 800,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "noalarm",
+      "type": "noAlarm",
+      "title": "警報を鳴らさずにクリア"
+    }
+  ],
+  "hints": [
+    "service_door は閉まっていて thief_b は通れない。thief_a が console の隣で open service_door できる。右の部屋の警備員は外周を巡回し、右上にはカメラがある。",
+    "signal <名前> と wait until signal_received(<名前>) で二人の手順を同期できる。on spotted ... resume をスクリプトの先頭に書くと、見つかったときだけ safe_room に逃げて hide し、wait until safe で落ち着いてから resume で元の手順に戻れる。",
+    "--- thief_a ---\nmove console\nopen service_door\nsignal ready\nmove exit\n--- thief_b ---\non spotted\n  move safe_room\n  hide\n  wait until safe\n  resume\nend\n\nwait until signal_received(ready)\nmove jewel\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move console\nopen service_door\nsignal ready\nmove exit\n",
+    "thief_b": "on spotted\n  move safe_room\n  hide\n  wait until safe\n  resume\nend\n\nwait until signal_received(ready)\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

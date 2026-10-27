@@ -1,0 +1,97 @@
+# HeistScript
+
+プログラミングした怪盗たちが宝を盗み出す、8ビット風ステルス・パズルゲーム。怪盗ごとに専用言語 **HSL (HeistScript Language)** のスクリプトを書き、警備員・監視カメラを避けて宝物を盗み、全員で脱出する。ローカル完結・オフライン・シングルプレイヤーで、コードは外部に送信しない。
+
+- 仕様: [`SPEC.md`](SPEC.md)（正）
+- 実装計画: [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md)
+- 仕様解釈の記録: [`docs/DECISIONS.md`](docs/DECISIONS.md)
+- 言語リファレンス: ゲーム内「命令ヘルプ」タブ
+
+## 起動・テスト
+
+```bash
+npm install
+npm run dev        # http://localhost:5173
+npm test           # Vitest (core 単体/統合)
+npm run build      # 型検査 + Vite ビルド (dist/)
+npm run test:e2e   # Playwright（初回は npx playwright install chromium）
+npm run preview    # dist/ を配信
+npx tsx scripts/sim.ts stage_02 'thief_a=move jewel\nsteal jewel\nmove exit' --trace   # CLI でステージを検証
+```
+
+推奨解像度 1280×720 以上（デスクトップブラウザ）。
+
+## 遊び方
+
+1. 上部でステージを選ぶ。左のエディタに怪盗ごとのスクリプトを書く（タブで切替）。構文/意味エラーは赤線と下部のリストに行・列つきで表示され、エラーがある間は実行できない。
+2. **▶ 実行** で初期状態から再生。**⏸** で一時停止、**⏭ 1tick** でステップ、**x1/x2/x4** で速度変更、タイムラインで過去の tick へシーク（閲覧専用リプレイ）。**↺ 初期状態へ** でコードを保ったまま再実行。
+3. 下部に実行ログ（全部/怪盗/警備/エラーのフィルタ）、選択中の怪盗・警備員・カメラのインスペクタ、ヒント（3段階、最終段階は実行可能なサンプルコード）、命令ヘルプ。
+4. エディタの行番号左をクリックするとブレークポイント（その行の実行前で一時停止）。
+5. 結果画面: 成功/失敗/停止の理由、経過 tick、発見・気絶・警報回数、命令数、チャレンジ達成。
+
+コード編集・クリア記録・速度・視界表示設定は localStorage に保存され、リロード後も残る。「コード初期化」で怪盗のスクリプトをステージ初期コードに戻せる。
+
+## HSL 早見表
+
+```hsl
+# コメント。1行1命令、ブロックは end で閉じる。大文字小文字を区別。
+on spotted              # 見つかったとき（次tick）に割り込む。resume で元の命令へ戻る
+  move safe_room
+  hide
+  wait until safe
+  resume
+end
+
+move jewel              # 目的地へ自動移動（ウェイポイント/宝物/扉/出口/人物のID）
+steal jewel             # 隣接または同じマスの宝物を盗む (3tick)
+wait 5                  # 5tick 待つ（wait 0 も 1tick）
+wait until guard_away   # 条件が真になるまで毎tick判定
+if guard_near           # if / else / end, while / end
+  hide                  # 隠れ場所(H / ロッカー)の上でだけ成功
+end
+knockout guard_1        # 背後の隣接マスからのみ。30tick で目覚める
+carry guard_1 / drop    # 気絶した警備員を担ぐ/下ろす
+open service_door       # 隣接した扉を開ける
+signal ready            # 共有フラグ。signal_received(ready) で読む
+```
+
+条件: `guard_visible`, `guard_near`, `guard_away`, `has_treasure`, `safe`, `at_exit`, `signal_received(id)`, `true`, `false`、演算子 `and` / `or` / `not` / `( )`。
+
+## 実装済み機能
+
+- **Core（React/Phaser 非依存の純粋 TypeScript）**: 固定 tick の決定的シミュレーション（SPEC 5 節の順序）、決定的 A*（同スコア安定化・隣接順固定）、supercover 視線と90度円錐視界、警備員 FSM（PATROL/INVESTIGATE/CHASE/SEARCH/UNCONSCIOUS）、捕獲（隣接1tick準備→成立）、カメラ（固定/回転・警報）、扉、隠れ場所、気絶/運搬/ドロップ（運搬中タイマー停止）、シグナル、イベント（spotted/alarm）とハンドラ割込/resume/HANDLER_TIMEOUT、命令予算（100命令/tick）、tick 上限、ブレークポイント、tick ごとのスナップショット（リプレイ）。
+- **HSL**: 独自 lexer / parser / AST / analyzer / VM。`eval` や `new Function` は使わない。構文エラーは行・列つき、意味エラー（未定義ID・未解禁命令・ハンドラ重複・ハンドラ外の resume）は複数まとめて表示。
+- **ステージ**: 5面（JSON、自前バリデータでID一意性・座標・巡回点到達性・出口到達性を検証）。各ステージに3段階ヒントと、テストで成功が担保されたサンプル解答。
+- **UI**: React + Monaco（HSL シンタックスハイライト・補完・エラーマーカー・実行行ハイライト・ブレークポイント）+ Phaser 3（コード生成の 8bit 風ドット絵、整数倍率、視界扇形、経路表示、気絶の星/Zzz、捕獲の赤点滅）。再生/一時停止/1tick/速度/タイムラインシーク/初期状態へ、ログフィルタ、インスペクタ、ヒント、命令ヘルプ、結果画面、エディタ幅のドラッグ調整。
+- **保存**: localStorage（`schemaVersion` 付き、破損データは既定値へ復帰）。Repository インターフェースで IndexedDB へ差し替え可能。
+
+## テスト
+
+- `npm test`: Vitest 80 件（A*、視界、HSL 構文/意味、VM 実行時、警備員 AI、捕獲、気絶/運搬、カメラ/扉、隠れる、2人の怪盗、保存、全ステージのサンプル解答成功・100回ハッシュ一致・tick 上限終了）。
+- `npm run test:e2e`: Playwright（Stage1 の編集→再生→クリア→結果画面、エラーコードの実行禁止、一時停止→ステップ→巻き戻し→再再生、リロード後の保存、Stage2〜5 のクリア、失敗画面、ヒント挿入、ブレークポイント）。
+
+## 未実装項目 / 既知の制限
+
+- BGM/SFX は未実装（ミュート設定の保存枠のみ）。すべての情報は視覚で分かる。
+- 施錠扉・`hack`、怪盗3人目、複数種の警備員、乱数（固定 seed PRNG）、ステージエディタ、スクリプト共有は MVP 対象外（SPEC 1.1）。
+- 1幅通路で2人の怪盗が正面衝突すると迂回路がない限り `PATH_BLOCKED` で停止する（仕様通り。すれ違いは2幅以上の通路で可能）。
+- リプレイはメモリ上のみ（リロードで消える）。
+- Playwright の E2E は `devices` プリセットを使わない（UA を上書きすると Monaco の Cmd/Ctrl 判定がホストとずれるため）。
+- 監視カメラの回転パターンは「N tick ごとに時計回り」のみ。
+
+## ディレクトリ
+
+```
+src/core/model   型・設定値・ステージスキーマ
+src/core/sim     grid, astar, vision, guardAi, judge, thiefActions, vm, step
+src/core/hsl     lexer, parser, ast, analyzer, compile, errors
+src/core/replay  スナップショット記録
+src/core/stages  検証・WorldState 生成・組み込みステージ
+src/core/runner  実行セッション (Run)
+src/game         Phaser シーン・ドット絵生成
+src/ui           React UI・Monaco 設定
+src/storage      保存リポジトリ
+stages/          ステージ JSON
+tests/core       Vitest / tests/e2e Playwright
+scripts/sim.ts   ステージ検証 CLI
+```

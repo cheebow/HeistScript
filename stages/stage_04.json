@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_04",
+  "title": "眠ってもらおう",
+  "description": "警備員が宝物庫の入口を見張っている。背後 behind に回り込み knockout で眠らせよう。30tick 後に目を覚ますので急ぐこと。carry / drop で運ぶこともできる。",
+  "width": 20,
+  "height": 12,
+  "tiles": [
+    "####################",
+    "#E.................#",
+    "#..................#",
+    "#......#######.....#",
+    "#......#.....#.....#",
+    "#......#.....#.....#",
+    "#......####.##.....#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "#..................#",
+    "####################"
+  ],
+  "waypoints": [
+    {
+      "id": "behind",
+      "x": 11,
+      "y": 8
+    },
+    {
+      "id": "vault",
+      "x": 11,
+      "y": 5
+    },
+    {
+      "id": "corner",
+      "x": 18,
+      "y": 10
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 2,
+      "direction": "right",
+      "starterScript": "# 警備員の真後ろのマスから knockout <警備員> で気絶させられる。\n# 眠っている警備員のマスは通り抜けられる。\nmove behind\nknockout guard_1\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 11,
+      "y": 7,
+      "direction": "up",
+      "patrolRoute": [
+        {
+          "x": 11,
+          "y": 7,
+          "waitTicks": 30
+        },
+        {
+          "x": 11,
+          "y": 9,
+          "waitTicks": 6
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 9,
+      "y": 5,
+      "required": true
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 600,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "knockout",
+    "carry",
+    "drop"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "pacifist",
+      "type": "noKnockout",
+      "title": "誰も眠らせずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 90,
+      "title": "90tick以内にクリア"
+    }
+  ],
+  "hints": [
+    "警備員 guard_1 は宝物庫の入口 (11,6) の前に立ち、ときどき後ろへ下がって戻る。knockout は相手の真後ろ（向きの反対側の隣）からしか成功しない。",
+    "move behind で警備員の後ろへ回り、wait until guard_near などで警備員が戻るのを待ってから knockout guard_1。眠っている警備員のマスは通り抜けられる。30tick 以内に離れるか、carry で宝物庫の中へ運んで drop しておくと目覚めても見つかりにくい。",
+    "move behind\nknockout guard_1\ncarry guard_1\nmove vault\ndrop\nmove jewel\nsteal jewel\nmove exit"
+  ],
+  "solution": {
+    "thief_a": "move behind\nknockout guard_1\ncarry guard_1\nmove vault\ndrop\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

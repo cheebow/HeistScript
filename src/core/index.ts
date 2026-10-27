@@ -1,0 +1,14 @@
+export * from './model';
+export * from './runner';
+export { compileScript, compileScripts } from './hsl/compile';
+export { parse } from './hsl/parser';
+export { tokenize } from './hsl/lexer';
+export type { Program, Statement, Expr } from './hsl/ast';
+export type { HslError } from './hsl/errors';
+export { formatHslError } from './hsl/errors';
+export { validateStage, assertStage } from './stages/validate';
+export { createWorld } from './stages/createWorld';
+export { findPath } from './sim/astar';
+export { canSee, visibleTiles, supercoverLine, inCone, hasLineOfSight } from './sim/vision';
+export { step } from './sim/step';
+export { isHidingSpot, manhattan, samePos } from './sim/grid';

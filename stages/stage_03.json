@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_03",
+  "title": "見つかるな!",
+  "description": "右の部屋を警備員が巡回している。緑のロッカー locker_a / locker_b に入って hide すれば見つからない。壁の陰も視線を遮る。",
+  "width": 20,
+  "height": 12,
+  "tiles": [
+    "####################",
+    "#E.......#.........#",
+    "#........#.........#",
+    "#........#.........#",
+    "#...##...#..####...#",
+    "#...##...#..#..#...#",
+    "#........#..#..#...#",
+    "#........#..####...#",
+    "#.........H........#",
+    "#........#.........#",
+    "#........#....H....#",
+    "####################"
+  ],
+  "waypoints": [
+    {
+      "id": "locker_a",
+      "x": 10,
+      "y": 8
+    },
+    {
+      "id": "locker_b",
+      "x": 14,
+      "y": 10
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 2,
+      "direction": "right",
+      "starterScript": "# ロッカー(H)の上で hide すると隠れられる。\n# if <条件> ... end で分岐できる。\nmove locker_a\nhide\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 11,
+      "y": 2,
+      "direction": "right",
+      "patrolRoute": [
+        {
+          "x": 17,
+          "y": 2,
+          "waitTicks": 8
+        },
+        {
+          "x": 17,
+          "y": 9,
+          "waitTicks": 8
+        },
+        {
+          "x": 11,
+          "y": 9,
+          "waitTicks": 8
+        },
+        {
+          "x": 11,
+          "y": 2,
+          "waitTicks": 8
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 18,
+      "y": 5,
+      "required": true
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 600,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 150,
+      "title": "150tick以内にクリア"
+    }
+  ],
+  "hints": [
+    "警備員は右の部屋の外周を時計回りに巡回する。視界は正面90度・5マス。ロッカー(H)の上で hide すると見えなくなる。",
+    "move locker_a → hide → wait until guard_away で警備員をやり過ごし、宝石を盗んだら locker_b に戻って同じ手順。if guard_near ... end で必要なときだけ隠れることもできる。",
+    "move locker_a\nhide\nwait until guard_away\nmove jewel\nsteal jewel\nmove locker_b\nhide\nwait until guard_away\nmove exit"
+  ],
+  "solution": {
+    "thief_a": "move locker_a\nhide\nwait until guard_away\nmove jewel\nsteal jewel\nmove locker_b\nhide\nwait until guard_away\nmove exit\n"
+  }
+}
