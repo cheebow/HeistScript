@@ -18,6 +18,11 @@ export interface SaveData {
   stages: Record<string, StageProgress>;
   settings: {
     showVision: boolean;
+    showCameraVision: boolean;
+    showPaths: boolean;
+    reducedMotion: boolean;
+    /** 0 = 自動 */
+    zoom: 0 | 1 | 2 | 3 | 4;
     muted: boolean;
     speed: 1 | 2 | 4;
     lastStageId: string | null;
@@ -28,7 +33,7 @@ export function defaultSaveData(): SaveData {
   return {
     schemaVersion: SAVE_SCHEMA_VERSION,
     stages: {},
-    settings: { showVision: true, muted: true, speed: 1, lastStageId: null },
+    settings: { showVision: true, showCameraVision: true, showPaths: true, reducedMotion: false, zoom: 0, muted: true, speed: 1, lastStageId: null },
   };
 }
 
@@ -67,6 +72,10 @@ export function sanitizeSaveData(raw: unknown): SaveData {
   if (isObj(raw.settings)) {
     const s = raw.settings;
     if (typeof s.showVision === 'boolean') d.settings.showVision = s.showVision;
+    if (typeof s.showCameraVision === 'boolean') d.settings.showCameraVision = s.showCameraVision;
+    if (typeof s.showPaths === 'boolean') d.settings.showPaths = s.showPaths;
+    if (typeof s.reducedMotion === 'boolean') d.settings.reducedMotion = s.reducedMotion;
+    if (s.zoom === 0 || s.zoom === 1 || s.zoom === 2 || s.zoom === 3 || s.zoom === 4) d.settings.zoom = s.zoom;
     if (typeof s.muted === 'boolean') d.settings.muted = s.muted;
     if (s.speed === 1 || s.speed === 2 || s.speed === 4) d.settings.speed = s.speed;
     if (typeof s.lastStageId === 'string') d.settings.lastStageId = s.lastStageId;

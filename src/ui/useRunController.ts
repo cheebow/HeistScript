@@ -174,11 +174,12 @@ export function useRunController(stage: StageDefinition | null, initialSpeed: Sp
     return run.snapshotAt(viewTick) ?? run.world;
   }, [run, viewTick, version]);
 
+  // ログは全件返す（過去のコマを表示中は、先の tick の行を UI 側で薄く表示する）
   const logs = useMemo(() => {
     void version;
     if (!run) return [];
-    return run.logs.filter((l) => l.tick <= viewTick);
-  }, [run, viewTick, version]);
+    return run.logs.slice();
+  }, [run, version]);
 
   return {
     status,

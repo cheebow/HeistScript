@@ -7,8 +7,12 @@ import { buildAllSprites, drawPixelMap, TILE, type PixelMap } from './pixelArt';
 
 export interface RenderOptions {
   showVision: boolean;
+  showCameraVision: boolean;
   showPaths: boolean;
+  reducedMotion: boolean;
   selectedId: string | null;
+  /** 人物の名前タグ（ID → 表示名） */
+  nameTags: Record<string, string>;
 }
 
 export interface SceneCallbacks {
@@ -21,7 +25,8 @@ const WALK_FRAMES: (0 | 1 | 2)[] = [1, 0, 2, 0];
 /** Phaser シーン。WorldState を受け取って描画・演出するだけで、ゲームロジックは持たない。 */
 export class HeistScene extends Phaser.Scene {
   private world: WorldState | null = null;
-  private options: RenderOptions = { showVision: true, showPaths: true, selectedId: null };
+  private options: RenderOptions = { showVision: true, showCameraVision: true, showPaths: true, reducedMotion: false, selectedId: null, nameTags: {} };
+  private tagTexts = new Map<string, Phaser.GameObjects.Text>();
   private tileSprites: Phaser.GameObjects.Image[] = [];
   private tileStageId: string | null = null;
   private tileDoorState = '';
@@ -163,8 +168,7 @@ export class HeistScene extends Phaser.Scene {
   private renderVision(world: WorldState): void {
     const g = this.visionGfx;
     g.clear();
-    if (!this.options.showVision) return;
-    for (const guard of world.guards) {
+    if (this.options.showVision) for (const guard of world.guards) {
       if (!isGuardActive(guard)) continue;
       const color = guard.state === 'CHASE' ? 0xd8434e : guard.state === 'PATROL' ? 0xf3d35a : 0xf08a3c;
       g.fillStyle(color, 0.2);
@@ -172,7 +176,7 @@ export class HeistScene extends Phaser.Scene {
         g.fillRect(t.x * TILE, t.y * TILE, TILE, TILE);
       }
     }
-    for (const cam of world.cameras) {
+    if (this.options.showCameraVision) for (const cam of world.cameras) {
       g.fillStyle(0x4fc7dc, 0.18);
       for (const t of visibleTiles(world, cam)) g.fillRect(t.x * TILE, t.y * TILE, TILE, TILE);
     }
@@ -325,6 +329,22 @@ export class HeistScene extends Phaser.Scene {
       }
     }
 
+    // 名前タグ（怪盗が複数のとき、または選択中）
+    const seenTags = new Set<string>();
+    for (const thief of world.thieves) {
+      const tag = this.options.nameTags[thief.id];
+      if (!tag || (world.thieves.length < 2 && this.options.selectedId !== thief.id)) continue;
+      const pos = this.thiefRenderPos(world, thief);
+      this.placeTag(thief.id, tag, pos.px + TILE / 2, pos.py + TILE + 1, this.options.selectedId === thief.id);
+      seenTags.add(thief.id);
+    }
+    for (const [id, t] of this.tagTexts) {
+      if (!seenTags.has(id)) {
+        t.destroy();
+        this.tagTexts.delete(id);
+      }
+    }
+
     for (const cam of world.cameras) {
       seenActors.add(cam.id);
       const img = this.getActor(cam.id, `camera_${cam.direction}`, DEPTH.actors);
@@ -350,6 +370,54 @@ export class HeistScene extends Phaser.Scene {
     }
   }
 
+  private placeTag(id: string, text: string, x: number, y: number, strong: boolean): void {
+    let t = this.tagTexts.get(id);
+    if (!t) {
+      t = this.add
+        .text(0, 0, text, { fontFamily: '"Hiragino Sans", "Noto Sans JP", sans-serif', fontSize: '9px', color: '#ffffff', backgroundColor: 'rgba(13,13,20,0.75)', padding: { x: 3, y: 1 } })
+        .setOrigin(0.5, 0)
+        .setDepth(DEPTH.text)
+        .setResolution(2);
+      this.tagTexts.set(id, t);
+    }
+    if (t.text !== text) t.setText(text);
+    t.setPosition(x, y).setAlpha(strong ? 1 : 0.75);
+  }
+
+  /** 作戦開始バナー（実行開始時に UI から呼ぶ） */
+  showBanner(text: string, color = '#9fc3df'): void {
+    if (!this.ready || !this.world) return;
+    const w = this.world.width * TILE;
+    const h = this.world.height * TILE;
+    const bg = this.add.rectangle(w / 2, h / 2, w, 28, 0x0d0d14, 0.8).setDepth(DEPTH.text);
+    const t = this.add
+      .text(w / 2, h / 2, text, { fontFamily: '"Hiragino Sans", "Noto Sans JP", sans-serif', fontSize: '16px', color, stroke: '#0d0d14', strokeThickness: 3 })
+      .setOrigin(0.5)
+      .setDepth(DEPTH.text + 0.1)
+      .setResolution(2);
+    if (this.options.reducedMotion) {
+      this.time.delayedCall(500, () => {
+        bg.destroy();
+        t.destroy();
+      });
+      return;
+    }
+    bg.setScale(0, 1);
+    this.tweens.add({ targets: bg, scaleX: 1, duration: 180, ease: 'Quad.easeOut' });
+    t.setAlpha(0);
+    this.tweens.add({ targets: t, alpha: 1, duration: 180, delay: 120 });
+    this.tweens.add({
+      targets: [bg, t],
+      alpha: 0,
+      delay: 900,
+      duration: 250,
+      onComplete: () => {
+        bg.destroy();
+        t.destroy();
+      },
+    });
+  }
+
   private renderSelection(world: WorldState): void {
     const g = this.selectGfx;
     g.clear();
@@ -368,7 +436,7 @@ export class HeistScene extends Phaser.Scene {
     if (world.tick === this.lastFxTick) return;
     const jumped = world.tick !== this.lastFxTick + 1; // シークなどで飛んだときは演出しない
     this.lastFxTick = world.tick;
-    if (jumped || world.tick === 0) return;
+    if (jumped || world.tick === 0 || this.options.reducedMotion) return;
     for (const entry of world.tickLog) this.effectFor(world, entry);
   }
 

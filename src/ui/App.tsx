@@ -24,10 +24,19 @@ export function App() {
   const [activeThief, setActiveThief] = useState<string>(stage.thieves[0]!.id);
   const [selectedId, setSelectedId] = useState<string | null>(stage.thieves[0]!.id);
   const [showVision, setShowVision] = useState(save.settings.showVision);
+  const [showCameraVision, setShowCameraVision] = useState(save.settings.showCameraVision);
+  const [showPaths, setShowPaths] = useState(save.settings.showPaths);
+  const [reducedMotion, setReducedMotion] = useState(save.settings.reducedMotion);
+  const [zoom, setZoom] = useState<number>(save.settings.zoom);
+  const [appliedZoom, setAppliedZoom] = useState<{ zoom: number; maxFit: number }>({ zoom: 1, maxFit: 1 });
+  const [banner, setBanner] = useState<{ key: number; text: string; color?: string } | null>(null);
+  const [bottomHeight, setBottomHeight] = useState(() => Math.max(160, Math.min(300, Math.round(window.innerHeight * 0.26))));
+  const [bottomMinimized, setBottomMinimized] = useState(false);
   const [sideTab, setSideTab] = useState<SideTab>('hint');
   const [breakpoints, setBreakpointsState] = useState<Record<string, Set<number>>>({});
   const [showResult, setShowResult] = useState(false);
   const [editorWidth, setEditorWidth] = useState(460);
+  const editorManualRef = useRef(false);
   const ctl = useRunController(stage, save.settings.speed);
   const jumpRef = useRef<{ thiefId: string; line: number } | null>(null);
 
@@ -59,9 +68,13 @@ export function App() {
     persist((d) => {
       d.settings.lastStageId = stage.id;
       d.settings.showVision = showVision;
+      d.settings.showCameraVision = showCameraVision;
+      d.settings.showPaths = showPaths;
+      d.settings.reducedMotion = reducedMotion;
+      d.settings.zoom = zoom as 0 | 1 | 2 | 3 | 4;
       d.settings.speed = ctl.speed;
     });
-  }, [stage.id, showVision, ctl.speed, persist]);
+  }, [stage.id, showVision, showCameraVision, showPaths, reducedMotion, zoom, ctl.speed, persist]);
 
   // コンパイル結果（エラー表示用）
   const compileErrors = useMemo(() => {
@@ -115,6 +128,7 @@ export function App() {
       const compile = ctl.start(scripts, autoPlay);
       if (compile && !compile.ok) return;
       setShowResult(false);
+      if (autoPlay) setBanner((b) => ({ key: (b?.key ?? 0) + 1, text: '作戦開始' }));
     },
     [ctl, scripts],
   );
@@ -161,7 +175,11 @@ export function App() {
   const world = ctl.world;
   const activeVm = world?.vms.find((v) => v.thiefId === activeThief);
   const activeLine = ctl.run && activeVm ? activeVm.currentLine : null;
-  const renderOptions = useMemo(() => ({ showVision, showPaths: true, selectedId }), [showVision, selectedId]);
+  const nameTags = useMemo(() => Object.fromEntries(stage.thieves.map((t) => [t.id, t.label ?? t.id])), [stage]);
+  const renderOptions = useMemo(
+    () => ({ showVision, showCameraVision, showPaths, reducedMotion, selectedId, nameTags }),
+    [showVision, showCameraVision, showPaths, reducedMotion, selectedId, nameTags],
+  );
   const previewWorld = useMemo(() => {
     if (world) return world;
     // 編集中は初期状態をプレビュー
@@ -174,13 +192,53 @@ export function App() {
     return createPreview(stage);
   }, [stage]);
 
+  /** 結果の原因となった tick（逮捕・エラー・停止のログから） */
+  const causeTick = useMemo(() => {
+    if (!ctl.run || !result) return null;
+    const logs = ctl.run.logs;
+    for (let i = logs.length - 1; i >= 0; i--) {
+      const l = logs[i]!;
+      if (l.level === 'error' || l.eventType === 'SUCCESS' || l.eventType === 'STOPPED') return l.tick;
+    }
+    return ctl.run.world.tick;
+  }, [ctl.run, result]);
+  const causeLog = useMemo(() => {
+    if (!ctl.run || causeTick === null) return null;
+    return [...ctl.run.logs].reverse().find((l) => l.tick === causeTick && (l.level === 'error' || l.level === 'warn')) ?? null;
+  }, [ctl.run, causeTick]);
+
   const progress = save.stages[stage.id];
-  const statusLabel =
-    ctl.status === 'editing' ? '編集中' : ctl.status === 'running' ? (ctl.isReplay ? 'リプレイ再生中' : '実行中') : ctl.status === 'paused' ? (ctl.isReplay ? 'リプレイ閲覧（閲覧専用）' : '一時停止') : '終了';
+  const statusLabel = ctl.isReplay
+    ? ctl.status === 'running'
+      ? '過去のコマを再生中'
+      : '過去のコマを表示中（閲覧専用）'
+    : ctl.status === 'editing'
+      ? '編集中'
+      : ctl.status === 'running'
+        ? '実行中'
+        : ctl.status === 'paused'
+          ? '一時停止'
+          : '終了';
+
+  // マップを優先した自動レイアウト: 2x 表示に必要な幅が確保できるならエディタ幅を詰める（手動調整後は行わない）
+  useEffect(() => {
+    if (zoom !== 0) return;
+    const apply = () => {
+      if (editorManualRef.current) return;
+      const needed = stage.width * 32 * 2 + 40;
+      const available = window.innerWidth - 6;
+      const w = available - needed;
+      setEditorWidth(w >= 360 ? Math.min(700, w) : 460);
+    };
+    apply();
+    window.addEventListener('resize', apply);
+    return () => window.removeEventListener('resize', apply);
+  }, [stage.width, zoom]);
 
   // ドラッグで境界調整
   const onDragStart = (e: React.MouseEvent) => {
     e.preventDefault();
+    editorManualRef.current = true;
     const startX = e.clientX;
     const startW = editorWidth;
     const move = (ev: MouseEvent) => setEditorWidth(Math.max(280, Math.min(900, startW + ev.clientX - startX)));
@@ -192,8 +250,21 @@ export function App() {
     window.addEventListener('mouseup', up);
   };
 
+  const onBottomDragStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startY = e.clientY;
+    const startH = bottomHeight;
+    const move = (ev: MouseEvent) => setBottomHeight(Math.max(120, Math.min(600, startH - (ev.clientY - startY))));
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+
   return (
-    <div className="app" style={{ ['--editor-width' as string]: `${editorWidth}px` }}>
+    <div className="app" style={{ ['--editor-width' as string]: `${editorWidth}px`, ['--bottom-height' as string]: bottomMinimized ? '34px' : `${bottomHeight}px` }}>
       <header className="topbar">
         <div className="brand">
           <span className="logo">Heist</span>
@@ -249,9 +320,34 @@ export function App() {
           <span className={`status status-${ctl.status}`} data-testid="run-status">
             {statusLabel}
           </span>
-          <label className="toggle">
-            <input type="checkbox" checked={showVision} onChange={(e) => setShowVision(e.target.checked)} /> 視界表示
-          </label>
+          <details className="menu">
+            <summary title="表示の設定">表示</summary>
+            <div className="menu-body">
+              <label className="toggle">
+                <input type="checkbox" checked={showVision} onChange={(e) => setShowVision(e.target.checked)} data-testid="toggle-guard-vision" /> 警備員の視界
+              </label>
+              <label className="toggle">
+                <input type="checkbox" checked={showCameraVision} onChange={(e) => setShowCameraVision(e.target.checked)} data-testid="toggle-camera-vision" /> カメラの視界
+              </label>
+              <label className="toggle">
+                <input type="checkbox" checked={showPaths} onChange={(e) => setShowPaths(e.target.checked)} data-testid="toggle-paths" /> 移動予定の経路
+              </label>
+              <label className="toggle">
+                <input type="checkbox" checked={reducedMotion} onChange={(e) => setReducedMotion(e.target.checked)} data-testid="toggle-reduced-motion" /> 演出を減らす
+              </label>
+              <label className="toggle">
+                拡大率
+                <select value={zoom} onChange={(e) => setZoom(Number(e.target.value))} data-testid="zoom-select">
+                  <option value={0}>自動（{appliedZoom.maxFit}x まで）</option>
+                  {[1, 2, 3, 4].map((z) => (
+                    <option key={z} value={z}>
+                      {z}x{z > appliedZoom.maxFit ? '（スクロール）' : ''}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </details>
         </div>
       </header>
 
@@ -306,8 +402,14 @@ export function App() {
             world={previewWorld ?? initialWorld}
             options={renderOptions}
             version={ctl.version}
-            onSelect={(id) => setSelectedId(id)}
+            onSelect={(id) => {
+              setSelectedId(id);
+              if (id && stage.thieves.some((t) => t.id === id)) setActiveThief(id);
+            }}
             describeTile={(x, y) => describeTile(stage, previewWorld ?? initialWorld, x, y)}
+            zoom={zoom}
+            onZoomApplied={(z, maxFit) => setAppliedZoom((prev) => (prev.zoom === z && prev.maxFit === maxFit ? prev : { zoom: z, maxFit }))}
+            banner={banner}
           />
           {ctl.isReplay && <div className="replay-banner">過去のコマを表示中（閲覧専用）。やり直すには「最初に戻す」</div>}
           <div className="legend" aria-label="凡例">
@@ -323,9 +425,27 @@ export function App() {
         </section>
       </main>
 
-      <footer className="bottom">
-        <LogPanel logs={ctl.logs} thiefIds={stage.thieves.map((t) => t.id)} guardIds={stage.guards.map((g) => g.id)} onJumpLine={(thiefId) => setActiveThief(thiefId)} />
-        <InspectorPanel world={world} stage={stage} selectedId={selectedId} onSelect={setSelectedId} />
+      <div className="hsplitter" onMouseDown={onBottomDragStart} role="separator" aria-orientation="horizontal" title="ドラッグで高さを調整" />
+      <footer className={`bottom ${bottomMinimized ? 'minimized' : ''}`}>
+        {bottomMinimized ? (
+          <div className="bottom-bar">
+            <button className="subtle" onClick={() => setBottomMinimized(false)} data-testid="bottom-restore">
+              ▔ ログ・状態・ヒントを表示
+            </button>
+            {causeLog && <span className="muted">最後の出来事: t{causeLog.tick} {causeLog.details}</span>}
+          </div>
+        ) : (
+          <>
+        <LogPanel
+          logs={ctl.logs}
+          thiefIds={stage.thieves.map((t) => t.id)}
+          guardIds={stage.guards.map((g) => g.id)}
+          onJumpLine={(thiefId) => setActiveThief(thiefId)}
+          onSeek={(tick) => ctl.seek(tick)}
+          currentTick={ctl.viewTick}
+          onMinimize={() => setBottomMinimized(true)}
+        />
+        <InspectorPanel world={world ?? initialWorld} stage={stage} selectedId={selectedId} onSelect={setSelectedId} />
         <aside className="side-panel">
           <div className="tabs" role="tablist">
             <button role="tab" aria-selected={sideTab === 'hint'} className={sideTab === 'hint' ? 'active' : ''} onClick={() => setSideTab('hint')}>
@@ -337,6 +457,8 @@ export function App() {
           </div>
           {sideTab === 'hint' ? <HintPanel stage={stage} onInsertSample={insertSample} /> : <HelpPanel stage={stage} />}
         </aside>
+          </>
+        )}
       </footer>
 
       {showResult && result && ctl.run && (
@@ -349,6 +471,27 @@ export function App() {
               {result.reason}
               {result.scriptLine ? `（${result.scriptLine}行目）` : ''}
             </p>
+            {result.status !== 'SUCCESS' && causeTick !== null && (
+              <p className="result-cause">
+                発生 tick: {causeTick}
+                {result.actorId ? `／関係: ${result.actorId}` : ''}
+                {causeLog && causeLog.actorId !== result.actorId ? `／${causeLog.actorId}` : ''}
+                <button
+                  className="link"
+                  onClick={() => {
+                    setShowResult(false);
+                    ctl.seek(Math.max(0, causeTick - 5));
+                    if (result.actorId && stage.thieves.some((t) => t.id === result.actorId)) {
+                      setActiveThief(result.actorId);
+                      setSelectedId(result.actorId);
+                    }
+                  }}
+                  data-testid="result-jump"
+                >
+                  その直前（t{Math.max(0, causeTick - 5)}）から見る
+                </button>
+              </p>
+            )}
             <table className="stats">
               <tbody>
                 <tr>

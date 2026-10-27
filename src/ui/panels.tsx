@@ -6,14 +6,17 @@ import { formatHslError } from '../core/hsl/errors';
 import { COMMAND_DOCS, PREDICATE_DOCS } from './monaco/setup';
 import { labelOf, stageEntities } from './stageInfo';
 
-export type LogFilter = 'all' | 'thief' | 'guard' | 'error';
+export type LogFilter = 'all' | 'important' | 'thief' | 'guard' | 'error';
 
-export function LogPanel({ logs, thiefIds, guardIds, onJumpLine }: { logs: LogEntry[]; thiefIds: string[]; guardIds: string[]; onJumpLine: (thiefId: string, line: number) => void }) {
+const IMPORTANT_EVENTS = new Set(['SPOTTED', 'CAPTURED', 'CAPTURE_PREPARE', 'KNOCKOUT', 'KNOCKOUT_FAILED', 'STEAL', 'ALARM', 'SIGNAL', 'HANDLER_START', 'RESUME', 'GUARD_WAKE', 'GUARD_FOUND_UNCONSCIOUS', 'OPEN', 'HIDE', 'SUCCESS', 'STOPPED', 'TIMEOUT', 'PATH_BLOCKED', 'PATH_NOT_FOUND', 'ACTION_FAILED', 'SCRIPT_BUDGET_EXCEEDED', 'HANDLER_TIMEOUT']);
+
+export function LogPanel({ logs, thiefIds, guardIds, onJumpLine, onSeek, currentTick, onMinimize }: { logs: LogEntry[]; thiefIds: string[]; guardIds: string[]; onJumpLine: (thiefId: string, line: number) => void; onSeek: (tick: number) => void; currentTick: number; onMinimize?: () => void }) {
   const [filter, setFilter] = useState<LogFilter>('all');
   const filtered = useMemo(() => {
     const items = logs.filter((l) => {
       if (filter === 'all') return true;
       if (filter === 'error') return l.level === 'error';
+      if (filter === 'important') return IMPORTANT_EVENTS.has(l.eventType);
       if (filter === 'thief') return thiefIds.includes(l.actorId);
       if (filter === 'guard') return guardIds.includes(l.actorId) || l.actorId.startsWith('cam');
       return true;
@@ -25,17 +28,22 @@ export function LogPanel({ logs, thiefIds, guardIds, onJumpLine }: { logs: LogEn
       <header className="panel-header">
         <h2>実行ログ</h2>
         <div className="seg" role="radiogroup" aria-label="ログフィルタ">
-          {(['all', 'thief', 'guard', 'error'] as LogFilter[]).map((f) => (
+          {(['all', 'important', 'thief', 'guard', 'error'] as LogFilter[]).map((f) => (
             <button key={f} className={filter === f ? 'active' : ''} onClick={() => setFilter(f)} aria-pressed={filter === f}>
-              {f === 'all' ? '全部' : f === 'thief' ? '怪盗' : f === 'guard' ? '警備' : 'エラー'}
+              {f === 'all' ? '全部' : f === 'important' ? '重要' : f === 'thief' ? '怪盗' : f === 'guard' ? '警備' : 'エラー'}
             </button>
           ))}
         </div>
+        {onMinimize && (
+          <button className="subtle" onClick={onMinimize} title="下部パネルを最小化">
+            ▁ 最小化
+          </button>
+        )}
       </header>
       <ol className="log-list" data-testid="log-list">
-        {filtered.length === 0 && <li className="log-empty">まだログはありません。実行すると表示されます。</li>}
+        {filtered.length === 0 && <li className="log-empty">{logs.length === 0 ? 'まだログはありません。実行すると表示されます。' : '該当するログはありません。'}</li>}
         {filtered.map((l, i) => (
-          <li key={i} className={`log-${l.level}`}>
+          <li key={i} className={`log-${l.level} ${l.tick === currentTick ? 'log-current' : ''} ${l.tick > currentTick ? 'log-future' : ''}`} onClick={() => onSeek(l.tick)} title="クリックでこの tick を表示">
             <span className="log-tick">t{l.tick}</span>
             <span className="log-actor">{l.actorId}</span>
             <span className="log-type">{l.eventType}</span>

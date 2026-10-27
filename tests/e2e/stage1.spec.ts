@@ -61,7 +61,7 @@ test.describe('Stage 1', () => {
     // 巻き戻し
     await page.getByTestId('timeline').fill('2');
     await expect(page.getByTestId('tick-label')).toHaveText('tick 2/5');
-    await expect(page.getByTestId('run-status')).toContainText('リプレイ');
+    await expect(page.getByTestId('run-status')).toContainText('過去のコマ');
     const infoAt2 = await page.getByTestId('thief-info').innerText();
     expect(infoAt2).not.toEqual(infoAt5);
     // 初期状態から再実行して 5tick

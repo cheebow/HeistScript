@@ -7,7 +7,12 @@ export interface GameHandle {
   game: Phaser.Game;
   scene: HeistScene;
   setWorld(world: WorldState, options: RenderOptions): void;
+  /** 倍率を設定（0 = 自動）。戻り値は実際の倍率 */
+  setZoom(level: number, containerWidth: number, containerHeight: number): number;
+  /** 領域に収まる最大倍率 */
+  fitZoom(containerWidth: number, containerHeight: number): number;
   resize(containerWidth: number, containerHeight: number): void;
+  showBanner(text: string, color?: string): void;
   /** 画面座標（clientX/Y）からタイル座標を求める。キャンバス外なら null */
   tileAt(clientX: number, clientY: number): { x: number; y: number } | null;
   destroy(): void;
@@ -31,6 +36,8 @@ export function createGame(parent: HTMLElement, width: number, height: number, c
     banner: false,
   });
   let pending: { world: WorldState; options: RenderOptions } | null = null;
+  let zoomLevel = 0;
+  const fit = (cw: number, ch: number) => Math.max(1, Math.min(4, Math.floor(Math.min(cw / (width * TILE), ch / (height * TILE)))));
   const handle: GameHandle = {
     game,
     scene,
@@ -38,9 +45,20 @@ export function createGame(parent: HTMLElement, width: number, height: number, c
       pending = { world, options };
       scene.setWorld(world, options);
     },
-    resize(cw, ch) {
-      const zoom = Math.max(1, Math.floor(Math.min(cw / (width * TILE), ch / (height * TILE))));
+    fitZoom(cw, ch) {
+      return fit(cw, ch);
+    },
+    setZoom(level, cw, ch) {
+      zoomLevel = level;
+      const zoom = level > 0 ? level : fit(cw, ch);
       game.scale.setZoom(zoom);
+      return zoom;
+    },
+    resize(cw, ch) {
+      handle.setZoom(zoomLevel, cw, ch);
+    },
+    showBanner(text, color) {
+      scene.showBanner(text, color);
     },
     tileAt(clientX, clientY) {
       const rect = game.canvas.getBoundingClientRect();
