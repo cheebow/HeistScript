@@ -610,7 +610,18 @@ export function App() {
         <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="ステージの読込/書出" data-testid="stage-io-dialog">
           <div className="modal">
             <h2>ステージの読込 / 書出</h2>
-            <p className="muted small">ステージは JSON ファイル（SPEC.md 10 節の形式）。読み込んだステージは検証に通ればこのブラウザに保存され、一覧の末尾に追加されます。</p>
+            <p className="muted small">
+              自分でステージを作れます。まず「今のステージを書き出す」でファイルに保存し、テキストエディタで書き換えて「読み込む」と、一覧の末尾に自作ステージとして追加されます（このブラウザに保存）。
+            </p>
+            <details className="muted small">
+              <summary>書き換え方のメモ</summary>
+              <ul className="io-notes">
+                <li><code>id</code> はほかと重ならない名前に（例: <code>my_stage_1</code>）。<code>title</code> はステージ名。</li>
+                <li><code>tiles</code> はマップ。1 行が 1 列ぶんで、<code>#</code> 壁、<code>.</code> 床、<code>H</code> 隠れ場所、<code>D</code> 扉（<code>objects</code> にも同じ位置の扉を書く）、<code>V</code> 通風口、<code>E</code> 出口（<code>exit</code> と同じ位置）。座標は左上が (0,0)。</li>
+                <li><code>thieves</code> 怪盗（1〜3 人）、<code>guards</code> 警備員と巡回路 <code>patrolRoute</code>、<code>cameras</code> カメラ、<code>objects</code> 宝物・扉・ロッカー・レーザー・スイッチ・鍵、<code>waypoints</code> 名前つきの地点。</li>
+                <li>間違いがあれば読み込み時に場所と理由が出ます。</li>
+              </ul>
+            </details>
             <div className="modal-actions" style={{ justifyContent: 'flex-start' }}>
               <label className="file-btn">
                 JSON を読み込む
