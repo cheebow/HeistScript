@@ -4,7 +4,7 @@
   "title": "鏡の廊下",
   "width": 22,
   "height": 10,
-  "description": "長い廊下を二台の回転カメラが見張っている。ロッカーを渡り歩きながら、カメラが向こうを向くたびに少しずつ進み、右端の宝石を取って脱出しよう。",
+  "description": "長い廊下を二台の回転カメラが見張っている。ロッカーを渡り歩きながら、カメラが向こうを向くたびに少しずつ進み、右端の宝石を取って廊下の中ほどの出口へ戻ろう。",
   "tiles": [
     "######################",
     "#....................#",
@@ -14,16 +14,16 @@
     "#.H.......H........H.#",
     "#....................#",
     "#....................#",
-    "#....................#",
+    "#...........E........#",
     "######################"
   ],
   "waypoints": [
     {
       "id": "exit",
-      "x": 20,
+      "x": 12,
       "y": 8,
       "label": "出口",
-      "description": "廊下の右端、宝石のすぐ下にある脱出口"
+      "description": "廊下の中ほど、ロッカーBの下にある脱出口。宝石を取ったら戻ってくる"
     },
     {
       "id": "locker_a",
@@ -114,7 +114,7 @@
     }
   ],
   "exit": {
-    "x": 20,
+    "x": 12,
     "y": 8
   },
   "maxTicks": 700,
@@ -142,7 +142,7 @@
     {
       "id": "fast",
       "type": "maxTicks",
-      "value": 100,
+      "value": 160,
       "title": "100tick以内にクリア"
     }
   ],
@@ -154,10 +154,10 @@
   "firstStep": "locker_a に隠れて、二台のカメラの向きが変わる tick をそれぞれ数えよう。",
   "hints": [
     "二台のカメラはどちらも 20 tick ごとに時計回りに回るが、向きがずれている。ロッカー(H)の上で hide すれば映らない。映ると警報が鳴り、上の通路の警備員が中央の階段から降りてくる。",
-    "locker_a → locker_b → locker_c → 宝石 → 出口の順に、そのカメラが廊下の反対側を向いている間だけ移動する。hide のあとの wait の長さを調整しよう。",
-    "move locker_a\nhide\nwait 12\nmove locker_b\nhide\nwait 16\nmove locker_c\nhide\nmove jewel\nsteal jewel\nmove exit"
+    "locker_a → locker_b → locker_c → 宝石 → locker_c → 出口の順に、そのカメラが廊下の反対側を向いている間だけ移動する。hide のあとの wait の長さを調整しよう。帰りは東のカメラをもう一度やり過ごす。",
+    "move locker_a\nhide\nwait 6\nmove locker_b\nhide\nwait 4\nmove locker_c\nhide\nwait 20\nmove jewel\nsteal jewel\nmove locker_c\nhide\nwait 40\nmove exit"
   ],
   "solution": {
-    "thief_a": "move locker_a\nhide\nwait 12\nmove locker_b\nhide\nwait 16\nmove locker_c\nhide\nmove jewel\nsteal jewel\nmove exit\n"
+    "thief_a": "move locker_a\nhide\nwait 6\nmove locker_b\nhide\nwait 4\nmove locker_c\nhide\nwait 20\nmove jewel\nsteal jewel\nmove locker_c\nhide\nwait 40\nmove exit\n"
   }
 }
