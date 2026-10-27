@@ -45,12 +45,19 @@ export function describeTile(stage: StageDefinition, world: WorldState, x: numbe
     if (o.x !== x || o.y !== y) continue;
     if (o.type === 'treasure' && o.takenBy !== null) continue;
     const e = info(o.id);
-    const kind = o.type === 'treasure' ? '宝物' : o.type === 'door' ? '扉' : 'ロッカー';
+    const kind = o.type === 'treasure' ? '宝物' : o.type === 'door' ? '扉' : o.type === 'locker' ? 'ロッカー' : o.type === 'laser' ? 'レーザー' : 'スイッチ';
     title = title || `${e?.label ?? kind}（${o.id}）`;
     if (e?.description) lines.push(e.description);
     if (o.type === 'treasure') lines.push(`move ${o.id} で隣まで行き、steal ${o.id} で盗む${o.required ? '（必須）' : ''}`);
-    if (o.type === 'door') lines.push(o.open ? '開いている' : `閉まっている。隣接して open ${o.id} で開ける`);
+    if (o.type === 'door') {
+      const sw = world.objects.find((x) => x.type === 'switch' && x.targetDoorId === o.id);
+      if (sw) lines.push(`${o.open ? '開いている' : '閉まっている'}。スイッチ ${sw.id} が押されている間だけ開く`);
+      else if (o.cycle) lines.push(`${o.open ? '開いている' : '閉まっている'}。${o.cycle.openTicks} tick 開いて ${o.cycle.closedTicks} tick 閉じる周期。閉じているときは開くまで待つ`);
+      else lines.push(o.open ? '開いている' : `閉まっている。隣接して open ${o.id} で開ける`);
+    }
     if (o.type === 'locker') lines.push(`move ${o.id} で乗り、hide で隠れる`);
+    if (o.type === 'laser') lines.push(`${o.active ? '作動中！' : '停止中'}（${o.laser?.onTicks} tick 作動／${o.laser?.offTicks} tick 停止）。作動中に触れると警報が鳴る`);
+    if (o.type === 'switch') lines.push(`${o.pressed ? '押されている' : '押されていない'}。怪盗か気絶した警備員が乗っている間、扉 ${o.targetDoorId} が開く`);
   }
   for (const [id, pos] of Object.entries(world.waypoints)) {
     if (pos.x !== x || pos.y !== y) continue;

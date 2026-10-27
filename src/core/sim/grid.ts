@@ -47,6 +47,17 @@ export function isStaticPassable(world: WorldState, p: Position): boolean {
   return true;
 }
 
+/** 経路計画用: 周期／スイッチで開閉する扉は「いずれ開く」ものとして通行可とみなす */
+export function isPlannable(world: WorldState, p: Position): boolean {
+  if (isStaticPassable(world, p)) return true;
+  if (!inBounds(world, p)) return false;
+  const t = tileAt(world, p);
+  if (t === undefined || t === 'wall') return false;
+  const door = doorAt(world, p);
+  if (door && !door.open && (door.cycle || world.objects.some((o) => o.type === 'switch' && o.targetDoorId === door.id))) return true;
+  return false;
+}
+
 /** 視線を遮るか（壁・閉扉） */
 export function blocksSight(world: WorldState, p: Position): boolean {
   if (!inBounds(world, p)) return true;

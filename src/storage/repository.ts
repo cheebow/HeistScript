@@ -3,6 +3,18 @@
  */
 export const SAVE_SCHEMA_VERSION = 1;
 
+export interface BestRecord {
+  ticks: number;
+  instructions: number;
+  spotted: number;
+  knockouts: number;
+  alarms: number;
+  /** 達成したチャレンジID */
+  challenges: string[];
+  /** そのときのスクリプト */
+  scripts: Record<string, string>;
+}
+
 export interface StageProgress {
   /** 怪盗ID → スクリプト */
   scripts: Record<string, string>;
@@ -11,11 +23,17 @@ export interface StageProgress {
   bestTicks: number | null;
   /** 達成したチャレンジID */
   challenges: string[];
+  /** 最速クリアの記録（スクリプトつき） */
+  best?: BestRecord | null;
+  /** チャレンジごとの達成時スクリプト */
+  challengeScripts?: Record<string, Record<string, string>>;
 }
 
 export interface SaveData {
   schemaVersion: number;
   stages: Record<string, StageProgress>;
+  /** インポートしたカスタムステージ（検証済み JSON をそのまま保持） */
+  customStages: unknown[];
   settings: {
     showVision: boolean;
     showCameraVision: boolean;
@@ -33,6 +51,7 @@ export function defaultSaveData(): SaveData {
   return {
     schemaVersion: SAVE_SCHEMA_VERSION,
     stages: {},
+    customStages: [],
     settings: { showVision: true, showCameraVision: true, showPaths: true, reducedMotion: false, zoom: 0, muted: true, speed: 1, lastStageId: null },
   };
 }
@@ -61,14 +80,22 @@ export function sanitizeSaveData(raw: unknown): SaveData {
       if (isObj(p.scripts)) {
         for (const [tid, src] of Object.entries(p.scripts)) if (typeof src === 'string') scripts[tid] = src;
       }
+      const best = isObj(p.best) && typeof p.best.ticks === 'number' && isObj(p.best.scripts) ? (p.best as unknown as BestRecord) : null;
+      const challengeScripts: Record<string, Record<string, string>> = {};
+      if (isObj(p.challengeScripts)) {
+        for (const [cid, sc] of Object.entries(p.challengeScripts)) if (isObj(sc)) challengeScripts[cid] = Object.fromEntries(Object.entries(sc).filter(([, v]) => typeof v === 'string')) as Record<string, string>;
+      }
       d.stages[id] = {
         scripts,
         cleared: p.cleared === true,
         bestTicks: typeof p.bestTicks === 'number' ? p.bestTicks : null,
         challenges: Array.isArray(p.challenges) ? p.challenges.filter((c): c is string => typeof c === 'string') : [],
+        best,
+        challengeScripts,
       };
     }
   }
+  if (Array.isArray(raw.customStages)) d.customStages = raw.customStages.filter(isObj);
   if (isObj(raw.settings)) {
     const s = raw.settings;
     if (typeof s.showVision === 'boolean') d.settings.showVision = s.showVision;

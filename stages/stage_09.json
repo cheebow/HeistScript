@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_09",
+  "title": "赤い糸",
+  "width": 20,
+  "height": 11,
+  "description": "宝物庫へ続く通路に赤いレーザーが張られている。作動中に触れると警報が鳴り、警備員が来る。止まる瞬間を数えて駆け抜けよう。",
+  "tiles": [
+    "####################",
+    "#E........#........#",
+    "#.........#........#",
+    "#.........#........#",
+    "#.........####.....#",
+    "#..................#",
+    "#.........####.....#",
+    "#.........#........#",
+    "#.........#........#",
+    "#.........#........#",
+    "####################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上の脱出口"
+    },
+    {
+      "id": "gate",
+      "x": 9,
+      "y": 5,
+      "label": "通路の入口",
+      "description": "レーザー通路の手前。ここで周期を待つ"
+    },
+    {
+      "id": "landing",
+      "x": 14,
+      "y": 5,
+      "label": "通路の出口",
+      "description": "レーザー通路を抜けた先"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "あなたが操作する怪盗",
+      "starterScript": "# レーザーは一定周期で止まる。通路の入口 gate で観察しよう\nmove gate\nwait 40\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 17,
+      "y": 2,
+      "direction": "down",
+      "label": "警備員1",
+      "description": "右の部屋の右端を上下に巡回し、警報が鳴ると現場へ向かう",
+      "patrolRoute": [
+        {
+          "x": 17,
+          "y": 8,
+          "waitTicks": 3
+        },
+        {
+          "x": 17,
+          "y": 2,
+          "waitTicks": 3
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 12,
+      "y": 8,
+      "required": true,
+      "label": "宝石",
+      "description": "右の部屋の左下にある必須の宝物"
+    },
+    {
+      "id": "laser_a",
+      "type": "laser",
+      "x": 11,
+      "y": 5,
+      "onTicks": 12,
+      "offTicks": 8,
+      "offset": 0,
+      "label": "レーザーA",
+      "description": "12 tick 作動・8 tick 停止"
+    },
+    {
+      "id": "laser_b",
+      "type": "laser",
+      "x": 13,
+      "y": 5,
+      "onTicks": 12,
+      "offTicks": 8,
+      "offset": 2,
+      "label": "レーザーB",
+      "description": "A より少し遅れた同じ周期（12 tick 作動・8 tick 停止）"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 600,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "noalarm",
+      "type": "noAlarm",
+      "title": "警報を鳴らさずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 110,
+      "title": "110tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "wait"
+  ],
+  "goal": "レーザーに触れずに通路を抜けて宝石を盗み、出口へ。",
+  "firstStep": "初期コードで gate に行き、1コマ進めるで A と B が赤くなる tick・消える tick を数えよう。",
+  "hints": [
+    "レーザーは赤いとき作動中。A・B とも 12 tick 作動して 8 tick 止まるが、B は A より少し遅れて動く。両方を続けて通れる瞬間は短い。警備員は右端を上下に巡回し、警報が鳴ると現場へ来る。",
+    "通路の入口 gate に着いてから wait で周期を合わせ、A が消えた直後に move で一気に抜ける（怪盗は 2 tick で 1 マス進む）。帰りは通路の出口 landing で同じように待つ。",
+    "move gate\nwait 6\nmove jewel\nsteal jewel\nmove landing\nwait 8\nmove exit"
+  ],
+  "solution": {
+    "thief_a": "move gate\nwait 6\nmove jewel\nsteal jewel\nmove landing\nwait 8\nmove exit\n"
+  }
+}

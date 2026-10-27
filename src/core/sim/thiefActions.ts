@@ -43,6 +43,17 @@ export function processThiefAction(world: WorldState, vm: VmState, thief: Thief,
         }
         return;
       }
+      if (result === 'impassable') {
+        // 閉じた扉（タイマー／スイッチ）: 開くまで待つ。3回制限には数えない
+        const next = action.path[0]!;
+        const door = world.objects.find((o) => o.type === 'door' && o.x === next.x && o.y === next.y);
+        if (door && !door.open && (door.cycle || world.objects.some((o) => o.type === 'switch' && o.targetDoorId === door.id))) {
+          thief.moveProgress = cfg.thiefTicksPerTile; // 開いた tick にすぐ進めるようにしておく
+          if (action.blockedCount === 0) log(world, thief.id, 'MOVE_WAIT_DOOR', `扉 ${door.id} が開くのを待っている`, action.line);
+          action.blockedCount = 0;
+          return;
+        }
+      }
       // ブロック: 動かず、1タイル分の時間を置いて再試行（進行度リセット）。動的占有を避けて再探索
       action.blockedCount++;
       thief.moveProgress = 0;

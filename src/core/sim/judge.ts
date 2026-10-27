@@ -3,13 +3,15 @@ import { isGuardActive, log, type SimContext } from './context';
 import { enterChase, enterInvestigate } from './guardAi';
 import { euclid, manhattan, rotateClockwise, samePos } from './grid';
 import { canSee } from './vision';
+import { processLasers } from './gimmicks';
 
 function sortIds(ids: string[]): string[] {
   return [...ids].sort();
 }
 
-/** フェーズ5-a: カメラ回転とカメラ検知（警報） */
+/** フェーズ5-a: カメラ回転とカメラ検知（警報）、レーザー接触 */
 export function processCameras(world: WorldState, ctx: SimContext): void {
+  processLasers(world, (sourceId, at, reason) => raiseAlarm(world, sourceId, at, reason, ctx));
   for (const cam of world.cameras) {
     if (cam.rotateEveryTicks > 0 && world.tick % cam.rotateEveryTicks === 0) {
       cam.direction = rotateClockwise(cam.direction);
@@ -100,7 +102,9 @@ export function processGuardVision(world: WorldState, ctx: SimContext): void {
       // 開始時に閉まっていた扉が開いている → 一度だけ調査（巡回中のみ）
       if (g.state === 'PATROL') {
         for (const door of world.objects) {
-          if (door.type !== 'door' || !door.open || door.initiallyOpen || door.noticed) continue;
+          // タイマー／スイッチで動く扉は「設備」なので不審に思わない (D-20)
+          if (door.type !== 'door' || !door.open || door.initiallyOpen || door.noticed || door.cycle) continue;
+          if (world.objects.some((o) => o.type === 'switch' && o.targetDoorId === door.id)) continue;
           if (canSee(world, viewer, door)) {
             door.noticed = true;
             log(world, g.id, 'GUARD_FOUND_DOOR', `開いている扉 ${door.id} に気づいた`, null, 'warn');

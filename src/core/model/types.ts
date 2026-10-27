@@ -91,7 +91,7 @@ export interface Camera {
   visibleThiefIds: string[];
 }
 
-export type GameObjectType = 'treasure' | 'door' | 'locker';
+export type GameObjectType = 'treasure' | 'door' | 'locker' | 'laser' | 'switch';
 
 export interface GameObject {
   id: string;
@@ -110,6 +110,18 @@ export interface GameObject {
   initiallyOpen: boolean;
   /** door: 警備員が「開いている」ことに気づいたか（一度だけ調査する） */
   noticed: boolean;
+  /** door: タイマー開閉（なければ固定） */
+  cycle: { openTicks: number; closedTicks: number; offset: number } | null;
+  /** laser: 作動周期 */
+  laser: { onTicks: number; offTicks: number; offset: number } | null;
+  /** laser: 作動中か（表示・判定用キャッシュ、毎 tick 更新） */
+  active: boolean;
+  /** laser: 直前 tick に当たっていた怪盗 */
+  hitThiefIds: string[];
+  /** switch: 開ける扉 */
+  targetDoorId: string | null;
+  /** switch: 押されているか */
+  pressed: boolean;
 }
 
 export interface Thief {

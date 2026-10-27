@@ -156,7 +156,21 @@ export function validateStage(raw: unknown): { ok: true; stage: StageDefinition 
       if (!isObj(o)) return err(`objects[${i}]`, 'オブジェクトが必要です');
       checkId(o.id, `objects[${i}].id`);
       checkLabel(o, `objects[${i}]`);
-      if (!['treasure', 'door', 'locker'].includes(o.type as string)) err(`objects[${i}].type`, 'treasure/door/locker のいずれか');
+      if (!['treasure', 'door', 'locker', 'laser', 'switch'].includes(o.type as string)) err(`objects[${i}].type`, 'treasure/door/locker/laser/switch のいずれか');
+      if (o.type === 'laser') {
+        if (!isInt(o.onTicks) || (o.onTicks as number) <= 0) err(`objects[${i}].onTicks`, '正の整数');
+        if (!isInt(o.offTicks) || (o.offTicks as number) < 0) err(`objects[${i}].offTicks`, '0以上の整数');
+        if (o.offset !== undefined && !isInt(o.offset)) err(`objects[${i}].offset`, '整数');
+      }
+      if (o.type === 'door' && o.cycle !== undefined) {
+        const c = o.cycle;
+        if (!isObj(c) || !isInt(c.openTicks) || (c.openTicks as number) <= 0 || !isInt(c.closedTicks) || (c.closedTicks as number) <= 0) err(`objects[${i}].cycle`, 'openTicks/closedTicks は正の整数');
+        else if (c.offset !== undefined && !isInt(c.offset)) err(`objects[${i}].cycle.offset`, '整数');
+      }
+      if (o.type === 'switch') {
+        if (typeof o.targetDoorId !== 'string') err(`objects[${i}].targetDoorId`, '扉の ID が必要です');
+        else if (!(s.objects as unknown[]).some((d) => isObj(d) && d.type === 'door' && d.id === o.targetDoorId)) err(`objects[${i}].targetDoorId`, `扉 '${String(o.targetDoorId)}' が存在しません`);
+      }
       if (checkPos(o, `objects[${i}]`)) {
         if (o.type === 'door') {
           doorTiles.add(`${o.x},${o.y}`);

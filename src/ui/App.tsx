@@ -3,6 +3,7 @@ import { compileScript } from '../core/hsl/compile';
 import type { HslError } from '../core/hsl/errors';
 import type { StageDefinition } from '../core/model/stage';
 import { getStages } from '../core/stages';
+import { validateStage } from '../core/stages/validate';
 import { createRepository, type SaveData } from '../storage/repository';
 import { Editor } from './Editor';
 import { describeTile } from './describeTile';
@@ -19,8 +20,18 @@ const repository = createRepository();
 type SideTab = 'hint' | 'help';
 
 export function App() {
-  const stages = useMemo(() => getStages(), []);
   const [save, setSave] = useState<SaveData>(() => repository.load());
+  // カスタムステージは内容が同じなら同一オブジェクトを保つ（stage の同一性が変わると実行がリセットされるため）
+  const customKey = useMemo(() => JSON.stringify(save.customStages), [save.customStages]);
+  const stages = useMemo(() => {
+    const builtIn = getStages();
+    const custom: StageDefinition[] = [];
+    for (const raw of JSON.parse(customKey) as unknown[]) {
+      const r = validateStage(raw);
+      if (r.ok && !builtIn.some((b) => b.id === r.stage.id) && !custom.some((c) => c.id === r.stage.id)) custom.push(r.stage);
+    }
+    return [...builtIn, ...custom];
+  }, [customKey]);
   const [stageId, setStageId] = useState<string>(() => save.settings.lastStageId && stages.some((s) => s.id === save.settings.lastStageId) ? save.settings.lastStageId : stages[0]!.id);
   const stage = useMemo(() => stages.find((s) => s.id === stageId) ?? stages[0]!, [stages, stageId]);
   const [scripts, setScripts] = useState<Record<string, string>>(() => initialScripts(stage, save));
@@ -38,6 +49,8 @@ export function App() {
   const [sideTab, setSideTab] = useState<SideTab>('hint');
   const [breakpoints, setBreakpointsState] = useState<Record<string, Set<number>>>({});
   const [showResult, setShowResult] = useState(false);
+  const [showStageIO, setShowStageIO] = useState(false);
+  const [importError, setImportError] = useState<string[] | null>(null);
   const [editorWidth, setEditorWidth] = useState(460);
   const editorManualRef = useRef(false);
   const ctl = useRunController(stage, save.settings.speed);
@@ -144,17 +157,26 @@ export function App() {
       if (result.status === 'SUCCESS' && ctl.run) {
         const ticks = ctl.run.world.tick;
         const stats = ctl.run.world.stats;
+        const usedScripts = { ...scripts };
         persist((d) => {
           const p = d.stages[stage.id] ?? { scripts: {}, cleared: false, bestTicks: null, challenges: [] };
           p.cleared = true;
           p.bestTicks = p.bestTicks === null ? ticks : Math.min(p.bestTicks, ticks);
+          const achieved: string[] = [];
           for (const c of stage.challenges) {
             const ok =
               (c.type === 'maxTicks' && c.value !== undefined && ticks <= c.value) ||
               (c.type === 'noSpotted' && stats.spottedCount === 0) ||
               (c.type === 'noKnockout' && stats.knockoutCount === 0) ||
               (c.type === 'noAlarm' && stats.alarmCount === 0);
-            if (ok && !p.challenges.includes(c.id)) p.challenges.push(c.id);
+            if (ok) {
+              achieved.push(c.id);
+              if (!p.challenges.includes(c.id)) p.challenges.push(c.id);
+              p.challengeScripts = { ...(p.challengeScripts ?? {}), [c.id]: usedScripts };
+            }
+          }
+          if (!p.best || ticks < p.best.ticks) {
+            p.best = { ticks, instructions: stats.instructionCount, spotted: stats.spottedCount, knockouts: stats.knockoutCount, alarms: stats.alarmCount, challenges: achieved, scripts: usedScripts };
           }
           d.stages[stage.id] = p;
         });
@@ -287,7 +309,8 @@ export function App() {
           <select value={stage.id} onChange={(e) => setStageId(e.target.value)} data-testid="stage-select">
             {stages.map((s, i) => (
               <option key={s.id} value={s.id}>
-                {i + 1}. {s.title} {save.stages[s.id]?.cleared ? '✔' : ''}
+                {i + 1}. {s.title}
+                {i >= getStages().length ? '（カスタム）' : ''} {save.stages[s.id]?.cleared ? '✔' : ''}
               </option>
             ))}
           </select>
@@ -411,7 +434,37 @@ export function App() {
           <div className="game-header">
             <h1>{stage.title}</h1>
             <span className="muted">{stage.description}</span>
-            {progress?.cleared && <span className="badge">クリア済み（最良 {progress.bestTicks} tick）</span>}
+            {progress?.cleared && (
+              <span className="badge" title={progress.best ? `最速 ${progress.best.ticks} tick／命令 ${progress.best.instructions}／発見 ${progress.best.spotted}／気絶 ${progress.best.knockouts}／警報 ${progress.best.alarms}` : ''}>
+                クリア済み（最良 {progress.bestTicks} tick）
+              </span>
+            )}
+            {stage.challenges.length > 0 && (
+              <span className="challenge-list" title="チャレンジ（クリア条件とは別の記録）">
+                {stage.challenges.map((c) => (
+                  <span key={c.id} className={`chal ${progress?.challenges.includes(c.id) ? 'done' : ''}`} title={c.title ?? c.id}>
+                    {progress?.challenges.includes(c.id) ? '★' : '☆'}
+                  </span>
+                ))}
+              </span>
+            )}
+            {progress?.best && (
+              <button
+                className="subtle"
+                onClick={() => {
+                  if (window.confirm(`最速クリア（${progress.best!.ticks} tick）のときのコードを読み込みますか？ 今のコードは上書きされます`)) {
+                    for (const [tid, src] of Object.entries(progress.best!.scripts)) onScriptChange(tid, src);
+                  }
+                }}
+                data-testid="btn-load-best"
+                title="最速クリア時のコードをエディタに戻す"
+              >
+                ベストのコードを読み込む
+              </button>
+            )}
+            <button className="subtle" onClick={() => setShowStageIO(true)} data-testid="btn-stage-io" title="ステージ JSON の読み込み・書き出し">
+              ステージの読込/書出
+            </button>
           </div>
           <GameView
             world={previewWorld ?? initialWorld}
@@ -434,6 +487,8 @@ export function App() {
             <span><i className="sw sw-camera" />カメラの視界</span>
             <span><i className="sw sw-locker" />隠れ場所</span>
             <span><i className="sw sw-exit" />出口</span>
+            {stage.objects.some((o) => o.type === 'laser') && <span><i className="sw sw-laser" />レーザー（赤いとき作動）</span>}
+            {stage.objects.some((o) => o.type === 'switch') && <span><i className="sw sw-switch" />スイッチ</span>}
             <span><i className="sw sw-path" />移動予定の経路</span>
             <span className="muted">人物をクリックすると状態を表示</span>
           </div>
@@ -475,6 +530,90 @@ export function App() {
           </>
         )}
       </footer>
+
+      {showStageIO && (
+        <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="ステージの読込/書出" data-testid="stage-io-dialog">
+          <div className="modal">
+            <h2>ステージの読込 / 書出</h2>
+            <p className="muted small">ステージは JSON ファイル（SPEC.md 10 節の形式）。読み込んだステージは検証に通ればこのブラウザに保存され、一覧の末尾に追加されます。</p>
+            <div className="modal-actions" style={{ justifyContent: 'flex-start' }}>
+              <label className="file-btn">
+                JSON を読み込む
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  data-testid="stage-import"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    try {
+                      const raw: unknown = JSON.parse(await file.text());
+                      const r = validateStage(raw);
+                      if (!r.ok) {
+                        setImportError(r.errors.map((er) => `${er.path}: ${er.message}`));
+                        return;
+                      }
+                      if (getStages().some((b) => b.id === r.stage.id)) {
+                        setImportError([`id '${r.stage.id}' は組み込みステージと重複しています。別の id にしてください`]);
+                        return;
+                      }
+                      persist((d) => {
+                        d.customStages = [...d.customStages.filter((c) => (c as { id?: string }).id !== r.stage.id), raw];
+                      });
+                      setImportError(null);
+                      setShowStageIO(false);
+                      setStageId(r.stage.id);
+                    } catch (err) {
+                      setImportError([`JSON を読み込めません: ${(err as Error).message}`]);
+                    } finally {
+                      e.target.value = '';
+                    }
+                  }}
+                />
+              </label>
+              <button
+                onClick={() => {
+                  const blob = new Blob([JSON.stringify(stage, null, 2)], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `${stage.id}.json`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                data-testid="stage-export"
+              >
+                現在のステージを書き出す
+              </button>
+              {!getStages().some((b) => b.id === stage.id) && (
+                <button
+                  onClick={() => {
+                    if (window.confirm(`カスタムステージ '${stage.id}' を削除しますか？`)) {
+                      persist((d) => {
+                        d.customStages = d.customStages.filter((c) => (c as { id?: string }).id !== stage.id);
+                      });
+                      setStageId(getStages()[0]!.id);
+                      setShowStageIO(false);
+                    }
+                  }}
+                >
+                  このカスタムステージを削除
+                </button>
+              )}
+            </div>
+            {importError && (
+              <ul className="error-list" data-testid="import-errors">
+                {importError.map((m, i) => (
+                  <li key={i}>{m}</li>
+                ))}
+              </ul>
+            )}
+            <div className="modal-actions">
+              <button onClick={() => { setShowStageIO(false); setImportError(null); }}>閉じる</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showResult && result && ctl.run && (
         <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="結果" data-testid="result-dialog">

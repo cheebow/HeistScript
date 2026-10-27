@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_10",
+  "title": "開かずの間",
+  "width": 20,
+  "height": 12,
+  "description": "宝物庫の扉は一定の周期でしか開かない。扉の前で待つ間、巡回する警備員に見つからないように。",
+  "tiles": [
+    "####################",
+    "#E.................#",
+    "#..................#",
+    "#....##......####..#",
+    "#....##......#..#..#",
+    "#............#..#..#",
+    "#............##D##.#",
+    "#..................#",
+    "#..................#",
+    "#....##............#",
+    "#....##............#",
+    "####################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上の脱出口"
+    },
+    {
+      "id": "pillar",
+      "x": 4,
+      "y": 5,
+      "label": "柱の陰",
+      "description": "左上の柱のすぐ下。警備員の巡回路から外れていて見えない"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "あなたが操作する怪盗",
+      "starterScript": "# 扉 vault_door は周期で開閉する。閉じていても move すれば開くまで待つ\nmove pillar\nwait 40\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 17,
+      "y": 2,
+      "direction": "down",
+      "label": "警備員1",
+      "description": "部屋の外周を回る",
+      "patrolRoute": [
+        {
+          "x": 17,
+          "y": 9,
+          "waitTicks": 2
+        },
+        {
+          "x": 8,
+          "y": 9,
+          "waitTicks": 2
+        },
+        {
+          "x": 8,
+          "y": 2,
+          "waitTicks": 2
+        },
+        {
+          "x": 17,
+          "y": 2,
+          "waitTicks": 2
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 14,
+      "y": 5,
+      "required": true,
+      "label": "宝石",
+      "description": "宝物庫の中にある必須の宝物"
+    },
+    {
+      "id": "vault_door",
+      "type": "door",
+      "x": 15,
+      "y": 6,
+      "open": false,
+      "cycle": {
+        "openTicks": 6,
+        "closedTicks": 18,
+        "offset": 6
+      },
+      "label": "宝物庫の扉",
+      "description": "6 tick 開いて 18 tick 閉じる。閉じているときは前で待てば開く"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 600,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 130,
+      "title": "130tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "wait until",
+    "wait"
+  ],
+  "goal": "周期で開く扉から宝物庫に入り、宝石を盗んで出口へ。",
+  "firstStep": "初期コードで柱の陰へ行き、扉が開く間隔と警備員の周期を観察しよう。",
+  "hints": [
+    "扉は 6 tick 開いて 18 tick 閉じる。閉じた扉に move すると扉の前で自動的に待つが、その間は丸見え。警備員は部屋の外周を時計回りに回る（右の列を下り、下の行を左へ、左の列を上り、上の行を右へ）。",
+    "柱の陰 pillar は巡回路から見えない。警備員が左側を通り過ぎて上の行へ向かったころに扉へ向かうと、扉が開くのを待つ間に見つからない。wait の長さを変えて試そう。中に入ったら、次に扉が開くまで宝物庫の中で待てる。",
+    "move pillar\nwait 10\nmove jewel\nsteal jewel\nmove pillar\nwait until guard_away\nmove exit"
+  ],
+  "solution": {
+    "thief_a": "move pillar\nwait 10\nmove jewel\nsteal jewel\nmove pillar\nwait until guard_away\nmove exit\n"
+  }
+}

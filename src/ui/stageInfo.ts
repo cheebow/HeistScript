@@ -37,8 +37,12 @@ export function stageEntities(stage: StageDefinition): EntityInfo[] {
       rows.push({ id: o.id, label: o.label ?? '宝物', kind: '宝物', description: o.description ?? '', pos, usage: `move ${o.id} → steal ${o.id}`, commands: ['move', 'steal'] });
     } else if (o.type === 'door') {
       rows.push({ id: o.id, label: o.label ?? '扉', kind: '扉', description: o.description ?? '', pos, usage: `open ${o.id}（隣接して）`, commands: ['move', 'open'] });
-    } else {
+    } else if (o.type === 'locker') {
       rows.push({ id: o.id, label: o.label ?? 'ロッカー', kind: 'ロッカー', description: o.description ?? '', pos, usage: `move ${o.id} → hide`, commands: ['move'] });
+    } else if (o.type === 'laser') {
+      rows.push({ id: o.id, label: o.label ?? 'レーザー', kind: 'レーザー', description: o.description ?? `${o.onTicks ?? 1} tick 作動・${o.offTicks ?? 0} tick 停止の周期。作動中に触れると警報`, pos, usage: '（止まっている間に通る）', commands: [] });
+    } else {
+      rows.push({ id: o.id, label: o.label ?? 'スイッチ', kind: 'スイッチ', description: o.description ?? `乗っている間だけ扉 ${o.targetDoorId} が開く`, pos, usage: `move ${o.id}（乗る）`, commands: ['move'] });
     }
   }
   for (const g of stage.guards) {

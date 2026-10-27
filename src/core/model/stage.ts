@@ -70,12 +70,20 @@ export interface StageCamera extends Labeled {
 
 export interface StageObject extends Labeled {
   id: string;
-  type: 'treasure' | 'door' | 'locker';
+  type: 'treasure' | 'door' | 'locker' | 'laser' | 'switch';
   x: number;
   y: number;
   required?: boolean;
   open?: boolean;
   locked?: boolean;
+  /** door: タイマー開閉 */
+  cycle?: { openTicks: number; closedTicks: number; offset?: number };
+  /** laser: 作動周期 */
+  onTicks?: number;
+  offTicks?: number;
+  offset?: number;
+  /** switch: 開ける扉の ID */
+  targetDoorId?: string;
 }
 
 export interface StageChallenge {

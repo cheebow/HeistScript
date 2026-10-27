@@ -14,7 +14,7 @@ async function typeInEditor(page: Page, text: string) {
   const lines = text.split('\n');
   for (let i = 0; i < lines.length; i++) {
     await page.keyboard.type(lines[i]!);
-    await page.waitForTimeout(200); // 補完ウィジェットの表示を待ってから閉じる
+    await page.waitForTimeout(350); // 補完ウィジェットの表示を待ってから閉じる（高負荷時の取りこぼし防止）
     await page.keyboard.press('Escape');
     if (i < lines.length - 1) await page.keyboard.press('Enter');
   }

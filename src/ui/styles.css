@@ -171,3 +171,11 @@ button.link { background: transparent; border: none; color: var(--accent-text); 
 .pred.ng code { color: var(--muted); }
 .learn { background: rgba(90, 143, 181, 0.08); border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; margin-bottom: 8px; }
 .learn-cmd { margin-right: 6px; color: var(--accent-text); }
+.sw-laser { background: #d8434e; }
+.sw-switch { background: #f3d35a; }
+
+.challenge-list { display: inline-flex; gap: 2px; font-size: 12px; }
+.chal { color: var(--muted); }
+.chal.done { color: var(--yellow); }
+.file-btn { display: inline-block; background: var(--panel2); border: 1px solid var(--border); border-radius: 4px; padding: 5px 10px; cursor: pointer; }
+.file-btn input { display: none; }

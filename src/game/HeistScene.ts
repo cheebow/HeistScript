@@ -148,14 +148,15 @@ export class HeistScene extends Phaser.Scene {
   private renderObjects(world: WorldState): void {
     const seen = new Set<string>();
     for (const o of world.objects) {
-      if (o.type !== 'treasure') continue;
+      if (o.type !== 'treasure' && o.type !== 'laser' && o.type !== 'switch') continue;
       seen.add(o.id);
+      const key = o.type === 'treasure' ? 'treasure' : o.type === 'laser' ? (o.active ? 'laser_on' : 'laser_off') : o.pressed ? 'switch_down' : 'switch_up';
       let img = this.objectSprites.get(o.id);
       if (!img) {
-        img = this.add.image(o.x * TILE, o.y * TILE, 'treasure').setOrigin(0, 0).setDepth(DEPTH.objects);
+        img = this.add.image(o.x * TILE, o.y * TILE, key).setOrigin(0, 0).setDepth(o.type === 'treasure' ? DEPTH.objects : DEPTH.tiles + 0.5);
         this.objectSprites.set(o.id, img);
-      }
-      img.setVisible(o.takenBy === null);
+      } else if (img.texture.key !== key) img.setTexture(key);
+      img.setVisible(o.type !== 'treasure' || o.takenBy === null);
     }
     for (const [id, img] of this.objectSprites) {
       if (!seen.has(id)) {

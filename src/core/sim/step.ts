@@ -3,6 +3,7 @@ import { findVm, log, type SimContext } from './context';
 import { decideGuard, moveGuard, wakeGuards } from './guardAi';
 import { judgeMission, processCameras, processGuardVision } from './judge';
 import { processThiefAction } from './thiefActions';
+import { updateGimmicks } from './gimmicks';
 import { runVmTick } from './vm';
 
 /**
@@ -19,8 +20,9 @@ export function step(world: WorldState, ctx: SimContext): void {
   world.tick++;
   world.tickLog = [];
 
-  // 1. タイマーとイベント
+  // 1. タイマーとイベント（扉・スイッチ・レーザーの状態もここで確定）
   wakeGuards(world, ctx);
+  updateGimmicks(world, ctx);
   dispatchEvents(world, ctx);
 
   // 2. 怪盗 VM

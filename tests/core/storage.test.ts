@@ -34,6 +34,26 @@ describe('保存', () => {
     expect(loaded.stages['stage_01']!.scripts['thief_a']).toBe('move jewel');
     expect(loaded.stages['stage_01']!.bestTicks).toBe(50);
   });
+  it('ベスト記録とカスタムステージを保存・復元し、不正な値は捨てる', () => {
+    const repo = new LocalStorageRepository(new FakeStorage());
+    const d = repo.load();
+    d.stages['stage_01'] = {
+      scripts: {},
+      cleared: true,
+      bestTicks: 61,
+      challenges: ['fast'],
+      best: { ticks: 61, instructions: 3, spotted: 0, knockouts: 0, alarms: 0, challenges: ['fast'], scripts: { thief_a: 'move jewel' } },
+      challengeScripts: { fast: { thief_a: 'move jewel' } },
+    };
+    d.customStages = [{ id: 'custom_x' }, 'junk' as unknown as object];
+    repo.save(d);
+    const loaded = repo.load();
+    expect(loaded.stages['stage_01']!.best?.scripts['thief_a']).toBe('move jewel');
+    expect(loaded.stages['stage_01']!.challengeScripts?.['fast']?.['thief_a']).toBe('move jewel');
+    expect(loaded.customStages).toEqual([{ id: 'custom_x' }]);
+    expect(sanitizeSaveData({ schemaVersion: 1, stages: { a: { best: { ticks: 'x' } } } }).stages['a']!.best).toBeNull();
+  });
+
   it('破損データは既定値へ安全に復帰する', () => {
     const st = new FakeStorage();
     st.setItem('heistscript.save', '{not json');
@@ -45,6 +65,8 @@ describe('保存', () => {
       cleared: false,
       bestTicks: null,
       challenges: [],
+      best: null,
+      challengeScripts: {},
     });
   });
 });

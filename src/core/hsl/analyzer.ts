@@ -38,9 +38,10 @@ export function analyze(program: Program, stage: StageDefinition): HslError[] {
   const treasures = new Set(stage.objects.filter((o) => o.type === 'treasure').map((o) => o.id));
   const doors = new Set(stage.objects.filter((o) => o.type === 'door').map((o) => o.id));
   const lockers = new Set(stage.objects.filter((o) => o.type === 'locker').map((o) => o.id));
+  const switches = new Set(stage.objects.filter((o) => o.type === 'switch').map((o) => o.id));
   const guards = new Set(stage.guards.map((g) => g.id));
   const thieves = new Set(stage.thieves.map((t) => t.id));
-  const moveTargets = new Set([...waypointIds, ...treasures, ...doors, ...lockers, ...guards, ...thieves]);
+  const moveTargets = new Set([...waypointIds, ...treasures, ...doors, ...lockers, ...switches, ...guards, ...thieves]);
 
   const push = (line: number, col: number, message: string) => errors.push({ kind: 'semantic', line, col, message });
   const maybe = (input: string, cands: Iterable<string>): string => {

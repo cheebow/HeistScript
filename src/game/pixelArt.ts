@@ -415,6 +415,31 @@ export function smokeMark(): PixelMap {
   return p.toMap();
 }
 
+export function laserTile(active: boolean): PixelMap {
+  const p = new Pix().blit(floorTile());
+  // 両端の発信機
+  p.rect(0, 13, 4, 6, 'D').rect(28, 13, 4, 6, 'D');
+  p.rect(1, 15, 2, 2, active ? 'R' : 'r').rect(29, 15, 2, 2, active ? 'R' : 'r');
+  if (active) {
+    p.hline(4, 15, 24, 'r').hline(4, 16, 24, 'R').hline(4, 17, 24, 'r');
+    p.px(10, 16, 'W').px(21, 16, 'W');
+  } else {
+    for (let x = 5; x < 28; x += 4) p.px(x, 16, 'r');
+  }
+  return p.toMap();
+}
+
+export function switchTile(pressed: boolean): PixelMap {
+  const p = new Pix().blit(floorTile());
+  const top = pressed ? 10 : 8;
+  p.rect(6, top, 20, 16 - (pressed ? 2 : 0), 'D');
+  p.rect(7, top + 1, 18, 14 - (pressed ? 2 : 0), pressed ? 'y' : 'Y');
+  p.hline(7, top + 1, 18, pressed ? 'Y' : 'W');
+  p.rect(13, top + 5, 6, 4, pressed ? 'D' : 'y');
+  p.hline(6, 26, 20, 'K');
+  return p.toMap();
+}
+
 /** すべてのテクスチャ定義（key → PixelMap） */
 export function buildAllSprites(): Record<string, PixelMap> {
   const out: Record<string, PixelMap> = {
@@ -427,6 +452,10 @@ export function buildAllSprites(): Record<string, PixelMap> {
     door_open: doorOpenTile(),
     exit: exitTile(),
     treasure: treasureSprite(),
+    laser_on: laserTile(true),
+    laser_off: laserTile(false),
+    switch_up: switchTile(false),
+    switch_down: switchTile(true),
     camera_right: cameraSprite('right'),
     camera_left: flipH(cameraSprite('right')),
     camera_up: cameraSprite('up'),

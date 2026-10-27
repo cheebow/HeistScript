@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_07",
+  "title": "回る目",
+  "width": 20,
+  "height": 11,
+  "description": "左の部屋の回転カメラが通用口のあたりを周期的に見張っている。映ると警報が鳴り、右の部屋の警備員が駆けつける。カメラの向きを読んで、死角のうちに通用口を抜けよう。",
+  "tiles": [
+    "####################",
+    "#E.........#.......#",
+    "#..........D.......#",
+    "#..H.......#.......#",
+    "#..........#.......#",
+    "#..........#.......#",
+    "#..........#.......#",
+    "#..........#.......#",
+    "#..........#.......#",
+    "#..........#.......#",
+    "####################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上の脱出口"
+    },
+    {
+      "id": "locker_a",
+      "x": 3,
+      "y": 3,
+      "label": "ロッカーA",
+      "description": "左の部屋の隠れ場所。ここでカメラの周期を観察する"
+    },
+    {
+      "id": "doorway",
+      "x": 12,
+      "y": 2,
+      "label": "通用口の先",
+      "description": "右の部屋側の扉のすぐ横"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "あなたが操作する怪盗",
+      "starterScript": "# カメラは一定周期で回る。ロッカーに隠れて 1コマ進める で向きの変わり方を観察しよう\nmove locker_a\nhide\nwait 40\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 13,
+      "y": 9,
+      "direction": "right",
+      "label": "警備員1",
+      "description": "右の部屋の下側を巡回し、警報が鳴ると現場へ駆けつける",
+      "patrolRoute": [
+        {
+          "x": 13,
+          "y": 9,
+          "waitTicks": 3
+        },
+        {
+          "x": 17,
+          "y": 9,
+          "waitTicks": 3
+        }
+      ]
+    }
+  ],
+  "cameras": [
+    {
+      "id": "cam_1",
+      "x": 10,
+      "y": 5,
+      "direction": "down",
+      "range": 8,
+      "rotateEveryTicks": 10,
+      "label": "回転カメラ",
+      "description": "10 tick ごとに時計回りに 90 度回る。射程 8。映ると警報"
+    }
+  ],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 18,
+      "y": 8,
+      "required": true,
+      "label": "宝石",
+      "description": "右の部屋の右下にある必須の宝物"
+    },
+    {
+      "id": "side_door",
+      "type": "door",
+      "x": 11,
+      "y": 2,
+      "open": true,
+      "label": "通用口",
+      "description": "右の部屋とつながる扉。開いている"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 600,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "noalarm",
+      "type": "noAlarm",
+      "title": "警報を鳴らさずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 120,
+      "title": "120tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "wait",
+    "on alarm"
+  ],
+  "goal": "回転カメラに映らずに宝石を盗み、出口へ。",
+  "firstStep": "初期コードで locker_a に隠れ、1コマ進めるでカメラが何 tick ごとに回るか数えよう。",
+  "hints": [
+    "カメラは 10 tick ごとに時計回り（下→左→上→右）に向きを変え、射程は 8 マス。通用口 doorway のあたりは「上」「右」を向いているときに映る。ロッカー(H)の上で hide すれば映らない。",
+    "ロッカーで hide したあと wait で向きが変わるのを待ち、カメラが左を向いた直後に move で通用口を抜ける。右の部屋の警備員は下側を巡回しているので、宝石を盗んだらすぐ戻る。on alarm ... end で鳴ったときの保険も書ける。",
+    "move locker_a\nhide\nwait 30\nmove jewel\nsteal jewel\nmove doorway\nmove exit"
+  ],
+  "solution": {
+    "thief_a": "move locker_a\nhide\nwait 30\nmove jewel\nsteal jewel\nmove doorway\nmove exit\n"
+  }
+}

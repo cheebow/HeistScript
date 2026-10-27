@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_08",
+  "title": "二人の見張り",
+  "width": 22,
+  "height": 13,
+  "description": "見張りが二人。一人は宝物庫の前で動かず、もう一人は下の通路を往復しながら覗き穴から様子をうかがう。眠らせた見張りをその場に残すと、見つかって起こされてしまう。",
+  "tiles": [
+    "######################",
+    "#E.........#.........#",
+    "#..........#.........#",
+    "#...####...#..#####..#",
+    "#...#..#...#..#...#..#",
+    "#...#..#...#..#...#..#",
+    "#...####.......##.##.#",
+    "#..........#.........#",
+    "#..........#.........#",
+    "#..........#####.#####",
+    "#.........#..........#",
+    "#.#.........##.......#",
+    "######################"
+  ],
+  "waypoints": [
+    {
+      "id": "exit",
+      "x": 1,
+      "y": 1,
+      "label": "出口",
+      "description": "左上の脱出口"
+    },
+    {
+      "id": "corner",
+      "x": 14,
+      "y": 8,
+      "label": "壁ぎわ",
+      "description": "右の部屋の壁ぎわ。下の通路からは壁に隠れて見えにくく、見張り2が覗き穴に来ると近づいたのが分かる"
+    },
+    {
+      "id": "behind",
+      "x": 17,
+      "y": 8,
+      "label": "見張りの背後",
+      "description": "宝物庫の入口に立つ見張り1の真後ろ（南側）"
+    },
+    {
+      "id": "vault_corner",
+      "x": 15,
+      "y": 4,
+      "label": "宝物庫の隅",
+      "description": "宝物庫の中の左上。外からは見えないので、眠らせた見張りを隠すのに使える"
+    }
+  ],
+  "thieves": [
+    {
+      "id": "thief_a",
+      "x": 1,
+      "y": 2,
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "あなたが操作する怪盗",
+      "starterScript": "# 眠らせた見張りは carry で運び、見えない場所で drop して隠そう\nmove corner\nwait until guard_near\nwait until guard_away\nmove behind\nknockout guard_1\nmove jewel\nsteal jewel\nmove exit\n"
+    }
+  ],
+  "guards": [
+    {
+      "id": "guard_1",
+      "x": 17,
+      "y": 7,
+      "direction": "up",
+      "label": "見張り1",
+      "description": "宝物庫の入口の前に立ち、宝物庫の方を向いて動かない",
+      "patrolRoute": []
+    },
+    {
+      "id": "guard_2",
+      "x": 12,
+      "y": 10,
+      "direction": "right",
+      "label": "見張り2",
+      "description": "下の通路を往復し、途中の覗き穴から宝物庫の前を確認する。眠った仲間を見つけると起こす",
+      "patrolRoute": [
+        {
+          "x": 16,
+          "y": 9,
+          "waitTicks": 3
+        },
+        {
+          "x": 20,
+          "y": 10,
+          "waitTicks": 6
+        },
+        {
+          "x": 16,
+          "y": 9,
+          "waitTicks": 3
+        },
+        {
+          "x": 12,
+          "y": 10,
+          "waitTicks": 6
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 16,
+      "y": 5,
+      "required": true,
+      "label": "宝石",
+      "description": "宝物庫の中にある必須の宝物"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 700,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    },
+    {
+      "id": "pacifist",
+      "type": "noKnockout",
+      "title": "誰も眠らせずにクリア"
+    }
+  ],
+  "learn": [
+    "carry",
+    "drop"
+  ],
+  "goal": "見張りを眠らせて宝石を盗み、起こされる前に脱出する。",
+  "firstStep": "初期コード（運ばない版）を実行して、見張り2が仲間を見つけて起こすところまで観察しよう。",
+  "hints": [
+    "見張り2は下の通路を往復し、覗き穴 (16,9) に立つと宝物庫の前が見える。眠った見張り1をそこに残すと、見つかって 3 tick で起こされる。壁ぎわ corner は覗き穴から見えず、見張り2が覗き穴に来ると guard_near になる。",
+    "corner で見張り2が覗き穴に来て去るのを待ってから behind へ行き knockout。すぐ carry 見張りID で担いで宝物庫の隅 vault_corner へ運び drop。運搬中は遅い（4tick/マス）ので寄り道しない。",
+    "move corner\nwait until guard_near\nwait until guard_away\nmove behind\nknockout guard_1\ncarry guard_1\nmove vault_corner\ndrop\nmove jewel\nsteal jewel\nmove exit"
+  ],
+  "solution": {
+    "thief_a": "move corner\nwait until guard_near\nwait until guard_away\nmove behind\nknockout guard_1\ncarry guard_1\nmove vault_corner\ndrop\nmove jewel\nsteal jewel\nmove exit\n"
+  }
+}

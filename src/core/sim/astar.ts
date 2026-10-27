@@ -1,5 +1,5 @@
 import type { Position, WorldState } from '../model/types';
-import { isStaticPassable, neighbors, posKey, samePos } from './grid';
+import { isPlannable, neighbors, posKey, samePos } from './grid';
 
 export interface PathOptions {
   /** 追加で通行不可とみなすタイル（動的占有） */
@@ -28,7 +28,7 @@ export function findPath(
   options: PathOptions = {},
 ): Position[] | null {
   if (samePos(start, goal)) return [];
-  if (!isStaticPassable(world, goal)) return null;
+  if (!isPlannable(world, goal)) return null;
   const blocked = options.blocked;
   if (blocked && blocked.has(posKey(goal)) && !options.allowBlockedGoal) return null;
 
@@ -72,7 +72,7 @@ export function findPath(
     for (const nb of neighbors(current)) {
       const key = posKey(nb);
       if (closed.has(key)) continue;
-      if (!isStaticPassable(world, nb)) continue;
+      if (!isPlannable(world, nb)) continue;
       const isGoal = nb.x === goal.x && nb.y === goal.y;
       if (blocked && blocked.has(key) && !(isGoal && options.allowBlockedGoal)) continue;
       const g = current.g + 1;

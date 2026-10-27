@@ -94,7 +94,18 @@ export function createWorld(stage: StageDefinition): WorldState {
       locked: o.type === 'door' ? o.locked === true : false,
       initiallyOpen: o.type === 'door' ? o.open === true : false,
       noticed: false,
+      cycle: o.type === 'door' && o.cycle ? { openTicks: o.cycle.openTicks, closedTicks: o.cycle.closedTicks, offset: o.cycle.offset ?? 0 } : null,
+      laser: o.type === 'laser' ? { onTicks: o.onTicks ?? 1, offTicks: o.offTicks ?? 0, offset: o.offset ?? 0 } : null,
+      active: false,
+      hitThiefIds: [],
+      targetDoorId: o.type === 'switch' ? (o.targetDoorId ?? null) : null,
+      pressed: false,
     }));
+
+  for (const o of objects) {
+    if (o.laser) o.active = (((0 + o.laser.offset) % (o.laser.onTicks + o.laser.offTicks)) + (o.laser.onTicks + o.laser.offTicks)) % (o.laser.onTicks + o.laser.offTicks) < o.laser.onTicks;
+    if (o.cycle) o.open = (((0 + o.cycle.offset) % (o.cycle.openTicks + o.cycle.closedTicks)) + (o.cycle.openTicks + o.cycle.closedTicks)) % (o.cycle.openTicks + o.cycle.closedTicks) < o.cycle.openTicks;
+  }
 
   return {
     stageId: stage.id,

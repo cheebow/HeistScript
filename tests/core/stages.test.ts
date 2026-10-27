@@ -62,6 +62,48 @@ describe('組み込みステージ', () => {
     expect(naive.thieves[0]!.captured).toBe(true);
   });
 
+  it('stage_07〜11: 無策スクリプトは成功しない（警報・逮捕・停止）', () => {
+    const naive: Record<string, Record<string, string>> = {
+      stage_07: { thief_a: 'move jewel\nsteal jewel\nmove exit\n' },
+      stage_08: { thief_a: 'move jewel\nsteal jewel\nmove exit\n' },
+      stage_09: { thief_a: 'move jewel\nsteal jewel\nmove exit\n' },
+      stage_10: { thief_a: 'move jewel\nsteal jewel\nmove exit\n' },
+      stage_11: { thief_a: 'move plate\nwait 200\n', thief_b: 'wait 5\nmove jewel\nsteal jewel\nmove exit\n' },
+    };
+    for (const [id, scripts] of Object.entries(naive)) {
+      const s = stages.find((x) => x.id === id)!;
+      const { world } = simulate(s, scripts);
+      expect(world.result?.status, id).not.toBe('SUCCESS');
+    }
+  });
+
+  it('stage_07/09: サンプル解答は警報を鳴らさない', () => {
+    for (const id of ['stage_07', 'stage_09']) {
+      const s = stages.find((x) => x.id === id)!;
+      const { world } = simulate(s, s.solution!);
+      expect(world.stats.alarmCount, id).toBe(0);
+      expect(world.stats.spottedCount, id).toBe(0);
+    }
+  });
+
+  it('stage_08: 運ばずに眠らせるだけだと見つかる。運べば未発見', () => {
+    const s = stages.find((x) => x.id === 'stage_08')!;
+    const hidden = simulate(s, s.solution!).world;
+    expect(hidden.result?.status).toBe('SUCCESS');
+    expect(hidden.stats.spottedCount).toBe(0);
+    const koOnly = simulate(s, { thief_a: 'move corner\nwait until guard_near\nwait until guard_away\nmove behind\nknockout guard_1\nmove jewel\nsteal jewel\nmove exit\n' }).world;
+    expect(koOnly.stats.spottedCount).toBeGreaterThan(0);
+  });
+
+  it('stage_11: 連携と「見張りをおもりに」の両方が成立する', () => {
+    const s = stages.find((x) => x.id === 'stage_11')!;
+    const byId = Object.fromEntries(s.solutions!.map((sol) => [sol.id, simulate(s, sol.scripts).world]));
+    expect(byId['coop']!.result?.status).toBe('SUCCESS');
+    expect(byId['coop']!.stats.knockoutCount).toBe(0);
+    expect(byId['weight']!.result?.status).toBe('SUCCESS');
+    expect(byId['weight']!.stats.knockoutCount).toBe(1);
+  });
+
   it('stage_02: 何も考えず進むと捕まる', () => {
     const s = stages.find((x) => x.id === 'stage_02')!;
     const { world } = simulate(s, { thief_a: 'move jewel\nsteal jewel\nmove exit\n' });
