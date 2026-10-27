@@ -35,6 +35,7 @@ export const PALETTE: Record<string, string> = {
   f: '#73cf93', // 緑明
   O: '#f08a3c', // オレンジ
   P: '#a56fd1', // 紫
+  p: '#f0a39b', // ほほ
   F: '#101420', // 床（基本）
   Z: '#141a2a', // 床（明）
   z: '#0c1019', // 床（暗）
@@ -256,83 +257,94 @@ const THIEF_STYLE: CharStyle = { hat: 'thief', body: 'B', bodyDark: 'v', bodyLig
 const GUARD_STYLE: CharStyle = { hat: 'guard', body: 'N', bodyDark: 'n', bodyLight: 'm' };
 
 /**
- * キャラクターを描く。frame 0/1/2 で歩行（0: 立ち, 1: 左足前, 2: 右足前）。
- * 32x32 のうち本体は x 9..22、y 2..30 程度に収める。
+ * キャラクターを描く（デフォルメ: 大きな頭・小さな体・大きな目）。
+ * frame 0/1/2 で歩行（0: 立ち, 1: 左足前, 2: 右足前）。
  */
 export function characterSprite(style: CharStyle, dir: Dir, frame: 0 | 1 | 2): PixelMap {
   const p = new Pix();
-  const legL = frame === 1 ? -2 : 0; // 左足を上げる
-  const legR = frame === 2 ? -2 : 0;
-  const bob = frame === 0 ? 0 : -1; // 歩行中は全体が少し上下
+  const bob = frame === 0 ? 0 : -1;
+  const hair = style.hat === 'thief' ? 'K' : 'M';
+
+  const headDownUp = (face: boolean) => {
+    // 頭（角を落とした 16×14）
+    p.rect(8, 4 + bob, 16, 14, 'S');
+    p.px(8, 4 + bob, '.').px(23, 4 + bob, '.').px(8, 17 + bob, '.').px(23, 17 + bob, '.');
+    p.vline(23, 6 + bob, 10, 's').hline(10, 17 + bob, 12, 's');
+    if (face) {
+      // 大きな目（3×4）とハイライト
+      for (const ex of [11, 18]) {
+        p.rect(ex, 9 + bob, 3, 4, 'W');
+        p.rect(ex + 1, 10 + bob, 2, 3, 'K');
+        p.px(ex + 1, 10 + bob, 'W');
+      }
+      p.px(10, 14 + bob, 'p').px(21, 14 + bob, 'p'); // ほほ
+      p.hline(15, 15 + bob, 2, 's'); // 口
+      if (style.hat === 'thief') {
+        // 目元の黒いマスク（目の穴は残す）
+        p.rect(8, 9 + bob, 16, 1, 'K').rect(8, 13 + bob, 16, 1, 'K');
+        p.rect(8, 10 + bob, 3, 3, 'K').rect(14, 10 + bob, 4, 3, 'K').rect(21, 10 + bob, 3, 3, 'K');
+      }
+    } else {
+      p.rect(8, 4 + bob, 16, 14, hair);
+      p.px(8, 4 + bob, '.').px(23, 4 + bob, '.').px(8, 17 + bob, '.').px(23, 17 + bob, '.');
+      p.rect(9, 15 + bob, 14, 3, 'S'); // うなじ
+    }
+    // 髪（前髪）か帽子
+    if (style.hat === 'thief') {
+      p.rect(9, 1 + bob, 14, 5, 'K'); // クラウン
+      p.rect(6, 5 + bob, 20, 2, 'K'); // 広いつば
+      p.hline(9, 4 + bob, 14, 'k'); // リボン
+    } else {
+      p.rect(9, 2 + bob, 14, 4, 'N');
+      p.hline(9, 2 + bob, 14, 'm');
+      p.rect(7, 6 + bob, 18, 2, face ? 'K' : 'n'); // つば
+      if (face) p.rect(15, 3 + bob, 2, 2, 'Y'); // 帽章
+      if (face) p.hline(9, 8 + bob, 14, hair); // 前髪
+    }
+  };
 
   if (dir === 'down' || dir === 'up') {
-    // 足
-    p.rect(12, 24 + legL, 3, 5, style.bodyDark).rect(12, 28 + legL, 3, 2, 'K');
-    p.rect(17, 24 + legR, 3, 5, style.bodyDark).rect(17, 28 + legR, 3, 2, 'K');
-    // 胴体
-    p.rect(11, 15 + bob, 10, 9, style.body);
-    p.vline(11, 15 + bob, 9, style.bodyLight);
-    p.vline(20, 15 + bob, 9, style.bodyDark);
-    p.hline(11, 21 + bob, 10, 'K'); // ベルト
+    const legL = frame === 1 ? -2 : 0;
+    const legR = frame === 2 ? -2 : 0;
+    // 足（短い）
+    p.rect(11, 26 + legL, 4, 3, style.bodyDark).rect(11, 29 + legL, 4, 2, 'K');
+    p.rect(17, 26 + legR, 4, 3, style.bodyDark).rect(17, 29 + legR, 4, 2, 'K');
+    // 体（小さい）
+    p.rect(10, 18 + bob, 12, 8, style.body);
+    p.vline(10, 18 + bob, 8, style.bodyLight).vline(21, 18 + bob, 8, style.bodyDark);
+    p.hline(10, 24 + bob, 12, 'K'); // ベルト
+    if (style.hat === 'guard' && dir === 'down') p.rect(13, 20 + bob, 2, 2, 'Y'); // バッジ
     // 腕
     const armL = frame === 2 ? -1 : 0;
     const armR = frame === 1 ? -1 : 0;
-    p.rect(9, 16 + bob + armL, 2, 6, style.body).rect(9, 22 + bob + armL, 2, 2, 'S');
-    p.rect(21, 16 + bob + armR, 2, 6, style.body).rect(21, 22 + bob + armR, 2, 2, 'S');
-    // 頭
-    p.rect(11, 6 + bob, 10, 9, 'S');
-    p.vline(20, 7 + bob, 8, 's');
-    if (dir === 'down') {
-      // 目
-      p.rect(13, 10 + bob, 2, 2, 'W').rect(17, 10 + bob, 2, 2, 'W');
-      p.px(14, 11 + bob, 'K').px(18, 11 + bob, 'K');
-      if (style.hat === 'thief') {
-        // 目元の黒いマスク
-        p.rect(11, 9 + bob, 10, 1, 'K').rect(11, 12 + bob, 10, 1, 'K').px(11, 10 + bob, 'K').px(11, 11 + bob, 'K').px(20, 10 + bob, 'K').px(20, 11 + bob, 'K');
-        p.px(15, 10 + bob, 'K').px(16, 10 + bob, 'K').px(15, 11 + bob, 'K').px(16, 11 + bob, 'K');
-      }
-      p.hline(14, 13 + bob, 4, 's'); // 口元の影
-    } else {
-      p.rect(11, 6 + bob, 10, 9, style.hat === 'thief' ? 'K' : 'M'); // 後頭部（髪）
-    }
-    // 帽子
-    if (style.hat === 'thief') {
-      p.rect(10, 3 + bob, 12, 4, 'K'); // クラウン
-      p.rect(8, 6 + bob, 16, 2, 'K'); // つば
-      p.hline(10, 5 + bob, 12, 'k'); // リボン
-    } else {
-      p.rect(10, 3 + bob, 12, 4, 'N'); // 制帽
-      p.hline(10, 3 + bob, 12, 'm');
-      p.rect(9, 6 + bob, 14, 2, dir === 'down' ? 'K' : 'n'); // つば（前）
-      if (dir === 'down') p.rect(15, 4 + bob, 2, 2, 'Y'); // 帽章
-      p.rect(14, 17 + bob, 2, 2, 'Y'); // バッジ
-    }
-    return dir === 'down' ? p.toMap() : p.toMap();
+    p.rect(8, 19 + bob + armL, 2, 5, style.body).rect(8, 24 + bob + armL, 2, 2, 'S');
+    p.rect(22, 19 + bob + armR, 2, 5, style.body).rect(22, 24 + bob + armR, 2, 2, 'S');
+    headDownUp(dir === 'down');
+    return p.toMap();
   }
 
   // 横向き（右）
   const stride = frame === 0 ? 0 : frame === 1 ? 2 : -2;
-  // 奥の足・手前の足
-  p.rect(13 - stride, 24, 3, 5, style.bodyDark).rect(13 - stride, 28, 3, 2, 'K');
-  p.rect(16 + stride, 24, 3, 5, style.body).rect(16 + stride, 28, 3, 2, 'K');
-  // 胴体
-  p.rect(12, 15 + bob, 8, 9, style.body);
-  p.vline(19, 15 + bob, 9, style.bodyDark);
-  p.hline(12, 21 + bob, 8, 'K');
-  // 腕（手前）
+  p.rect(12 - stride, 26, 4, 3, style.bodyDark).rect(12 - stride, 29, 4, 2, 'K');
+  p.rect(16 + stride, 26, 4, 3, style.body).rect(16 + stride, 29, 4, 2, 'K');
+  p.rect(11, 18 + bob, 10, 8, style.body);
+  p.vline(20, 18 + bob, 8, style.bodyDark);
+  p.hline(11, 24 + bob, 10, 'K');
   const swing = frame === 1 ? 2 : frame === 2 ? -2 : 0;
-  p.rect(15 + swing, 16 + bob, 2, 6, style.bodyDark).rect(15 + swing, 22 + bob, 2, 2, 'S');
-  // 頭
-  p.rect(12, 6 + bob, 9, 9, 'S');
-  p.rect(12, 6 + bob, 3, 9, style.hat === 'thief' ? 'K' : 'M'); // 後頭部
-  p.rect(18, 10 + bob, 2, 2, 'W').px(19, 11 + bob, 'K'); // 目
-  if (style.hat === 'thief') p.rect(15, 9 + bob, 6, 1, 'K').rect(15, 12 + bob, 6, 1, 'K').rect(20, 10 + bob, 1, 2, 'K');
-  // 帽子
+  p.rect(15 + swing, 19 + bob, 2, 5, style.bodyDark).rect(15 + swing, 24 + bob, 2, 2, 'S');
+  // 頭（横顔: 後頭部は髪）
+  p.rect(9, 4 + bob, 14, 14, 'S');
+  p.px(9, 4 + bob, '.').px(22, 4 + bob, '.').px(9, 17 + bob, '.').px(22, 17 + bob, '.');
+  p.rect(9, 5 + bob, 5, 12, hair);
+  p.hline(11, 17 + bob, 10, 's');
+  p.rect(17, 9 + bob, 3, 4, 'W').rect(18, 10 + bob, 2, 3, 'K').px(18, 10 + bob, 'W'); // 目
+  p.px(21, 14 + bob, 'p');
   if (style.hat === 'thief') {
-    p.rect(11, 3 + bob, 11, 4, 'K').rect(10, 6 + bob, 15, 2, 'K').hline(11, 5 + bob, 11, 'k');
+    p.rect(14, 9 + bob, 9, 1, 'K').rect(14, 13 + bob, 9, 1, 'K').rect(14, 10 + bob, 3, 3, 'K').rect(20, 10 + bob, 3, 3, 'K');
+    p.rect(10, 1 + bob, 13, 5, 'K').rect(8, 5 + bob, 18, 2, 'K').hline(10, 4 + bob, 13, 'k');
   } else {
-    p.rect(11, 3 + bob, 11, 4, 'N').hline(11, 3 + bob, 11, 'm').rect(12, 6 + bob, 13, 2, 'K');
-    p.rect(14, 17 + bob, 2, 2, 'Y');
+    p.rect(10, 2 + bob, 13, 4, 'N').hline(10, 2 + bob, 13, 'm').rect(12, 6 + bob, 14, 2, 'K');
+    p.rect(13, 20 + bob, 2, 2, 'Y');
   }
   return p.toMap();
 }

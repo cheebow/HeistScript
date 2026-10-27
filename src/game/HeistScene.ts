@@ -149,8 +149,6 @@ export class HeistScene extends Phaser.Scene {
       if (!img) {
         img = this.add.image(o.x * TILE, o.y * TILE, 'treasure').setOrigin(0, 0).setDepth(DEPTH.objects);
         this.objectSprites.set(o.id, img);
-        // 宝石は上下にゆっくり浮く
-        this.tweens.add({ targets: img, y: o.y * TILE - 2, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
       }
       img.setVisible(o.takenBy === null);
     }
