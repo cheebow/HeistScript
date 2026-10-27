@@ -37,7 +37,7 @@ export function TitleScreen({ hasProgress, onStart, onContinue }: TitleScreenPro
             <h2>クレジット</h2>
             <p>HeistScript — 8ビット風プログラミング・ステルスパズル。</p>
             <p className="muted small">
-              ドット絵・効果音・BGM はすべてコードで生成したオリジナル素材です。
+              ドット絵はすべてコードで生成したオリジナル素材です。
               <br />
               使用ライブラリ: Phaser 3 (MIT), Monaco Editor (MIT), React (MIT), Vite (MIT)。
               <br />

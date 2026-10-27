@@ -60,21 +60,6 @@ test.describe('Phase 12 仕上げ', () => {
     await expect(page.getByTestId('stage-io-dialog')).toBeHidden();
   });
 
-  test('音の設定が保存される', async ({ page }) => {
-    await page.goto('/#play');
-    await waitHook(page);
-    await page.locator('.menu summary').click();
-    await expect(page.getByTestId('toggle-sound')).not.toBeChecked(); // 既定はオフ
-    await page.getByTestId('toggle-sound').check();
-    await page.getByTestId('volume').fill('0.2');
-    await expect.poll(async () => page.evaluate(() => localStorage.getItem('heistscript.save') ?? '')).toContain('"soundOn":true');
-    await page.reload();
-    await waitHook(page);
-    await page.locator('.menu summary').click();
-    await expect(page.getByTestId('toggle-sound')).toBeChecked();
-    await expect(page.getByTestId('volume')).toHaveValue('0.2');
-  });
-
   test('#stage= で直接ステージを開ける', async ({ page }) => {
     await page.goto('/#stage=stage_05');
     await waitHook(page);

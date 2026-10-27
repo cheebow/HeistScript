@@ -10,7 +10,6 @@ import { describeTile } from './describeTile';
 import { formatHsl } from './format';
 import { explainThief } from './explain';
 import { DEFAULT_CONFIG } from '../core/model/config';
-import { audio, type SfxName } from '../game/audio';
 import { TitleScreen } from './screens/TitleScreen';
 import { StageSelect } from './screens/StageSelect';
 import { Briefing } from './screens/Briefing';
@@ -62,9 +61,7 @@ export function App() {
   const initialHash = typeof window !== 'undefined' ? window.location.hash : '';
   const [screen, setScreen] = useState<'title' | 'select' | 'game'>(initialHash.startsWith('#play') || initialHash.startsWith('#stage=') ? 'game' : 'title');
   const [showBriefing, setShowBriefing] = useState(false);
-  const [soundOn, setSoundOn] = useState(save.settings.soundOn);
-  const [volume, setVolume] = useState(save.settings.volume);
-  const sfxIndexRef = useRef(0);
+
   const [importError, setImportError] = useState<string[] | null>(null);
   const [editorWidth, setEditorWidth] = useState(460);
   const editorManualRef = useRef(false);
@@ -104,41 +101,9 @@ export function App() {
       d.settings.reducedMotion = reducedMotion;
       d.settings.zoom = zoom as 0 | 1 | 2 | 3 | 4;
       d.settings.speed = ctl.speed;
-      d.settings.soundOn = soundOn;
-      d.settings.volume = volume;
     });
-  }, [stage.id, showVision, showCameraVision, showPaths, reducedMotion, zoom, ctl.speed, soundOn, volume, persist]);
+  }, [stage.id, showVision, showCameraVision, showPaths, reducedMotion, zoom, ctl.speed, persist]);
 
-  // 音: 設定の反映、BGM の切替、効果音
-  useEffect(() => {
-    audio.setMuted(!soundOn);
-    audio.setVolume(volume);
-  }, [soundOn, volume]);
-  useEffect(() => {
-    audio.setBgm(screen !== 'game' ? 'plan' : ctl.status === 'running' && !ctl.isReplay ? 'infiltrate' : 'plan');
-  }, [screen, ctl.status, ctl.isReplay]);
-  useEffect(() => {
-    const unlock = () => audio.unlock();
-    window.addEventListener('pointerdown', unlock);
-    window.addEventListener('keydown', unlock);
-    return () => {
-      window.removeEventListener('pointerdown', unlock);
-      window.removeEventListener('keydown', unlock);
-    };
-  }, []);
-  useEffect(() => {
-    const logs = ctl.logs;
-    if (!ctl.run || ctl.isReplay) {
-      sfxIndexRef.current = logs.length;
-      return;
-    }
-    const SFX: Record<string, SfxName> = { STEAL: 'treasure', ALARM: 'alarm', SPOTTED: 'spotted', KNOCKOUT: 'knockout', HIDE: 'hide', CAPTURED: 'captured', SUCCESS: 'success', SIGNAL: 'signal', OPEN: 'door', DOOR_OPEN: 'door', GUARD_WAKE: 'wake', GUARD_REVIVE: 'wake' };
-    for (let i = sfxIndexRef.current; i < logs.length; i++) {
-      const name = SFX[logs[i]!.eventType];
-      if (name) audio.playSfx(name);
-    }
-    sfxIndexRef.current = logs.length;
-  }, [ctl.logs, ctl.run, ctl.isReplay]);
 
   // コンパイル結果（エラー表示用）
   const compileErrors = useMemo(() => {
@@ -192,10 +157,7 @@ export function App() {
       const compile = ctl.start(scripts, autoPlay);
       if (compile && !compile.ok) return;
       setShowResult(false);
-      if (autoPlay) {
-        setBanner((b) => ({ key: (b?.key ?? 0) + 1, text: '作戦開始' }));
-        audio.playSfx('start');
-      }
+      if (autoPlay) setBanner((b) => ({ key: (b?.key ?? 0) + 1, text: '作戦開始' }));
     },
     [ctl, scripts],
   );
@@ -385,11 +347,10 @@ export function App() {
     setStageId(id);
     setScreen('game');
     setShowBriefing(true);
-    audio.playSfx('ui');
   };
 
   if (screen === 'title') {
-    return <TitleScreen hasProgress={hasProgress} onStart={() => { setScreen('select'); audio.playSfx('ui'); }} onContinue={() => openStage(stage.id)} />;
+    return <TitleScreen hasProgress={hasProgress} onStart={() => setScreen('select')} onContinue={() => openStage(stage.id)} />;
   }
   if (screen === 'select') {
     return <StageSelect stages={stages} builtInCount={builtInCount} save={save} onSelect={openStage} onBack={() => setScreen('title')} />;
@@ -397,7 +358,7 @@ export function App() {
 
   return (
     <div className="app" style={{ ['--editor-width' as string]: `${editorWidth}px`, ['--bottom-height' as string]: bottomMinimized ? '34px' : `${bottomHeight}px` }}>
-      {showBriefing && <Briefing stage={stage} index={stages.findIndex((s) => s.id === stage.id)} onStart={() => { setShowBriefing(false); audio.playSfx('ui'); }} />}
+      {showBriefing && <Briefing stage={stage} index={stages.findIndex((s) => s.id === stage.id)} onStart={() => setShowBriefing(false)} />}
       <header className="topbar">
         <button className="brand subtle" onClick={() => setScreen('select')} title="ステージ選択へ戻る" data-testid="btn-to-select">
           <span className="logo">Heist</span>
@@ -455,15 +416,8 @@ export function App() {
             {statusLabel}
           </span>
           <details className="menu">
-            <summary title="表示と音の設定">設定</summary>
+            <summary title="表示の設定">表示</summary>
             <div className="menu-body">
-              <label className="toggle">
-                <input type="checkbox" checked={soundOn} onChange={(e) => setSoundOn(e.target.checked)} data-testid="toggle-sound" /> 音を鳴らす（既定はオフ）
-              </label>
-              <label className="toggle">
-                音量
-                <input type="range" min={0} max={1} step={0.05} value={volume} onChange={(e) => setVolume(Number(e.target.value))} data-testid="volume" />
-              </label>
               <label className="toggle">
                 <input type="checkbox" checked={showVision} onChange={(e) => setShowVision(e.target.checked)} data-testid="toggle-guard-vision" /> 警備員の視界
               </label>
