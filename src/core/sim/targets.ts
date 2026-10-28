@@ -1,7 +1,7 @@
 import type { Position, Thief, WorldState } from '../model/types';
 import { findPath } from './astar';
 import { isGuardActive } from './context';
-import { isStaticPassable, neighbors, occupiedTiles, posKey, samePos } from './grid';
+import { isPlannable, isStaticPassable, neighbors, occupiedTiles, posKey, samePos } from './grid';
 
 export type ResolvedTarget =
   | { ok: true; goal: Position; dynamic: boolean }
@@ -12,7 +12,18 @@ export type ResolvedTarget =
  * - ウェイポイント / 宝物 / 扉 / ロッカー / exit: そのタイル
  * - 怪盗 / 警備員（動的）: 対象に隣接する到達可能なタイルのうち最短経路のもの（同長は [up,right,down,left] 順）
  */
+/** "x,y" 形式の座標なら Position にする */
+export function parseCoordinate(id: string): Position | null {
+  const m = /^(\d+),(\d+)$/.exec(id);
+  return m ? { x: Number(m[1]), y: Number(m[2]) } : null;
+}
+
 export function resolveMoveTarget(world: WorldState, thief: Thief, targetId: string): ResolvedTarget {
+  const coord = parseCoordinate(targetId);
+  if (coord) {
+    if (!isStaticPassable(world, coord) && !isPlannable(world, coord)) return { ok: false, message: `(${coord.x},${coord.y}) は通れないマスです` };
+    return { ok: true, goal: coord, dynamic: false };
+  }
   const wp = world.waypoints[targetId];
   if (wp) return { ok: true, goal: { x: wp.x, y: wp.y }, dynamic: false };
   const obj = world.objects.find((o) => o.id === targetId);

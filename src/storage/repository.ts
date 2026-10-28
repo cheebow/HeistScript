@@ -38,6 +38,8 @@ export interface SaveData {
     showVision: boolean;
     showCameraVision: boolean;
     showPaths: boolean;
+    showWaypoints: boolean;
+    showCoords: boolean;
     reducedMotion: boolean;
     /** 0 = 自動 */
     zoom: 0 | 1 | 2 | 3 | 4;
@@ -51,7 +53,7 @@ export function defaultSaveData(): SaveData {
     schemaVersion: SAVE_SCHEMA_VERSION,
     stages: {},
     customStages: [],
-    settings: { showVision: true, showCameraVision: true, showPaths: true, reducedMotion: false, zoom: 0, speed: 1, lastStageId: null },
+    settings: { showVision: true, showCameraVision: true, showPaths: true, showWaypoints: true, showCoords: true, reducedMotion: false, zoom: 0, speed: 1, lastStageId: null },
   };
 }
 
@@ -100,6 +102,8 @@ export function sanitizeSaveData(raw: unknown): SaveData {
     if (typeof s.showVision === 'boolean') d.settings.showVision = s.showVision;
     if (typeof s.showCameraVision === 'boolean') d.settings.showCameraVision = s.showCameraVision;
     if (typeof s.showPaths === 'boolean') d.settings.showPaths = s.showPaths;
+    if (typeof s.showWaypoints === 'boolean') d.settings.showWaypoints = s.showWaypoints;
+    if (typeof s.showCoords === 'boolean') d.settings.showCoords = s.showCoords;
     if (typeof s.reducedMotion === 'boolean') d.settings.reducedMotion = s.reducedMotion;
     if (s.zoom === 0 || s.zoom === 1 || s.zoom === 2 || s.zoom === 3 || s.zoom === 4) d.settings.zoom = s.zoom;
     if (s.speed === 1 || s.speed === 2 || s.speed === 4) d.settings.speed = s.speed;

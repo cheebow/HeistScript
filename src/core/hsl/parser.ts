@@ -44,6 +44,20 @@ class Parser {
     }
     throw new HslSyntaxError(t.line, t.col, `${context} の後に余分な記述があります: '${t.value}'。1行に書けるのは1つの命令だけです`);
   }
+  /** 座標 `x,y` を読んで "x,y" の文字列にする */
+  private expectCoordinate(context: string): string {
+    const x = this.peek();
+    if (x.type !== 'int') throw new HslSyntaxError(x.line, x.col, `${context} の座標が不正です`);
+    this.next();
+    const comma = this.peek();
+    if (comma.type !== 'comma') throw new HslSyntaxError(comma.line, comma.col, `${context} の座標は x,y の形で書きます（例: ${context} 3,5）`);
+    this.next();
+    const y = this.peek();
+    if (y.type !== 'int') throw new HslSyntaxError(y.line, y.col, `${context} の座標は x,y の形で書きます（例: ${context} 3,5）`);
+    this.next();
+    return `${x.value},${y.value}`;
+  }
+
   private expectIdentifier(context: string): string {
     const t = this.peek();
     if (t.type !== 'word') {
@@ -128,11 +142,17 @@ class Parser {
     const { line, col } = t;
     switch (t.value) {
       case 'move':
+      case 'distract': {
+        this.next();
+        // 座標指定: move 3,5
+        const target = this.peek().type === 'int' ? this.expectCoordinate(t.value) : this.expectIdentifier(t.value);
+        this.expectNewline(`${t.value} ${target}`);
+        return { kind: 'action', command: t.value, target, line, col };
+      }
       case 'steal':
       case 'knockout':
       case 'carry':
-      case 'open':
-      case 'distract': {
+      case 'open': {
         this.next();
         const target = this.expectIdentifier(t.value);
         this.expectNewline(`${t.value} ${target}`);

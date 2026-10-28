@@ -75,8 +75,9 @@ h2 { font-size: 12px; letter-spacing: 0.02em; color: var(--muted); }
 .game-header .muted { flex: 1; min-width: 80px; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .game-header button.subtle { white-space: nowrap; }
 .game-header .badge { white-space: nowrap; }
-.game-view { flex: 1; min-height: 0; position: relative; overflow: auto; background: #0d0f13; display: flex; align-items: center; justify-content: center; }
-.game-view > div, .game-view canvas { flex: none; }
+.game-view { flex: 1; min-height: 0; position: relative; overflow: auto; background: #0d0f13; display: flex; align-items: flex-start; justify-content: flex-start; }
+/* margin: auto は枠より大きいとき 0 になるので、上端が切れずにスクロールできる */
+.game-view > div, .game-view canvas { flex: none; margin: auto; display: block; }
 .game-view canvas { image-rendering: pixelated; image-rendering: crisp-edges; }
 .replay-banner { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(38, 42, 51, 0.95); border: 1px solid var(--border); padding: 4px 12px; border-radius: 4px; font-size: 12px; color: var(--muted); }
 .badge { border: 1px solid var(--green); color: var(--green); border-radius: 3px; padding: 1px 8px; font-size: 12px; }
@@ -196,6 +197,7 @@ button.link { background: transparent; border: none; color: var(--accent-text); 
 .learn-cmd { margin-right: 6px; color: var(--accent-text); }
 .sw-laser { background: #d8434e; }
 .sw-switch { background: #f3d35a; }
+.sw-wp { background: transparent; border: 1px dashed #9fc3df; }
 .sw-key { background: #f3d35a; border: 1px solid #0d0d14; }
 .sw-vent { background: #3a3f4d; border: 1px solid #7c8494; }
 

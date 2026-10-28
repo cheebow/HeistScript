@@ -1,6 +1,6 @@
 import { HslSyntaxError } from './errors';
 
-export type TokenType = 'word' | 'int' | 'lparen' | 'rparen' | 'newline' | 'eof';
+export type TokenType = 'word' | 'int' | 'lparen' | 'rparen' | 'comma' | 'newline' | 'eof';
 
 export interface Token {
   type: TokenType;
@@ -55,6 +55,12 @@ export function tokenize(source: string): Token[] {
     }
     if (c === ')') {
       tokens.push({ type: 'rparen', value: ')', line, col });
+      i++;
+      col++;
+      continue;
+    }
+    if (c === ',') {
+      tokens.push({ type: 'comma', value: ',', line, col });
       i++;
       col++;
       continue;

@@ -98,6 +98,12 @@ export function describeTile(stage: StageDefinition, world: WorldState, x: numbe
   } else if (kind === 'door' && !title) {
     title = '扉';
   }
+  if (!title && kind === 'floor') {
+    title = `床 (${x},${y})`;
+    lines.push(`move ${x},${y} でここへ移動できる`);
+  } else if (title && kind !== 'wall') {
+    lines.push(`座標 (${x},${y})`);
+  }
   if (!title) return null;
   return { title, lines: lines.filter((l) => l !== '') };
 }

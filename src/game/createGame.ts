@@ -33,7 +33,8 @@ export function createGame(parent: HTMLElement, width: number, height: number, c
     roundPixels: true,
     backgroundColor: '#0b0b14',
     scene: [scene],
-    scale: { mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.CENTER_BOTH },
+    // 中央寄せは CSS（margin: auto）で行う。Phaser に任せると枠より大きいときに負のマージンで上が切れる
+    scale: { mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.NO_CENTER },
     audio: { noAudio: true },
     banner: false,
   });

@@ -45,6 +45,16 @@ export function analyze(program: Program, stage: StageDefinition): HslError[] {
   const moveTargets = new Set([...waypointIds, ...treasures, ...doors, ...lockers, ...switches, ...guards, ...thieves]);
 
   const push = (line: number, col: number, message: string) => errors.push({ kind: 'semantic', line, col, message });
+  /** 座標指定 "x,y" の検査。マップの中で、壁でなければよい */
+  const checkCoord = (target: string, line: number, col: number, cmd: string): boolean => {
+    const m = /^(\d+),(\d+)$/.exec(target);
+    if (!m) return false;
+    const x = Number(m[1]);
+    const y = Number(m[2]);
+    if (x < 0 || y < 0 || x >= stage.width || y >= stage.height) push(line, col, `${cmd} ${target}: 座標がマップの外です（x は 0〜${stage.width - 1}、y は 0〜${stage.height - 1}）`);
+    else if (stage.tiles[y]![x] === '#') push(line, col, `${cmd} ${target}: (${x},${y}) は壁です。マップにマウスを当てると座標が出ます`);
+    return true;
+  };
   const maybe = (input: string, cands: Iterable<string>): string => {
     const sug = suggestId(input, cands);
     return sug ? `。もしかして: ${sug}` : '';
@@ -83,6 +93,7 @@ export function analyze(program: Program, stage: StageDefinition): HslError[] {
         const target = stmt.target;
         switch (stmt.command) {
           case 'move':
+            if (target && checkCoord(target, stmt.line, stmt.col, 'move')) break;
             if (target && !moveTargets.has(target)) {
               push(stmt.line, stmt.col, `'${target}' はこのステージに存在しません${maybe(target, moveTargets)}（移動先に使える ID: ${[...moveTargets].join(', ')}）`);
             }
@@ -98,6 +109,7 @@ export function analyze(program: Program, stage: StageDefinition): HslError[] {
             }
             break;
           case 'distract':
+            if (target && checkCoord(target, stmt.line, stmt.col, 'distract')) break;
             if (target && !noiseTargets.has(target)) {
               push(stmt.line, stmt.col, `'${target}' は物音を立てられる地点ではありません${maybe(target, noiseTargets)}（地点やオブジェクトの ID を指定: ${[...noiseTargets].join(', ')}）`);
             }

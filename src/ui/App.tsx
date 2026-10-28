@@ -51,6 +51,8 @@ export function App() {
   const [showVision, setShowVision] = useState(save.settings.showVision);
   const [showCameraVision, setShowCameraVision] = useState(save.settings.showCameraVision);
   const [showPaths, setShowPaths] = useState(save.settings.showPaths);
+  const [showWaypoints, setShowWaypoints] = useState(save.settings.showWaypoints);
+  const [showCoords, setShowCoords] = useState(save.settings.showCoords);
   const [reducedMotion, setReducedMotion] = useState(save.settings.reducedMotion);
   const [zoom, setZoom] = useState<number>(save.settings.zoom);
   const [appliedZoom, setAppliedZoom] = useState<{ zoom: number; maxFit: number }>({ zoom: 1, maxFit: 1 });
@@ -105,11 +107,13 @@ export function App() {
       d.settings.showVision = showVision;
       d.settings.showCameraVision = showCameraVision;
       d.settings.showPaths = showPaths;
+      d.settings.showWaypoints = showWaypoints;
+      d.settings.showCoords = showCoords;
       d.settings.reducedMotion = reducedMotion;
       d.settings.zoom = zoom as 0 | 1 | 2 | 3 | 4;
       d.settings.speed = ctl.speed;
     });
-  }, [stage.id, showVision, showCameraVision, showPaths, reducedMotion, zoom, ctl.speed, persist]);
+  }, [stage.id, showVision, showCameraVision, showPaths, showWaypoints, showCoords, reducedMotion, zoom, ctl.speed, persist]);
 
 
   // コンパイル結果（エラー表示用）
@@ -257,8 +261,8 @@ export function App() {
   const activeLine = ctl.run && activeVm ? activeVm.currentLine : null;
   const nameTags = useMemo(() => Object.fromEntries(stage.thieves.map((t) => [t.id, t.label ?? t.id])), [stage]);
   const renderOptions = useMemo(
-    () => ({ showVision, showCameraVision, showPaths, reducedMotion, selectedId, nameTags }),
-    [showVision, showCameraVision, showPaths, reducedMotion, selectedId, nameTags],
+    () => ({ showVision, showCameraVision, showPaths, showWaypoints, showCoords, reducedMotion, selectedId, nameTags }),
+    [showVision, showCameraVision, showPaths, showWaypoints, showCoords, reducedMotion, selectedId, nameTags],
   );
   const previewWorld = useMemo(() => {
     if (world) return world;
@@ -478,6 +482,12 @@ export function App() {
                 <input type="checkbox" checked={showPaths} onChange={(e) => setShowPaths(e.target.checked)} data-testid="toggle-paths" /> 移動予定の経路
               </label>
               <label className="toggle">
+                <input type="checkbox" checked={showWaypoints} onChange={(e) => setShowWaypoints(e.target.checked)} data-testid="toggle-waypoints" /> 地点の名前
+              </label>
+              <label className="toggle">
+                <input type="checkbox" checked={showCoords} onChange={(e) => setShowCoords(e.target.checked)} data-testid="toggle-coords" /> 座標の目盛り
+              </label>
+              <label className="toggle">
                 <input type="checkbox" checked={reducedMotion} onChange={(e) => setReducedMotion(e.target.checked)} data-testid="toggle-reduced-motion" /> 演出を減らす
               </label>
               <label className="toggle">
@@ -609,6 +619,7 @@ export function App() {
             {stage.objects.some((o) => o.type === 'key') && <span><i className="sw sw-key" />鍵</span>}
             {stage.tiles.some((row) => row.includes('V')) && <span><i className="sw sw-vent" />通風口（怪盗だけ通れる）</span>}
             <span><i className="sw sw-path" />移動予定の経路</span>
+            <span><i className="sw sw-wp" />地点（move の目的地）</span>
             <span className="muted">人物をクリックすると状態を表示</span>
           </div>
         </section>

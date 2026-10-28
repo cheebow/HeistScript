@@ -4,7 +4,7 @@ import { findPath } from './astar';
 import { findGuard, findObject, log, type SimContext } from './context';
 import { isHidingSpot, manhattan, occupiedTiles, oppositeDirection, stepInDirection, samePos } from './grid';
 import { evaluateExpr } from './predicates';
-import { isAdjacent, isAdjacentOrSame, isGuardActive, resolveMoveTarget } from './targets';
+import { isAdjacent, isAdjacentOrSame, isGuardActive, parseCoordinate, resolveMoveTarget } from './targets';
 
 export function createVmState(thiefId: string): VmState {
   return {
@@ -229,6 +229,8 @@ function startAction(world: WorldState, vm: VmState, thief: Thief, stmt: Stateme
 
 /** distract の対象（地点またはオブジェクト）の座標 */
 export function noisePosition(world: WorldState, id: string): { x: number; y: number } | null {
+  const coord = parseCoordinate(id);
+  if (coord) return coord;
   const wp = world.waypoints[id];
   if (wp) return { x: wp.x, y: wp.y };
   const obj = world.objects.find((o) => o.id === id);

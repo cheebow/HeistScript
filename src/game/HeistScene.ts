@@ -9,6 +9,10 @@ export interface RenderOptions {
   showVision: boolean;
   showCameraVision: boolean;
   showPaths: boolean;
+  /** 地点（ウェイポイント）の目印と名前 */
+  showWaypoints: boolean;
+  /** 外周に座標の目盛り */
+  showCoords: boolean;
   reducedMotion: boolean;
   selectedId: string | null;
   /** 人物の名前タグ（ID → 表示名） */
@@ -25,7 +29,11 @@ const WALK_FRAMES: (0 | 1 | 2)[] = [1, 0, 2, 0];
 /** Phaser シーン。WorldState を受け取って描画・演出するだけで、ゲームロジックは持たない。 */
 export class HeistScene extends Phaser.Scene {
   private world: WorldState | null = null;
-  private options: RenderOptions = { showVision: true, showCameraVision: true, showPaths: true, reducedMotion: false, selectedId: null, nameTags: {} };
+  private options: RenderOptions = { showVision: true, showCameraVision: true, showPaths: true, showWaypoints: true, showCoords: true, reducedMotion: false, selectedId: null, nameTags: {} };
+  private waypointGfx!: Phaser.GameObjects.Graphics;
+  private waypointTexts: Phaser.GameObjects.Text[] = [];
+  private coordTexts: Phaser.GameObjects.Text[] = [];
+  private overlayStageId: string | null = null;
   private tagTexts = new Map<string, Phaser.GameObjects.Text>();
   private tileSprites: Phaser.GameObjects.Image[] = [];
   private tileStageId: string | null = null;
@@ -144,6 +152,7 @@ export class HeistScene extends Phaser.Scene {
     this.renderPaths(world);
     this.renderActors(world);
     this.renderSelection(world);
+    this.renderWaypointsAndCoords(world);
     this.playEffects(world);
   }
 
@@ -474,6 +483,60 @@ export class HeistScene extends Phaser.Scene {
         t.destroy();
       },
     });
+  }
+
+  /** 地点の目印（点線の枠と名前）と、外周の座標目盛り。ステージが変わったときだけ作り直す */
+  private renderWaypointsAndCoords(world: WorldState): void {
+    const key = `${world.stageId}:${this.renderScale}`;
+    if (this.overlayStageId !== key) {
+      this.overlayStageId = key;
+      if (!this.waypointGfx) this.waypointGfx = this.add.graphics().setDepth(DEPTH.path + 0.5);
+      this.waypointGfx.clear();
+      for (const t of this.waypointTexts) t.destroy();
+      for (const t of this.coordTexts) t.destroy();
+      this.waypointTexts = [];
+      this.coordTexts = [];
+      const g = this.waypointGfx;
+      const occupied = new Set<string>();
+      for (const o of world.objects) occupied.add(`${o.x},${o.y}`);
+      occupied.add(`${world.exit.x},${world.exit.y}`);
+      for (const [id, p] of Object.entries(world.waypoints)) {
+        if (id === 'exit') continue;
+        const px = p.x * TILE;
+        const py = p.y * TILE;
+        if (!occupied.has(`${p.x},${p.y}`)) {
+          // 床の目印: 角だけの枠と中央の小さなひし形
+          g.lineStyle(1, 0x9fc3df, 0.55);
+          const c = 6;
+          g.beginPath();
+          g.moveTo(px + 2, py + 2 + c); g.lineTo(px + 2, py + 2); g.lineTo(px + 2 + c, py + 2);
+          g.moveTo(px + TILE - 2 - c, py + 2); g.lineTo(px + TILE - 2, py + 2); g.lineTo(px + TILE - 2, py + 2 + c);
+          g.moveTo(px + 2, py + TILE - 2 - c); g.lineTo(px + 2, py + TILE - 2); g.lineTo(px + 2 + c, py + TILE - 2);
+          g.moveTo(px + TILE - 2 - c, py + TILE - 2); g.lineTo(px + TILE - 2, py + TILE - 2); g.lineTo(px + TILE - 2, py + TILE - 2 - c);
+          g.strokePath();
+          g.fillStyle(0x9fc3df, 0.5);
+          g.fillPoints([{ x: px + TILE / 2, y: py + TILE / 2 - 3 }, { x: px + TILE / 2 + 3, y: py + TILE / 2 }, { x: px + TILE / 2, y: py + TILE / 2 + 3 }, { x: px + TILE / 2 - 3, y: py + TILE / 2 }], true);
+        }
+        const t = this.add
+          .text(px + TILE / 2, py + TILE - 1, id, { fontFamily: 'ui-monospace, Menlo, Consolas, monospace', fontSize: '8px', color: '#9fc3df', backgroundColor: 'rgba(13,13,20,0.7)', padding: { x: 2, y: 0 } })
+          .setOrigin(0.5, 1)
+          .setDepth(DEPTH.text - 0.5)
+          .setResolution(this.textRes());
+        this.waypointTexts.push(t);
+      }
+      // 座標目盛り: 一番上の行に x、一番左の列に y
+      for (let x = 0; x < world.width; x++) {
+        const t = this.add.text(x * TILE + TILE / 2, 1, String(x), { fontFamily: 'ui-monospace, Menlo, Consolas, monospace', fontSize: '8px', color: '#e6e8ee', backgroundColor: 'rgba(13,13,20,0.75)', padding: { x: 2, y: 0 } }).setOrigin(0.5, 0).setDepth(DEPTH.text - 0.5).setResolution(this.textRes());
+        this.coordTexts.push(t);
+      }
+      for (let y = 0; y < world.height; y++) {
+        const t = this.add.text(1, y * TILE + TILE / 2, String(y), { fontFamily: 'ui-monospace, Menlo, Consolas, monospace', fontSize: '8px', color: '#e6e8ee', backgroundColor: 'rgba(13,13,20,0.75)', padding: { x: 2, y: 0 } }).setOrigin(0, 0.5).setDepth(DEPTH.text - 0.5).setResolution(this.textRes());
+        this.coordTexts.push(t);
+      }
+    }
+    this.waypointGfx.setVisible(this.options.showWaypoints);
+    for (const t of this.waypointTexts) t.setVisible(this.options.showWaypoints);
+    for (const t of this.coordTexts) t.setVisible(this.options.showCoords);
   }
 
   private renderSelection(world: WorldState): void {

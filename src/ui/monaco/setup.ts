@@ -27,7 +27,7 @@ export interface CommandDoc {
 }
 
 export const COMMAND_DOCS: CommandDoc[] = [
-  { name: 'move', signature: 'move 目的地ID', summary: '最短経路で目的地へ自動移動する。目的地はウェイポイント・宝物・扉・出口・人物のID。', ticks: '距離に応じる（2tick/タイル、運搬中は4tick）', example: 'move jewel' },
+  { name: 'move', signature: 'move 目的地ID ／ move x,y', summary: '最短経路で目的地へ自動移動する。目的地はウェイポイント・宝物・扉・出口・人物のID、または座標 x,y（マップにマウスを当てると座標が出る）。', ticks: '距離に応じる（2tick/タイル、運搬中は4tick）', example: 'move jewel' },
   { name: 'steal', signature: 'steal 宝物ID', summary: '隣接または同じマスの宝物を盗む。', ticks: '3 tick', example: 'steal jewel' },
   { name: 'wait', signature: 'wait 数 / wait until 条件', summary: 'n tick 待つ、または条件が成立するまで毎tick判定しながら待つ。', ticks: 'n tick（0は1）/ 条件次第', example: 'wait until guard_away' },
   { name: 'hide', signature: 'hide', summary: '隠れ場所（緑のロッカー）にいるときだけ隠れる。移動や knockout で解除。', ticks: '1 tick', example: 'hide' },
@@ -35,7 +35,7 @@ export const COMMAND_DOCS: CommandDoc[] = [
   { name: 'carry', signature: 'carry 警備員ID', summary: '隣接する気絶中の警備員を担ぐ。運搬中は移動が遅くなる。', ticks: '3 tick', example: 'carry guard_1' },
   { name: 'drop', signature: 'drop', summary: '担いでいる警備員を現在地に下ろす。', ticks: '1 tick', example: 'drop' },
   { name: 'open', signature: 'open 扉ID', summary: '隣接する扉を開ける。施錠された扉は、その扉の鍵を steal で持っているときだけ開く。', ticks: '2 tick', example: 'open service_door' },
-  { name: 'distract', signature: 'distract 地点ID', summary: '距離 6 以内の地点に物音を立てる。そこから距離 6 以内にいる巡回中・捜索中の警備員が調べに行く（追跡中の警備員は無視）。', ticks: '1 tick', example: 'distract corner' },
+  { name: 'distract', signature: 'distract 地点ID ／ distract x,y', summary: '距離 6 以内の地点（または座標）に物音を立てる。そこから距離 6 以内にいる巡回中・捜索中の警備員が調べに行く（追跡中の警備員は無視）。', ticks: '1 tick', example: 'distract corner' },
   { name: 'signal', signature: 'signal 名前', summary: '味方全員が signal_received(名前) で確認できるフラグを立てる。', ticks: '1 tick', example: 'signal ready' },
   { name: 'if', signature: 'if 条件 … else … end', summary: '評価した瞬間の条件で分岐する。', ticks: '0 tick', example: 'if guard_visible\n  hide\nend' },
   { name: 'while', signature: 'while 条件 … end', summary: '条件が真の間くり返す。中に wait を入れないと命令数上限で停止する。', ticks: '0 tick（本体次第）', example: 'while not at_exit\n  wait 1\nend' },
