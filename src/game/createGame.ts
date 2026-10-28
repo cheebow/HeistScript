@@ -39,6 +39,9 @@ export function createGame(parent: HTMLElement, width: number, height: number, c
   });
   let pending: { world: WorldState; options: RenderOptions } | null = null;
   let zoomLevel = 0;
+  // 高解像度ディスプレイでは、見た目の倍率 × 端末のピクセル比で内部描画する。
+  // ドット絵は整数倍のまま、文字・視界・経路などの線は端末の解像度で描かれる
+  const dpr = Math.max(1, Math.min(3, Math.round((typeof window !== 'undefined' && window.devicePixelRatio) || 1)));
   const fit = (cw: number, ch: number) => Math.max(1, Math.min(4, Math.floor(Math.min(cw / (width * TILE), ch / (height * TILE)))));
   const handle: GameHandle = {
     game,
@@ -53,7 +56,12 @@ export function createGame(parent: HTMLElement, width: number, height: number, c
     setZoom(level, cw, ch) {
       zoomLevel = level;
       const zoom = level > 0 ? level : fit(cw, ch);
-      game.scale.setZoom(zoom);
+      const k = zoom * dpr;
+      const bw = width * TILE * k;
+      const bh = height * TILE * k;
+      if (game.scale.width !== bw || game.scale.height !== bh) game.scale.resize(bw, bh);
+      game.scale.setZoom(1 / dpr); // CSS 上の大きさは width*TILE*zoom
+      scene.setRenderScale(k);
       return zoom;
     },
     resize(cw, ch) {

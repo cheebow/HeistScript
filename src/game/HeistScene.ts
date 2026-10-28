@@ -40,6 +40,8 @@ export class HeistScene extends Phaser.Scene {
   private overlay!: Phaser.GameObjects.Rectangle;
   private walkPhase = 0;
   private lastFxTick = -1;
+  /** 内部描画倍率（見た目の倍率 × 端末ピクセル比）。カメラのズームと文字の解像度に使う */
+  private renderScale = 1;
   private effectsEnabled = true;
   private callbacks: SceneCallbacks;
   private dirty = true;
@@ -76,6 +78,7 @@ export class HeistScene extends Phaser.Scene {
       this.callbacks.onSelect(hit ? hit.id : null);
     });
     this.ready = true;
+    this.applyRenderScale();
     if (this.world) this.render();
   }
 
@@ -93,8 +96,34 @@ export class HeistScene extends Phaser.Scene {
     for (const [key, map] of Object.entries(buildAllSprites())) this.makeTexture(key, map);
   }
 
+  /** 内部描画倍率を変える（createGame の setZoom から）。文字は作り直す */
+  setRenderScale(k: number): void {
+    if (this.renderScale === k) return;
+    this.renderScale = k;
+    if (this.ready) this.applyRenderScale();
+  }
+
+  private applyRenderScale(): void {
+    const cam = this.cameras.main;
+    cam.setZoom(this.renderScale);
+    const w = this.world;
+    const mapW = w ? w.width * TILE : this.scale.width / this.renderScale;
+    const mapH = w ? w.height * TILE : this.scale.height / this.renderScale;
+    cam.centerOn(mapW / 2, mapH / 2);
+    for (const t of this.tagTexts.values()) t.destroy();
+    this.tagTexts.clear();
+    this.dirty = true;
+  }
+
+  /** 文字の解像度（内部描画倍率に合わせる） */
+  private textRes(): number {
+    return Math.max(2, this.renderScale);
+  }
+
   setWorld(world: WorldState, options: RenderOptions, effects = true): void {
+    const sizeChanged = !this.world || this.world.width !== world.width || this.world.height !== world.height;
     this.world = world;
+    if (sizeChanged && this.ready) this.cameras.main.centerOn((world.width * TILE) / 2, (world.height * TILE) / 2);
     this.options = options;
     this.effectsEnabled = effects;
     this.dirty = true;
@@ -385,7 +414,7 @@ export class HeistScene extends Phaser.Scene {
         .text(0, 0, text, { fontFamily: '"Hiragino Sans", "Noto Sans JP", sans-serif', fontSize: '9px', color: '#ffffff', backgroundColor: 'rgba(13,13,20,0.75)', padding: { x: 3, y: 1 } })
         .setOrigin(0.5, 0)
         .setDepth(DEPTH.text)
-        .setResolution(2);
+        .setResolution(this.textRes());
       this.tagTexts.set(id, t);
     }
     if (t.text !== text) t.setText(text);
@@ -423,7 +452,7 @@ export class HeistScene extends Phaser.Scene {
       .text(w / 2, h / 2, text, { fontFamily: '"Hiragino Sans", "Noto Sans JP", sans-serif', fontSize: '16px', color, stroke: '#0d0d14', strokeThickness: 3 })
       .setOrigin(0.5)
       .setDepth(DEPTH.text + 0.1)
-      .setResolution(2);
+      .setResolution(this.textRes());
     if (this.options.reducedMotion) {
       this.time.delayedCall(500, () => {
         bg.destroy();
@@ -652,7 +681,7 @@ export class HeistScene extends Phaser.Scene {
       .text(x, y, text, { fontFamily: '"Hiragino Sans", "Noto Sans JP", sans-serif', fontSize: `${size}px`, color, stroke: '#0d0d14', strokeThickness: 3 })
       .setOrigin(0.5, 1)
       .setDepth(DEPTH.text)
-      .setResolution(2);
+      .setResolution(this.textRes());
     this.tweens.add({ targets: t, y: y - 16, duration: 900, ease: 'Quad.easeOut' });
     this.tweens.add({ targets: t, alpha: 0, delay: 600, duration: 400, onComplete: () => t.destroy() });
   }
