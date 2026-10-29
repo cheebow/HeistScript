@@ -4,7 +4,7 @@
   "title": "レーザー一本",
   "chapter": "第3章 設備",
   "difficulty": 1,
-  "description": "廊下に 1 本のレーザー。6 tick 作動して 6 tick 止まる。",
+  "description": "廊下をふさぐようにレーザーが張られている。6 tick 作動して 6 tick 止まる。",
   "width": 16,
   "height": 4,
   "tiles": [
@@ -61,7 +61,18 @@
       "onTicks": 6,
       "offTicks": 6,
       "offset": 0,
-      "label": "レーザー",
+      "label": "レーザー（上）",
+      "description": "6 tick 作動／6 tick 停止。作動中に触れると警報"
+    },
+    {
+      "id": "laser_2",
+      "type": "laser",
+      "x": 7,
+      "y": 2,
+      "onTicks": 6,
+      "offTicks": 6,
+      "offset": 0,
+      "label": "レーザー（下）",
       "description": "6 tick 作動／6 tick 停止。作動中に触れると警報"
     },
     {

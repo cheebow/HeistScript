@@ -478,6 +478,8 @@ export function buildAllSprites(): Record<string, PixelMap> {
     treasure: treasureSprite(),
     laser_on: laserTile(true),
     laser_off: laserTile(false),
+    laser_on_v: rotate90(laserTile(true)),
+    laser_off_v: rotate90(laserTile(false)),
     switch_up: switchTile(false),
     switch_down: switchTile(true),
     vent: ventTile(),

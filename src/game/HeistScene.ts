@@ -191,7 +191,7 @@ export class HeistScene extends Phaser.Scene {
     for (const o of world.objects) {
       if (o.type !== 'treasure' && o.type !== 'laser' && o.type !== 'switch' && o.type !== 'key') continue;
       seen.add(o.id);
-      const key = o.type === 'treasure' ? 'treasure' : o.type === 'key' ? 'key' : o.type === 'laser' ? (o.active ? 'laser_on' : 'laser_off') : o.pressed ? 'switch_down' : 'switch_up';
+      const key = o.type === 'treasure' ? 'treasure' : o.type === 'key' ? 'key' : o.type === 'laser' ? (o.active ? 'laser_on' : 'laser_off') + (this.laserVertical(world, o.x, o.y) ? '_v' : '') : o.pressed ? 'switch_down' : 'switch_up';
       let img = this.objectSprites.get(o.id);
       if (!img) {
         img = this.add.image(o.x * TILE, o.y * TILE, key).setOrigin(0, 0).setDepth(o.type === 'treasure' ? DEPTH.objects : DEPTH.tiles + 0.5);
@@ -205,6 +205,13 @@ export class HeistScene extends Phaser.Scene {
         this.objectSprites.delete(id);
       }
     }
+  }
+
+  /** レーザーは通路をふさぐ向きに描く: 上下が壁なら縦（上下の壁の間に張る）、それ以外は横 */
+  private laserVertical(world: WorldState, x: number, y: number): boolean {
+    // 壁か、となりのレーザー（複数マスで一本の線になる）を「端」とみなす
+    const end = (tx: number, ty: number) => (world.tiles[ty]?.[tx] ?? 'wall') === 'wall' || world.objects.some((o) => o.type === 'laser' && o.x === tx && o.y === ty);
+    return end(x, y - 1) && end(x, y + 1) && !(end(x - 1, y) && end(x + 1, y));
   }
 
   private renderVision(world: WorldState): void {
