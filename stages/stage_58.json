@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_58",
+  "title": "手を伸ばす",
+  "chapter": "第3章 設備",
+  "difficulty": 2,
+  "description": "宝石はレーザーの台座の上にある。台座のレーザーは止まらない。乗れば警報が鳴り、出口側の警備員が駆けつける。",
+  "width": 16,
+  "height": 6,
+  "tiles": [
+    "################",
+    "#..............#",
+    "#..............#",
+    "#..............#",
+    "#..............#",
+    "################"
+  ],
+  "waypoints": [],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# move jewel → steal jewel で実行して、何が起きるか見てみよう。\n",
+      "id": "thief_a",
+      "x": 1,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "警備員",
+      "description": "出口の手前、右下で壁を向いて待機。警報が鳴ると現場へ来る",
+      "id": "guard_1",
+      "x": 12,
+      "y": 4,
+      "direction": "down",
+      "patrolRoute": [
+        {
+          "x": 12,
+          "y": 4,
+          "waitTicks": 0
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "pedestal",
+      "type": "laser",
+      "x": 8,
+      "y": 2,
+      "onTicks": 1,
+      "offTicks": 0,
+      "offset": 0,
+      "label": "台座のレーザー",
+      "description": "止まらない。乗ると警報"
+    },
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 8,
+      "y": 2,
+      "required": true,
+      "label": "宝石",
+      "description": "レーザーの台座の上"
+    }
+  ],
+  "exit": {
+    "x": 14,
+    "y": 1
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "noalarm",
+      "type": "noAlarm",
+      "title": "警報を鳴らさずにクリア"
+    },
+    {
+      "id": "fast",
+      "type": "maxTicks",
+      "value": 40,
+      "title": "40tick以内にクリア"
+    }
+  ],
+  "learn": [
+    "steal は隣からでも盗める"
+  ],
+  "goal": "宝石を盗んで出口へ。",
+  "firstStep": "move jewel → steal jewel で実行して、何が起きるか見てみよう。",
+  "hints": [
+    "steal は「隣のマス」からでも盗める。move と steal が別の命令なのはこのため。",
+    "台座の隣の床（例えば左隣 7,2）へ move して、そこから steal jewel。ダブルクリックで move 7,2 が入る。",
+    "--- thief_a ---\nmove 7,2\nsteal jewel\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move 7,2\nsteal jewel\nmove exit\n"
+  }
+}

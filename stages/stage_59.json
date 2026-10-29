@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "id": "stage_59",
+  "title": "ロッカーの中から",
+  "chapter": "第2章 警備員の癖",
+  "difficulty": 3,
+  "description": "裏の通路と広間の間の壁に、ロッカーが一つだけはまっている。宝石はロッカーのすぐ下、広間の壁ぎわ。広間では警備員が往復していて、宝石のあたりはほとんどいつも見えている。",
+  "width": 16,
+  "height": 7,
+  "tiles": [
+    "################",
+    "#..............#",
+    "#######H########",
+    "#..............#",
+    "#..............#",
+    "#..............#",
+    "################"
+  ],
+  "waypoints": [
+    {
+      "description": "裏の通路と広間の間の壁にはまっている",
+      "id": "locker",
+      "x": 7,
+      "y": 2,
+      "label": "ロッカー"
+    }
+  ],
+  "thieves": [
+    {
+      "direction": "right",
+      "label": "怪盗A",
+      "description": "",
+      "starterScript": "# ロッカーまで行って hide し、警備員がどこまで見ているか観察しよう。\n",
+      "id": "thief_a",
+      "x": 14,
+      "y": 1
+    }
+  ],
+  "guards": [
+    {
+      "label": "警備員",
+      "description": "宝石の前を左右に往復する。立ち止まらない",
+      "id": "guard_1",
+      "x": 4,
+      "y": 4,
+      "direction": "right",
+      "patrolRoute": [
+        {
+          "x": 10,
+          "y": 4,
+          "waitTicks": 0
+        },
+        {
+          "x": 4,
+          "y": 4,
+          "waitTicks": 0
+        }
+      ]
+    }
+  ],
+  "cameras": [],
+  "objects": [
+    {
+      "id": "jewel",
+      "type": "treasure",
+      "x": 7,
+      "y": 3,
+      "required": true,
+      "label": "宝石",
+      "description": "広間の壁ぎわ。真上がロッカー"
+    }
+  ],
+  "exit": {
+    "x": 1,
+    "y": 1
+  },
+  "maxTicks": 500,
+  "unlockedCommands": [
+    "move",
+    "steal",
+    "wait",
+    "hide",
+    "if",
+    "while",
+    "knockout",
+    "carry",
+    "drop",
+    "open",
+    "distract",
+    "signal",
+    "resume",
+    "on"
+  ],
+  "challenges": [
+    {
+      "id": "unseen",
+      "type": "noSpotted",
+      "title": "一度も見つからずにクリア"
+    }
+  ],
+  "learn": [
+    "隠れたまま盗む"
+  ],
+  "goal": "宝石を盗んで出口へ。",
+  "firstStep": "ロッカーまで行って hide し、警備員がどこまで見ているか観察しよう。",
+  "hints": [
+    "steal は隣のマスからでも盗める。そして steal では隠れた状態は解けない。",
+    "move locker → hide → steal jewel（隠れたまま）→ wait until guard_near → wait until guard_away → move exit。",
+    "--- thief_a ---\nmove locker\nhide\nsteal jewel\nwait until guard_near\nwait until guard_away\nmove exit\n"
+  ],
+  "solution": {
+    "thief_a": "move locker\nhide\nsteal jewel\nwait until guard_near\nwait until guard_away\nmove exit\n"
+  }
+}

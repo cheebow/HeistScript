@@ -184,6 +184,22 @@ describe('組み込みステージ', () => {
     }
   });
 
+  it('stage_58/59: move と steal を分ける意味がある（隣から盗む／隠れたまま盗む）', () => {
+    const s58 = stages.find((x) => x.id === 'stage_58')!;
+    const naive58 = simulate(s58, { thief_a: 'move jewel\nsteal jewel\nmove exit\n' }).world;
+    expect(naive58.stats.alarmCount).toBeGreaterThan(0);
+    expect(naive58.result?.status).not.toBe('SUCCESS');
+    const sol58 = simulate(s58, s58.solution!).world;
+    expect(sol58.result?.status).toBe('SUCCESS');
+    expect(sol58.stats.alarmCount).toBe(0);
+    const s59 = stages.find((x) => x.id === 'stage_59')!;
+    const naive59 = simulate(s59, { thief_a: 'move locker\nhide\nwait until guard_near\nwait until guard_away\nmove jewel\nsteal jewel\nmove exit\n' }).world;
+    expect(naive59.stats.spottedCount).toBeGreaterThan(0);
+    const sol59 = simulate(s59, s59.solution!).world;
+    expect(sol59.result?.status).toBe('SUCCESS');
+    expect(sol59.stats.spottedCount).toBe(0);
+  });
+
   it('初期スクリプトのままではどのステージもクリアできない', () => {
     for (const s of stages) {
       const scripts: Record<string, string> = {};
