@@ -12,10 +12,12 @@ export interface EditorProps {
   breakpoints: Set<number>;
   onToggleBreakpoint: (line: number) => void;
   readOnly: boolean;
+  /** カーソルのある行の直後に 1 行挿入する要求（key が変わるたびに実行） */
+  insertLine?: { key: number; text: string } | null;
 }
 
 /** Monaco ラッパー。怪盗ごとにモデルを保持する。 */
-export function Editor({ thiefId, value, onChange, errors, activeLine, breakpoints, onToggleBreakpoint, readOnly }: EditorProps) {
+export function Editor({ thiefId, value, onChange, errors, activeLine, breakpoints, onToggleBreakpoint, readOnly, insertLine = null }: EditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const decorationsRef = useRef<monaco.editor.IEditorDecorationsCollection | null>(null);
@@ -75,6 +77,27 @@ export function Editor({ thiefId, value, onChange, errors, activeLine, breakpoin
   useEffect(() => {
     editorRef.current?.updateOptions({ readOnly });
   }, [readOnly]);
+
+  // マップのダブルクリックなどから「move ○○」を差し込む。カーソル行の直後（その行が空なら上書き）
+  useEffect(() => {
+    const editor = editorRef.current;
+    const model = editor?.getModel();
+    if (!editor || !model || !insertLine || insertLine.key === 0) return;
+    // まだエディタを触っていない（カーソルが先頭のまま）ときは末尾に足す
+    const raw = editor.getPosition();
+    const untouched = !editor.hasTextFocus() && (!raw || (raw.lineNumber === 1 && raw.column === 1));
+    const pos = untouched || !raw ? { lineNumber: model.getLineCount(), column: 1 } : raw;
+    const lineText = model.getLineContent(pos.lineNumber);
+    if (lineText.trim() === '') {
+      editor.executeEdits('insert-move', [{ range: new monaco.Range(pos.lineNumber, 1, pos.lineNumber, lineText.length + 1), text: insertLine.text }]);
+      editor.setPosition({ lineNumber: pos.lineNumber, column: insertLine.text.length + 1 });
+    } else {
+      const col = model.getLineMaxColumn(pos.lineNumber);
+      editor.executeEdits('insert-move', [{ range: new monaco.Range(pos.lineNumber, col, pos.lineNumber, col), text: '\n' + insertLine.text }]);
+      editor.setPosition({ lineNumber: pos.lineNumber + 1, column: insertLine.text.length + 1 });
+    }
+    editor.focus();
+  }, [insertLine]);
 
   // エラーマーカー
   useEffect(() => {

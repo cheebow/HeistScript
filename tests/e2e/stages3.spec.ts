@@ -53,3 +53,19 @@ test('周期のある設備は「N tick 後に」が表示され、成功時は�
   await expect(page.getByTestId('clear-badges')).toContainText('初クリア');
   await expect(page.getByTestId('share-box')).toBeVisible();
 });
+
+test('マップをダブルクリックすると move 命令がエディタに入る', async ({ page }) => {
+  await page.goto('/#stage=stage_24');
+  await waitHook(page);
+  await setScript(page, 'thief_a', '');
+  const canvas = page.locator('.game-view canvas');
+  const box = (await canvas.boundingBox())!;
+  const tileW = box.width / 14; // stage_24 は 14×7
+  const tileH = box.height / 7;
+  // 宝石 jewel_a (5,2) → move jewel_a
+  await canvas.dblclick({ position: { x: tileW * 5.5, y: tileH * 2.5 } });
+  await expect.poll(async () => page.evaluate(() => (window as unknown as { __heistTest: { getScript: () => string } }).__heistTest.getScript())).toContain('move jewel_a');
+  // ただの床 (2,3) → move 2,3
+  await canvas.dblclick({ position: { x: tileW * 2.5, y: tileH * 3.5 } });
+  await expect.poll(async () => page.evaluate(() => (window as unknown as { __heistTest: { getScript: () => string } }).__heistTest.getScript())).toContain('move 2,3');
+});

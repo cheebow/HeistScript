@@ -26,10 +26,14 @@ export interface GameViewProps {
   banner?: { key: number; text: string; color?: string } | null;
   /** 成功演出の要求（key が変わるたびに再生） */
   celebrate?: number;
+  /** マップのダブルクリック（タイル座標） */
+  onDoubleClickTile?: (x: number, y: number) => void;
 }
 
 /** Phaser キャンバスを保持する React コンテナ */
-export function GameView({ world, options, version, effects = true, onSelect, describeTile, zoom, onZoomApplied, banner, celebrate = 0 }: GameViewProps) {
+export function GameView({ world, options, version, effects = true, onSelect, describeTile, zoom, onZoomApplied, banner, celebrate = 0, onDoubleClickTile }: GameViewProps) {
+  const dblRef = useRef(onDoubleClickTile);
+  dblRef.current = onDoubleClickTile;
   const onZoomRef = useRef(onZoomApplied);
   onZoomRef.current = onZoomApplied;
   const zoomRef = useRef(zoom);
@@ -98,7 +102,17 @@ export function GameView({ world, options, version, effects = true, onSelect, de
   };
 
   return (
-    <div ref={containerRef} className="game-view" data-testid="game-view" onMouseMove={onMove} onMouseLeave={() => setTip(null)}>
+    <div
+      ref={containerRef}
+      className="game-view"
+      data-testid="game-view"
+      onMouseMove={onMove}
+      onMouseLeave={() => setTip(null)}
+      onDoubleClick={(e) => {
+        const tile = handleRef.current?.tileAt(e.clientX, e.clientY);
+        if (tile) dblRef.current?.(tile.x, tile.y);
+      }}
+    >
       {tip && (
         <div className="tile-tip" style={{ left: tip.x, top: tip.y }} role="tooltip" data-testid="tile-tip">
           <div className="tile-tip-title">{tip.info.title}</div>

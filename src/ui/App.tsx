@@ -58,6 +58,7 @@ export function App() {
   const [appliedZoom, setAppliedZoom] = useState<{ zoom: number; maxFit: number }>({ zoom: 1, maxFit: 1 });
   const [banner, setBanner] = useState<{ key: number; text: string; color?: string } | null>(null);
   const [celebrateKey, setCelebrateKey] = useState(0);
+  const [insertLine, setInsertLine] = useState<{ key: number; text: string } | null>(null);
   /** 今回のクリアで何が新しかったか（結果画面で強調する） */
   const [clearInfo, setClearInfo] = useState<{ first: boolean; prevBest: number | null; newChallenges: string[] } | null>(null);
   const [bottomHeight, setBottomHeight] = useState(() => Math.max(160, Math.min(300, Math.round(window.innerHeight * 0.26))));
@@ -541,6 +542,7 @@ export function App() {
             breakpoints={breakpoints[activeThief] ?? new Set()}
             onToggleBreakpoint={(line) => toggleBreakpoint(activeThief, line)}
             readOnly={false}
+            insertLine={insertLine}
           />
           <ErrorList errors={compileErrors[activeThief] ?? []} onJump={(line) => (jumpRef.current = { thiefId: activeThief, line })} />
           {ctl.lastBreakpoint && (
@@ -605,6 +607,17 @@ export function App() {
             onZoomApplied={(z, maxFit) => setAppliedZoom((prev) => (prev.zoom === z && prev.maxFit === maxFit ? prev : { zoom: z, maxFit }))}
             banner={banner}
             celebrate={celebrateKey}
+            onDoubleClickTile={(x, y) => {
+              // そのマスの地点・オブジェクト・人物の ID があればそれを、なければ座標を move の目的地にする
+              const w = previewWorld ?? initialWorld;
+              const wp = Object.entries(w.waypoints).find(([, p]) => p.x === x && p.y === y)?.[0];
+              const obj = w.objects.find((o) => o.x === x && o.y === y && !((o.type === 'treasure' || o.type === 'key') && o.takenBy !== null));
+              const person = w.guards.find((g) => g.x === x && g.y === y && !g.carriedBy) ?? w.thieves.find((t) => t.id !== activeThief && t.x === x && t.y === y);
+              const tile = w.tiles[y]?.[x];
+              const target = wp ?? obj?.id ?? person?.id ?? (tile && tile !== 'wall' ? `${x},${y}` : null);
+              if (!target) return;
+              setInsertLine((prev) => ({ key: (prev?.key ?? 0) + 1, text: `move ${target}` }));
+            }}
           />
           {ctl.isReplay && <div className="replay-banner">過去のコマを表示中（閲覧専用）。やり直すには「最初に戻す」</div>}
           <div className="legend" aria-label="凡例">
@@ -620,7 +633,7 @@ export function App() {
             {stage.tiles.some((row) => row.includes('V')) && <span><i className="sw sw-vent" />通風口（怪盗だけ通れる）</span>}
             <span><i className="sw sw-path" />移動予定の経路</span>
             <span><i className="sw sw-wp" />地点（move の目的地）</span>
-            <span className="muted">人物をクリックすると状態を表示</span>
+            <span className="muted">人物をクリックすると状態を表示／マスをダブルクリックすると move 命令を追加</span>
           </div>
         </section>
       </main>
